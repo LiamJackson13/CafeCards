@@ -28,7 +28,7 @@ const BooksScreen = () => {
               <ThemedText style={styles.title} title>
                 {item.title}
               </ThemedText>
-              <ThemedText>Written by {item.author}</ThemedText>
+              <ThemedText>You have {item.author} stamps</ThemedText>
             </ThemedCard>
           </Pressable>
         )}

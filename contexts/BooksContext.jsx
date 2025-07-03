@@ -21,7 +21,6 @@ export function BooksProvider({ children }) {
       );
 
       setBooks(response.documents);
-      console.log(response.documents);
     } catch (error) {
       console.error(error.message);
     }

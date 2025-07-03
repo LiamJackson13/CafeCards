@@ -23,7 +23,7 @@ const BookDetails = () => {
   const handleDelete = async () => {
     await deleteBook(id);
     setBook(null);
-    router.replace("/books");
+    router.replace("/cards");
   };
 
   useEffect(() => {
@@ -47,14 +47,14 @@ const BookDetails = () => {
     <ThemedView style={styles.container} safe>
       <ThemedCard style={styles.card}>
         <ThemedText style={styles.title}>{book.title}</ThemedText>
-        <ThemedText>Written by {book.author}</ThemedText>
+        <ThemedText>Cafe Name: {book.author}</ThemedText>
         <Spacer />
-        <ThemedText title>Book Description:</ThemedText>
+        <ThemedText title>Cafe Description:</ThemedText>
         <Spacer height={10} />
         <ThemedText>{book.description}</ThemedText>
       </ThemedCard>
       <ThemedButton style={styles.delete} onPress={handleDelete}>
-        <Text style={{ color: "#fff", textAlign: "center" }}>Delete Book</Text>
+        <Text style={{ color: "#fff", textAlign: "center" }}>Delete Card</Text>
       </ThemedButton>
     </ThemedView>
   );

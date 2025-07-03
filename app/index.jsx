@@ -18,8 +18,8 @@ export default function Index() {
       <Link href={"/register"} style={styles.link}>
         <ThemedText>Register Page</ThemedText>
       </Link>
-      <Link href={"/books"} style={styles.link}>
-        <ThemedText>Books Page</ThemedText>
+      <Link href={"/cards"} style={styles.link}>
+        <ThemedText>Cards Page</ThemedText>
       </Link>
     </ThemedView>
   );
