@@ -1,6 +1,11 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, Text } from "react-native";
+import {
+  Keyboard,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { useBooks } from "../../hooks/useBooks";
 
 import Spacer from "../../components/Spacer";
@@ -38,41 +43,41 @@ const CreateScreen = () => {
   };
 
   return (
-    // <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    <ThemedView style={styles.container}>
-      <ThemedText title style={styles.heading}>
-        Add a new Book
-      </ThemedText>
-      <Spacer />
-      <ThemedTextInput
-        style={styles.input}
-        placeholder="Book Title"
-        value={title}
-        onChangeText={setTitle}
-      />
-      <Spacer />
-      <ThemedTextInput
-        style={styles.input}
-        placeholder="Author"
-        value={author}
-        onChangeText={setAuthor}
-      />
-      <Spacer />
-      <ThemedTextInput
-        style={styles.multiline}
-        placeholder="Book Description"
-        value={description}
-        onChangeText={setDescription}
-        multiline={true}
-      />
-      <Spacer />
-      <ThemedButton onPress={handleSubmit} disabled={loading}>
-        <Text style={{ color: "#fff" }}>
-          {loading ? "Saving..." : "Create Book"}
-        </Text>
-      </ThemedButton>
-    </ThemedView>
-    // </TouchableWithoutFeedback> Test this on actual phone
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ThemedView style={styles.container}>
+        <ThemedText title style={styles.heading}>
+          Add a new Book
+        </ThemedText>
+        <Spacer />
+        <ThemedTextInput
+          style={styles.input}
+          placeholder="Book Title"
+          value={title}
+          onChangeText={setTitle}
+        />
+        <Spacer />
+        <ThemedTextInput
+          style={styles.input}
+          placeholder="Author"
+          value={author}
+          onChangeText={setAuthor}
+        />
+        <Spacer />
+        <ThemedTextInput
+          style={styles.multiline}
+          placeholder="Book Description"
+          value={description}
+          onChangeText={setDescription}
+          multiline={true}
+        />
+        <Spacer />
+        <ThemedButton onPress={handleSubmit} disabled={loading}>
+          <Text style={{ color: "#fff" }}>
+            {loading ? "Saving..." : "Create Book"}
+          </Text>
+        </ThemedButton>
+      </ThemedView>
+    </TouchableWithoutFeedback>
   );
 };
 
