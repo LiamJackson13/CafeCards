@@ -1,23 +1,25 @@
 export const Colors = {
-  primary: "#6849a7",
-  warning: "#cc475a",
+  // Brand colors
+  primary: "#AA7C48", // Warm caramel for buttons & accents
+  warning: "#E37B7B", // Soft warning red (error/toast)
 
   dark: {
-    text: "#d4d4d4",
-    title: "#fff",
-    background: "#252231",
-    navBackground: "#201e2b",
-    iconColor: "#9591a5",
-    iconColorFocused: "#fff",
-    uiBackground: "#2f2b3d",
+    text: "#F5F5F5", // Primary readable text
+    title: "#FFFFFF", // Bold headlines / section titles
+    background: "#1C1C1A", // App background (deep espresso black)
+    navBackground: "#2A2A26", // Bottom tab/nav bar
+    iconColor: "#B5B5A7", // Muted tan icons (unfocused)
+    iconColorFocused: "#F5F5F5", // Bright icon when selected
+    uiBackground: "#3A332A", // Cards, buttons, inputs (dark mocha)
   },
+
   light: {
-    text: "#625f72",
-    title: "#201e2b",
-    background: "#e0dfe8",
-    navBackground: "#e8e7ef",
-    iconColor: "#686477",
-    iconColorFocused: "#201e2b",
-    uiBackground: "#d6d5e1",
+    text: "#625F57", // Body text (light brown-gray)
+    title: "#3B2F2F", // Titles / Headings (rich coffee brown)
+    background: "#FDF3E7", // Light background (cream)
+    navBackground: "#EFE3D1", // Nav bar (light tan)
+    iconColor: "#7B6F63", // Unfocused icons
+    iconColorFocused: "#3B2F2F", // Focused icons
+    uiBackground: "#DBCBB1", // Cards, buttons, inputs (latte beige)
   },
 };

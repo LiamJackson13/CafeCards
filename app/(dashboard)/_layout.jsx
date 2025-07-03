@@ -36,12 +36,12 @@ const DashboardLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="books"
+          name="cards"
           options={{
-            title: "Books",
+            title: "Cards",
             tabBarIcon: ({ focused, color }) => (
               <Ionicons
-                name={focused ? "book" : "book-outline"}
+                name={focused ? "card" : "card-outline"}
                 size={24}
                 color={color}
               />
@@ -49,12 +49,12 @@ const DashboardLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="create"
+          name="qr"
           options={{
-            title: "Create",
+            title: "QR Code",
             tabBarIcon: ({ color, focused }) => (
               <Ionicons
-                name={focused ? "add" : "add-outline"}
+                name={focused ? "qr-code" : "qr-code-outline"}
                 size={24}
                 color={color}
               />

@@ -36,7 +36,7 @@ const CreateScreen = () => {
     setDescription("");
 
     // redirect
-    router.replace("/books");
+    router.replace("/cards");
 
     // reset loading state
     setLoading(false);
