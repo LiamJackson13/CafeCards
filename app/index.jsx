@@ -1,13 +1,13 @@
-import Logo from "@/assets/images/logo.png";
 import { Link } from "expo-router";
-import { Image, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import ThemedText from "../components/ThemedText";
 import ThemedView from "../components/ThemedView";
 
 export default function Index() {
   return (
     <ThemedView style={styles.container} safe>
-      <Image source={Logo} style={styles.img} />
+      {/* <Image source={Logo} style={styles.img} /> */}
+
       <ThemedText style={styles.title} title>
         Cafe Cards
       </ThemedText>

@@ -2,6 +2,7 @@ import { Link } from "expo-router";
 import { useState } from "react";
 import {
   Keyboard,
+  Platform,
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
@@ -30,7 +31,9 @@ const RegisterScreen = () => {
     }
   };
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback
+      onPress={Platform.OS !== "web" ? Keyboard.dismiss : undefined}
+    >
       <ThemedView style={styles.container}>
         <Spacer />
         <ThemedText title style={styles.title}>
@@ -80,6 +83,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    ...(Platform.OS === "web" && {
+      minHeight: "100vh",
+      paddingVertical: 20,
+      width: "100%",
+    }),
   },
   title: {
     textAlign: "center",
@@ -94,5 +102,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 6,
     marginHorizontal: 10,
+  },
+  input: {
+    ...(Platform.OS === "web" && {
+      maxWidth: 400,
+      width: "calc(100% - 80px)",
+      boxSizing: "border-box",
+      alignSelf: "center",
+    }),
   },
 });

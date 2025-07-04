@@ -1,9 +1,10 @@
-import { Platform, TextInput, useColorScheme } from "react-native";
+import { Platform, TextInput } from "react-native";
 import { Colors } from "../constants/Colors";
+import { useTheme } from "../contexts/ThemeContext";
 
 const ThemedTextInput = ({ style, ...props }) => {
-  const colorScheme = useColorScheme();
-  const theme = Colors[colorScheme] ?? Colors.light;
+  const { actualTheme } = useTheme();
+  const theme = Colors[actualTheme] ?? Colors.light;
 
   const webStyles =
     Platform.OS === "web"

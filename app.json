@@ -31,7 +31,7 @@
     ],
     "scheme": "cafecards",
     "slug": "cafe-cards",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "automatic",
     "version": "1.0.0",
     "web": {
       "bundler": "metro",

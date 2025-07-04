@@ -15,7 +15,7 @@ const BooksScreen = () => {
     <ThemedView style={styles.container} safe>
       <Spacer />
       <ThemedText title style={styles.heading}>
-        Your Reading List
+        Your Cards
       </ThemedText>
       <Spacer />
       <FlatList

@@ -3,6 +3,7 @@ import Spacer from "../../components/Spacer";
 import ThemedButton from "../../components/ThemedButton";
 import ThemedText from "../../components/ThemedText";
 import ThemedView from "../../components/ThemedView";
+import ThemeToggle from "../../components/ThemeToggle";
 import { useUser } from "../../hooks/useUser";
 
 const ProfileScreen = () => {
@@ -15,9 +16,11 @@ const ProfileScreen = () => {
       </ThemedText>
       <Spacer />
       <ThemedText style={{ textAlign: "center" }}>
-        Time to start reading some books...
+        Easily access all your cafe loyalty cards!
       </ThemedText>
 
+      <Spacer />
+      <ThemeToggle />
       <Spacer />
       <ThemedButton onPress={logout}>
         <Text style={{ color: "#f2f2f2" }}>Logout</Text>

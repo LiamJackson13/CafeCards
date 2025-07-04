@@ -1,12 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
-import { useColorScheme } from "react-native";
 import UserOnly from "../../components/auth/UserOnly";
 import { Colors } from "../../constants/Colors";
+import { useTheme } from "../../contexts/ThemeContext";
 
 const DashboardLayout = () => {
-  const colorScheme = useColorScheme();
-  const theme = Colors[colorScheme] ?? Colors.light;
+  const { actualTheme } = useTheme();
+  const theme = Colors[actualTheme] ?? Colors.light;
 
   return (
     <UserOnly>

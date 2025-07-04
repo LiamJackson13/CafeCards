@@ -2,6 +2,7 @@ import { Link } from "expo-router";
 import { useState } from "react";
 import {
   Keyboard,
+  Platform,
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
@@ -31,7 +32,9 @@ const LoginScreen = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback
+      onPress={Platform.OS !== "web" ? Keyboard.dismiss : undefined}
+    >
       <ThemedView style={styles.container}>
         <Spacer />
         <ThemedText title style={styles.title}>
@@ -39,10 +42,13 @@ const LoginScreen = () => {
         </ThemedText>
         <ThemedTextInput
           placeholder="Email"
-          style={{
-            width: "80%",
-            marginBottom: 20,
-          }}
+          style={[
+            {
+              width: "80%",
+              marginBottom: 20,
+            },
+            styles.input,
+          ]}
           keyboardType="email-address"
           autoCapitalize="none"
           onChangeText={setEmail}
@@ -58,7 +64,7 @@ const LoginScreen = () => {
           onChangeText={setPassword}
           value={password}
         />
-        <ThemedButton onPress={handleSubmit}>
+        <ThemedButton onPress={handleSubmit} style={styles.btn}>
           <Text style={{ color: "#f2f2f2" }}>Login</Text>
         </ThemedButton>
         <Spacer />
@@ -86,10 +92,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    ...(Platform.OS === "web" && {
+      minHeight: "100vh",
+      paddingVertical: 20,
+      width: "100%",
+    }),
   },
   btn: {
     backgroundColor: Colors.primary,
-    padding: 15,
+    paddingHorizontal: 35,
     borderRadius: 5,
   },
   pressed: {
@@ -103,5 +114,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 6,
     marginHorizontal: 10,
+  },
+  input: {
+    padding: 20,
+    borderRadius: 6,
+    alignSelf: "stretch",
+    marginHorizontal: 40,
+    ...(Platform.OS === "web" && {
+      maxWidth: 400,
+      width: "calc(100% - 80px)",
+      boxSizing: "border-box",
+      alignSelf: "center",
+    }),
   },
 });

@@ -1,11 +1,12 @@
-import { useColorScheme, View } from "react-native";
+import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors } from "../constants/Colors";
+import { useTheme } from "../contexts/ThemeContext";
 
 const ThemedView = ({ style, safe = false, ...props }) => {
   const insets = useSafeAreaInsets();
-  const colorScheme = useColorScheme();
-  const theme = Colors[colorScheme] ?? Colors.light;
+  const { actualTheme } = useTheme();
+  const theme = Colors[actualTheme] ?? Colors.light;
   if (!safe)
     return (
       <View style={[{ backgroundColor: theme.background }, style]} {...props} />
