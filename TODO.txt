@@ -10,7 +10,7 @@
 - [ ] Implement account deletion feature
 
 ### Core Functionality
-- [ ] Implement actual QR code scanning (replace placeholder)
+- [x] Implement actual QR code scanning (COMPLETED)
 - [ ] Add QR code generation for cafe owners
 - [ ] Create loyalty card data model and storage
 - [ ] Implement points/rewards system logic
@@ -33,6 +33,7 @@
 - [x] Role-based UI (COMPLETED)
 - [x] Global debug toggle for cafe/customer switching (COMPLETED)
 - [x] Auto-set debug toggle based on real user type (COMPLETED)
+- [x] Extract reusable components (StatCard, ProfileOption, DebugToggle, PasswordModal) (COMPLETED)
 - [ ] Add profile picture upload
 - [ ] Implement settings persistence
 - [ ] Add success/error toast notifications
@@ -45,11 +46,11 @@
 - [ ] Create add new card flow
 
 ### Camera/Scanner Screen
-- [ ] Implement actual camera functionality
-- [ ] Add QR code detection and processing
-- [ ] Create scan history
-- [ ] Add manual card entry option
-- [ ] Implement scan feedback (success/error states)
+- [x] Implement actual camera functionality (COMPLETED)
+- [x] Add QR code detection and processing (COMPLETED)
+- [x] Create scan history (COMPLETED)
+- [x] Add manual card entry option (COMPLETED)
+- [x] Implement scan feedback (success/error states) (COMPLETED)
 
 ### Settings Screen
 - [ ] Make settings functional (currently UI-only)
@@ -145,6 +146,22 @@
 - [ ] Manage app state during interruptions
 - [ ] Test with empty states
 - [ ] Handle large datasets gracefully
+
+## 🧩 Code Architecture & Refactoring
+
+### Component Extraction (COMPLETED)
+- [x] StatCard component for displaying profile statistics
+- [x] ProfileOption component for settings menu items
+- [x] DebugToggle component for development mode switching
+- [x] PasswordModal component for password change functionality
+- [x] Improved modularity and reusability of profile screen components
+
+### Pending Code Improvements
+- [ ] Extract common form components (TextInput, Button variations)
+- [ ] Create a centralized navigation helper
+- [ ] Implement error boundary components
+- [ ] Add proper TypeScript types throughout the app
+- [ ] Optimize performance with React.memo and useMemo where needed
 
 ## 📋 Testing Checklist
 

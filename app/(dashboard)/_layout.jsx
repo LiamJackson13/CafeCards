@@ -66,14 +66,15 @@ const DashboardLayout = () => {
             ),
           }}
         />
+        {/* Cafe user tabs - Camera first as default for cafe users */}
         <Tabs.Screen
-          name="profile"
+          name="cafeSettings"
           options={{
-            title: "Profile",
-            href: !isCafeUser ? "/profile" : "/profile",
+            title: "Settings",
+            href: isCafeUser ? "/cafeSettings" : null,
             tabBarIcon: ({ focused, color }) => (
               <Ionicons
-                name={focused ? "person" : "person-outline"}
+                name={focused ? "settings" : "settings-outline"}
                 size={24}
                 color={color}
               />
@@ -81,7 +82,6 @@ const DashboardLayout = () => {
           }}
         />
 
-        {/* Cafe user tabs - Camera first as default for cafe users */}
         <Tabs.Screen
           name="cafeCamera"
           options={{
@@ -96,14 +96,15 @@ const DashboardLayout = () => {
             ),
           }}
         />
+
         <Tabs.Screen
-          name="cafeSettings"
+          name="profile"
           options={{
-            title: "Settings",
-            href: isCafeUser ? "/cafeSettings" : null,
+            title: "Profile",
+            href: !isCafeUser ? "/profile" : "/profile",
             tabBarIcon: ({ focused, color }) => (
               <Ionicons
-                name={focused ? "settings" : "settings-outline"}
+                name={focused ? "person" : "person-outline"}
                 size={24}
                 color={color}
               />

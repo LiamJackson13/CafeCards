@@ -27,7 +27,8 @@
           "imageWidth": 200,
           "resizeMode": "contain"
         }
-      ]
+      ],
+      "expo-camera"
     ],
     "scheme": "cafecards",
     "slug": "cafe-cards",
