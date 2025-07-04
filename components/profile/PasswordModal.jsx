@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   submitButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#AA7C48",
   },
   submitButtonText: {
     color: "#fff",

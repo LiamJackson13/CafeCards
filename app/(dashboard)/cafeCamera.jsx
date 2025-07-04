@@ -5,6 +5,7 @@ import {
   Alert,
   AppState,
   Modal,
+  ScrollView,
   StyleSheet,
   TextInput,
   View,
@@ -114,32 +115,58 @@ const CafeScannerScreen = () => {
   };
 
   const processCardScan = async (cardData) => {
-    // Simulate card processing (replace with real Appwrite logic)
-    const mockCustomer = {
-      id: "customer_" + Math.random().toString(36).substr(2, 9),
-      name: "John Doe",
-      email: "john@example.com",
-      cardId: cardData,
-      currentStamps: Math.floor(Math.random() * 10),
-      totalStamps: Math.floor(Math.random() * 50),
-    };
+    let customer;
+
+    try {
+      // Try to parse as JSON (new format)
+      const parsedData = JSON.parse(cardData);
+
+      if (
+        parsedData.type === "loyalty_card" &&
+        parsedData.app === "cafe-cards"
+      ) {
+        // New QR format from our app
+        customer = {
+          id: parsedData.userId,
+          name: parsedData.customerName,
+          email: parsedData.email,
+          cardId: parsedData.cardId,
+          issueDate: parsedData.issueDate,
+          currentStamps: Math.floor(Math.random() * 10), // Replace with real data
+          totalStamps: Math.floor(Math.random() * 50), // Replace with real data
+        };
+      } else {
+        throw new Error("Invalid QR format");
+      }
+    } catch (_error) {
+      // Fallback for old format or plain text
+      customer = {
+        id: "customer_" + Math.random().toString(36).substr(2, 9),
+        name: "Unknown Customer",
+        email: "unknown@example.com",
+        cardId:
+          cardData.length > 20 ? cardData.substring(0, 20) + "..." : cardData,
+        currentStamps: Math.floor(Math.random() * 10),
+        totalStamps: Math.floor(Math.random() * 50),
+      };
+    }
 
     // Add to scan history
     const scanEntry = {
       id: Date.now().toString(),
       timestamp: new Date(),
-      customer: mockCustomer,
+      customer: customer,
       action: "stamp_added",
     };
 
     setScanHistory((prev) => [scanEntry, ...prev.slice(0, 4)]); // Keep last 5 scans
 
-    // Show success feedback
+    // Show success feedback with better formatting
     Alert.alert(
       "Scan Successful! ✅",
-      `Customer: ${mockCustomer.name}\nStamps: ${
-        mockCustomer.currentStamps + 1
-      }/10\nCard: ${cardData.substring(0, 20)}...`,
+      `Customer: ${customer.name}\nEmail: ${customer.email}\nStamps: ${
+        customer.currentStamps + 1
+      }/10\nCard: ${customer.cardId}`,
       [{ text: "OK" }]
     );
   };
@@ -332,7 +359,7 @@ const CafeScannerScreen = () => {
           <ThemedText type="subtitle" style={styles.historyTitle}>
             Recent Scans
           </ThemedText>
-          <View style={styles.historyContainer}>
+          <ScrollView style={styles.historyContainer}>
             {scanHistory.map((scan) => (
               <ThemedCard key={scan.id} style={styles.historyCard}>
                 <View style={styles.historyItem}>
@@ -352,11 +379,9 @@ const CafeScannerScreen = () => {
                 </View>
               </ThemedCard>
             ))}
-          </View>
+          </ScrollView>
         </>
       )}
-
-      {/* Manual Entry Modal */}
       <Modal
         visible={isManualEntryVisible}
         animationType="slide"

@@ -11,7 +11,10 @@
 
 ### Core Functionality
 - [x] Implement actual QR code scanning (COMPLETED)
-- [ ] Add QR code generation for cafe owners
+- [x] Add QR code generation for customers (COMPLETED)
+- [x] Implement QR code display with theming (COMPLETED)
+- [x] Add customer loyalty card QR with proper data format (COMPLETED)
+- [x] Update scanner to handle new QR format (COMPLETED)
 - [ ] Create loyalty card data model and storage
 - [ ] Implement points/rewards system logic
 - [ ] Add card expiration handling
@@ -49,6 +52,17 @@
 - [x] Implement actual camera functionality (COMPLETED)
 - [x] Add QR code detection and processing (COMPLETED)
 - [x] Create scan history (COMPLETED)
+- [x] Add camera refresh functionality (COMPLETED)
+- [x] Implement automatic camera refresh on page load (COMPLETED)
+- [x] Update scanner to parse new QR code format (COMPLETED)
+
+### QR Code Screen
+- [x] Transform from card creation to QR display (COMPLETED)
+- [x] Generate customer loyalty card QR codes (COMPLETED)
+- [x] Implement theme-aware QR codes (black/white) (COMPLETED)
+- [x] Add card ID copy functionality (COMPLETED)
+- [x] Include comprehensive card data in QR (COMPLETED)
+- [x] Add refresh QR functionality (COMPLETED)
 - [x] Add manual card entry option (COMPLETED)
 - [x] Implement scan feedback (success/error states) (COMPLETED)
 
@@ -140,6 +154,7 @@
 - [ ] Test password change on different devices
 - [ ] Ensure proper navigation after logout
 - [ ] Fix any memory leaks in camera preview
+- [x] Fix clipboard native module error (COMPLETED - switched to expo-clipboard)
 
 ### Edge Cases
 - [ ] Handle network connectivity issues
