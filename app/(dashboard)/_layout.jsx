@@ -15,10 +15,12 @@ import { Tabs } from "expo-router";
 import UserOnly from "../../components/auth/UserOnly";
 import { Colors } from "../../constants/Colors";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useCafeUser } from "../../hooks/useCafeUser";
 
 const DashboardLayout = () => {
   const { actualTheme } = useTheme();
   const theme = Colors[actualTheme] ?? Colors.light;
+  const isCafeUser = useCafeUser();
 
   return (
     <UserOnly>
@@ -34,10 +36,12 @@ const DashboardLayout = () => {
           tabBarInactiveTintColor: theme.iconColor,
         }}
       >
+        {/* Regular customer tabs */}
         <Tabs.Screen
           name="profile"
           options={{
             title: "Profile",
+            href: !isCafeUser ? "/profile" : "/profile",
             tabBarIcon: ({ focused, color }) => (
               <Ionicons
                 name={focused ? "person" : "person-outline"}
@@ -51,6 +55,7 @@ const DashboardLayout = () => {
           name="cards"
           options={{
             title: "Cards",
+            href: !isCafeUser ? "/cards" : null,
             tabBarIcon: ({ focused, color }) => (
               <Ionicons
                 name={focused ? "card" : "card-outline"}
@@ -64,6 +69,7 @@ const DashboardLayout = () => {
           name="qr"
           options={{
             title: "QR Code",
+            href: !isCafeUser ? "/qr" : null,
             tabBarIcon: ({ color, focused }) => (
               <Ionicons
                 name={focused ? "qr-code" : "qr-code-outline"}
@@ -73,6 +79,39 @@ const DashboardLayout = () => {
             ),
           }}
         />
+
+        {/* Cafe user tabs */}
+
+        <Tabs.Screen
+          name="cafeCamera"
+          options={{
+            title: "Scanner",
+            href: isCafeUser ? "/cafeCamera" : null,
+            tabBarIcon: ({ focused, color }) => (
+              <Ionicons
+                name={focused ? "camera" : "camera-outline"}
+                size={24}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="cafeSettings"
+          options={{
+            title: "Settings",
+            href: isCafeUser ? "/cafeSettings" : null,
+            tabBarIcon: ({ focused, color }) => (
+              <Ionicons
+                name={focused ? "settings" : "settings-outline"}
+                size={24}
+                color={color}
+              />
+            ),
+          }}
+        />
+
+        {/* Hidden screens */}
         <Tabs.Screen name="books/[id]" options={{ href: null }} />
       </Tabs>
     </UserOnly>

@@ -6,12 +6,31 @@
  * including login, registration, cards dashboard, and teams management.
  * Serves as a simple navigation hub for users to access different app features.
  */
-import { Link } from "expo-router";
-import { StyleSheet } from "react-native";
+import { Link, useRouter } from "expo-router";
+import { Pressable, StyleSheet } from "react-native";
 import ThemedText from "../components/ThemedText";
 import ThemedView from "../components/ThemedView";
+import { useCafeUser } from "../hooks/useCafeUser";
+import { useUser } from "../hooks/useUser";
 
 export default function Index() {
+  const router = useRouter();
+  const isCafeUser = useCafeUser();
+  const { user } = useUser();
+
+  const handleDashboardNavigation = () => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    // Route to appropriate default screen based on user type
+    if (isCafeUser) {
+      router.push("/(dashboard)/cafeSettings");
+    } else {
+      router.push("/(dashboard)/cards");
+    }
+  };
   return (
     <ThemedView style={styles.container} safe>
       {/* <Image source={Logo} style={styles.img} /> */}
@@ -25,12 +44,11 @@ export default function Index() {
       <Link href={"/register"} style={styles.link}>
         <ThemedText>Register Page</ThemedText>
       </Link>
-      <Link href={"/cards"} style={styles.link}>
-        <ThemedText>Cards Page</ThemedText>
-      </Link>
-      <Link href={"/teams"} style={styles.link}>
-        <ThemedText>Teams Page</ThemedText>
-      </Link>
+      <Pressable onPress={handleDashboardNavigation} style={styles.link}>
+        <ThemedText>
+          {user ? (isCafeUser ? "Cafe Dashboard" : "Cards Page") : "Cards Page"}
+        </ThemedText>
+      </Pressable>
     </ThemedView>
   );
 }
