@@ -13,6 +13,7 @@
     "expo-env.d.ts",
     "components/ThemedText.jsx",
     "app/_layout.jsx",
-    "app/index.jsx"
+    "app/index.jsx",
+    "app/teams.jsx"
   ]
 }

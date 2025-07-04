@@ -1,3 +1,11 @@
+/**
+ * Root App Layout Component
+ *
+ * This is the main layout component that wraps the entire application with essential providers.
+ * It sets up the context providers for Theme, User authentication, and Books data management.
+ * Contains the root Stack navigator configuration with theming support and defines the main
+ * navigation structure including auth routes, dashboard routes, and the home screen.
+ */
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Colors } from "../constants/Colors";

@@ -1,3 +1,15 @@
+/**
+ * Dashboard Layout Component
+ *
+ * This layout component wraps all authenticated user screens in a bottom tab navigation.
+ * It uses the UserOnly component to ensure only authenticated users can access
+ * these screens. Provides themed tab navigation with icons for:
+ * - Profile management
+ * - Loyalty cards view
+ * - QR code scanner/generator
+ * - Book management (if applicable)
+ * Includes dynamic theming support for tab bar appearance.
+ */
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import UserOnly from "../../components/auth/UserOnly";

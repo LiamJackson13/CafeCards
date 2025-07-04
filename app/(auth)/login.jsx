@@ -1,3 +1,15 @@
+/**
+ * User Login Screen
+ *
+ * This screen provides the user interface for existing users to log into the app.
+ * Features include:
+ * - Email and password input fields with validation
+ * - Form submission handling with error display
+ * - Integration with UserContext for authentication
+ * - Navigation link to registration screen
+ * - Responsive design with keyboard dismissal
+ * - Themed styling that adapts to light/dark mode
+ */
 import { Link } from "expo-router";
 import { useState } from "react";
 import {

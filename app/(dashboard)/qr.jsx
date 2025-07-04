@@ -1,3 +1,16 @@
+/**
+ * QR Code/Card Creation Screen
+ *
+ * This screen allows users to create new loyalty cards or books in the system.
+ * Features include:
+ * - Form input fields for title, author, and description
+ * - Form validation to ensure all required fields are filled
+ * - Card/book creation functionality through BooksContext
+ * - Loading states during creation process
+ * - Navigation back to cards list after successful creation
+ * - Keyboard dismissal for better mobile UX
+ * - Themed styling with input validation
+ */
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {

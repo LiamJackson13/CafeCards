@@ -1,3 +1,11 @@
+/**
+ * Home/Landing Screen
+ *
+ * This is the main entry point screen for the Cafe Cards app.
+ * Displays the app title, description, and navigation links to key sections
+ * including login, registration, cards dashboard, and teams management.
+ * Serves as a simple navigation hub for users to access different app features.
+ */
 import { Link } from "expo-router";
 import { StyleSheet } from "react-native";
 import ThemedText from "../components/ThemedText";
@@ -7,7 +15,6 @@ export default function Index() {
   return (
     <ThemedView style={styles.container} safe>
       {/* <Image source={Logo} style={styles.img} /> */}
-
       <ThemedText style={styles.title} title>
         Cafe Cards
       </ThemedText>
@@ -20,6 +27,9 @@ export default function Index() {
       </Link>
       <Link href={"/cards"} style={styles.link}>
         <ThemedText>Cards Page</ThemedText>
+      </Link>
+      <Link href={"/teams"} style={styles.link}>
+        <ThemedText>Teams Page</ThemedText>
       </Link>
     </ThemedView>
   );

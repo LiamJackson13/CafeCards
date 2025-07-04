@@ -1,3 +1,15 @@
+/**
+ * User Registration Screen
+ *
+ * This screen provides the user interface for new users to create an account.
+ * Features include:
+ * - Email and password input fields with validation
+ * - Account creation handling with error display
+ * - Integration with UserContext for registration and automatic login
+ * - Navigation link to login screen for existing users
+ * - Responsive design with keyboard dismissal
+ * - Themed styling that adapts to light/dark mode
+ */
 import { Link } from "expo-router";
 import { useState } from "react";
 import {

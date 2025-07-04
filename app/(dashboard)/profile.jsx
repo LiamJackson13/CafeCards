@@ -1,3 +1,16 @@
+/**
+ * User Profile Screen
+ *
+ * This screen displays user profile information and account management options.
+ * Features include:
+ * - Display of user email/account information
+ * - Theme toggle for switching between light/dark modes
+ * - Logout functionality
+ * - Navigation links to other app sections (teams)
+ * - Welcome message and app description
+ * - Themed styling with safe area support
+ */
+import { Link } from "expo-router";
 import { StyleSheet, Text } from "react-native";
 import Spacer from "../../components/Spacer";
 import ThemedButton from "../../components/ThemedButton";
@@ -25,6 +38,9 @@ const ProfileScreen = () => {
       <ThemedButton onPress={logout}>
         <Text style={{ color: "#f2f2f2" }}>Logout</Text>
       </ThemedButton>
+      <Link href={"/teams"} style={styles.link}>
+        <ThemedText>Teams Page</ThemedText>
+      </Link>
     </ThemedView>
   );
 };

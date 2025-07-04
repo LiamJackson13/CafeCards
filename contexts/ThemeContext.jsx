@@ -1,3 +1,12 @@
+/**
+ * Theme Management Context
+ *
+ * Provides theme state and management throughout the app.
+ * Handles switching between light and dark themes with persistent storage.
+ * Automatically loads saved theme preferences from AsyncStorage on app startup
+ * and provides methods for changing themes. Integrates with the Colors constant
+ * to provide theme-specific color schemes to all themed components throughout the app.
+ */
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useContext, useEffect, useState } from "react";
 

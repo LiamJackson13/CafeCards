@@ -1,3 +1,12 @@
+/**
+ * Books/Cards Data Management Context
+ *
+ * Provides data management for loyalty cards/books throughout the app.
+ * Handles CRUD operations (Create, Read, Update, Delete) for user's loyalty cards
+ * using Appwrite database services. Manages books/cards state and provides methods
+ * for fetching user-specific cards, creating new cards, and deleting existing ones.
+ * Integrates with user authentication to ensure data security and user-specific access.
+ */
 import { client, databases } from "@/lib/appwrite";
 import { createContext, useEffect, useState } from "react";
 import { ID, Permission, Query, Role } from "react-native-appwrite";

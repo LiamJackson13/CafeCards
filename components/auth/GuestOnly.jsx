@@ -1,3 +1,12 @@
+/**
+ * Guest Only Route Guard Component
+ *
+ * A route protection component that ensures only unauthenticated (guest) users
+ * can access wrapped screens. Automatically redirects authenticated users to
+ * the profile screen. Displays a loading state while checking authentication
+ * status. Used to protect auth screens like login and registration from
+ * being accessed by already logged-in users.
+ */
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { useUser } from "../../hooks/useUser";

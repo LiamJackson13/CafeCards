@@ -1,3 +1,12 @@
+/**
+ * Theme Toggle Component
+ *
+ * A user interface component that allows users to switch between light and dark themes.
+ * Provides both switch and button interfaces for theme toggling with platform-specific
+ * optimizations. Integrates with ThemeContext to persist theme preferences and
+ * immediately applies changes throughout the app. Includes visual feedback and
+ * themed styling that adapts to the current theme.
+ */
 import {
   Platform,
   StyleSheet,

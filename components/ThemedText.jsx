@@ -1,3 +1,11 @@
+/**
+ * Themed Text Component
+ *
+ * A reusable text component that automatically applies theme-based styling.
+ * Supports both regular text and title text with different color schemes.
+ * Automatically adapts text color based on the current theme (light/dark mode)
+ * and whether it's a title or regular text element.
+ */
 import { Text } from "react-native";
 import { Colors } from "../constants/Colors";
 import { useTheme } from "../contexts/ThemeContext";

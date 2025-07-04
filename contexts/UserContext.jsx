@@ -1,3 +1,13 @@
+/**
+ * User Authentication Context
+ *
+ * Provides user authentication state and methods throughout the app.
+ * Manages user login, registration, logout, and authentication status checking.
+ * Integrates with Appwrite backend for authentication services and maintains
+ * user session state. Provides login/register functions that handle account
+ * creation, session management, and error handling. Used by UserOnly/GuestOnly
+ * components and authentication-related screens.
+ */
 import { createContext, useEffect, useState } from "react";
 
 import { ID } from "react-native-appwrite";
@@ -21,6 +31,7 @@ export function UserProvider({ children }) {
   async function register(email, password) {
     try {
       await account.create(ID.unique(), email, password);
+
       await login(email, password);
     } catch (error) {
       throw Error(error.message);

@@ -1,3 +1,17 @@
+/**
+ * Individual Card/Book Details Screen
+ *
+ * This screen displays detailed information for a specific loyalty card or book.
+ * Features include:
+ * - Dynamic routing based on card/book ID parameter
+ * - Display of card title, author, and description
+ * - Delete functionality for removing cards
+ * - Loading states while fetching card data
+ * - Navigation back to cards list after deletion
+ * - Error handling for missing or invalid cards
+ * - Themed card layout with action buttons
+ */
+
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text } from "react-native";

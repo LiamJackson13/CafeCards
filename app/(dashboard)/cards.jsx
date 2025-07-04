@@ -1,3 +1,15 @@
+/**
+ * Loyalty Cards Screen
+ *
+ * This screen displays the user's collection of cafe loyalty cards.
+ * Features include:
+ * - List view of all user's loyalty cards/books
+ * - Card navigation to individual card details
+ * - Pressable cards that navigate to detailed card view
+ * - Empty state handling for users with no cards
+ * - Integration with BooksContext for card data management
+ * - Themed styling with consistent card layout
+ */
 import { useRouter } from "expo-router";
 import { FlatList, Pressable, StyleSheet } from "react-native";
 import Spacer from "../../components/Spacer";
