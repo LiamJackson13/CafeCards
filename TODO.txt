@@ -1,0 +1,176 @@
+# Cafe Cards App - TODO List
+
+## 🚀 High Priority Features
+
+### Authentication & User Management
+- [ ] Implement user registration validation
+- [ ] Add email verification flow
+- [ ] Implement forgot password functionality
+- [ ] Add user profile picture upload
+- [ ] Implement account deletion feature
+
+### Core Functionality
+- [ ] Implement actual QR code scanning (replace placeholder)
+- [ ] Add QR code generation for cafe owners
+- [ ] Create loyalty card data model and storage
+- [ ] Implement points/rewards system logic
+- [ ] Add card expiration handling
+
+### Database & Backend
+- [ ] Set up Appwrite collections for:
+  - [ ] User profiles
+  - [ ] Loyalty cards
+  - [ ] Cafes/businesses
+  - [ ] Transactions/scans
+- [ ] Implement real-time card updates
+- [ ] Add data synchronization between devices
+
+## 🎨 UI/UX Improvements
+
+### Profile Screen
+- [x] Password change modal (COMPLETED)
+- [x] Theme support (COMPLETED)
+- [x] Role-based UI (COMPLETED)
+- [ ] Add profile picture upload
+- [ ] Implement settings persistence
+- [ ] Add success/error toast notifications
+
+### Cards Screen
+- [x] Modern card layout (COMPLETED)
+- [ ] Add card search/filter functionality
+- [ ] Implement card sorting options
+- [ ] Add pull-to-refresh functionality
+- [ ] Create add new card flow
+
+### Camera/Scanner Screen
+- [ ] Implement actual camera functionality
+- [ ] Add QR code detection and processing
+- [ ] Create scan history
+- [ ] Add manual card entry option
+- [ ] Implement scan feedback (success/error states)
+
+### Settings Screen
+- [ ] Make settings functional (currently UI-only)
+- [ ] Add notification preferences
+- [ ] Implement data export/import
+- [ ] Add privacy controls
+
+## 🏪 Cafe Owner Features
+
+### Business Management
+- [ ] Cafe profile setup and editing
+- [ ] Loyalty program configuration
+- [ ] Reward tier management
+- [ ] Customer analytics dashboard
+
+### Card Management
+- [ ] Bulk card generation
+- [ ] Custom card designs
+- [ ] Expiration date management
+- [ ] Card activation/deactivation
+
+### Analytics
+- [ ] Customer engagement metrics
+- [ ] Popular rewards tracking
+- [ ] Revenue analytics
+- [ ] Customer retention stats
+
+## 📱 Technical Improvements
+
+### Performance
+- [ ] Implement image caching for card logos
+- [ ] Add loading states for all async operations
+- [ ] Optimize bundle size
+- [ ] Add error boundaries
+
+### Code Quality
+- [ ] Add comprehensive error handling
+- [ ] Implement logging system
+- [ ] Add unit tests
+- [ ] Add integration tests
+- [ ] Improve TypeScript coverage
+
+### Accessibility
+- [ ] Add accessibility labels
+- [ ] Implement screen reader support
+- [ ] Add high contrast mode
+- [ ] Test with accessibility tools
+
+## 🔧 Infrastructure
+
+### Security
+- [ ] Implement API rate limiting
+- [ ] Add request validation
+- [ ] Secure storage for sensitive data
+- [ ] Implement proper session management
+
+### Deployment
+- [ ] Set up CI/CD pipeline
+- [ ] Configure app store builds
+- [ ] Add crash reporting (Sentry/Bugsnag)
+- [ ] Set up analytics (Amplitude/Mixpanel)
+
+## 🎯 Nice-to-Have Features
+
+### Social Features
+- [ ] Share favorite cafes
+- [ ] Review system for cafes
+- [ ] Social login options
+- [ ] Friend referral system
+
+### Advanced Features
+- [ ] Offline support
+- [ ] Push notifications for offers
+- [ ] Location-based cafe discovery
+- [ ] Apple/Google Wallet integration
+
+### Gamification
+- [ ] Achievement system
+- [ ] Leaderboards
+- [ ] Special badges
+- [ ] Streak tracking
+
+## 🐛 Known Issues to Fix
+
+### Current Bugs
+- [ ] Verify theme persistence across app restarts
+- [ ] Test password change on different devices
+- [ ] Ensure proper navigation after logout
+- [ ] Fix any memory leaks in camera preview
+
+### Edge Cases
+- [ ] Handle network connectivity issues
+- [ ] Manage app state during interruptions
+- [ ] Test with empty states
+- [ ] Handle large datasets gracefully
+
+## 📋 Testing Checklist
+
+### Manual Testing
+- [ ] Test all navigation flows
+- [ ] Verify theme switching works correctly
+- [ ] Test on different screen sizes
+- [ ] Test on both iOS and Android
+
+### Automated Testing
+- [ ] Set up Jest testing environment
+- [ ] Write component tests for ThemedComponents
+- [ ] Add integration tests for user flows
+- [ ] Set up E2E testing with Detox
+
+## 📝 Documentation
+
+- [ ] Create API documentation
+- [ ] Write user guide/help section
+- [ ] Document component library
+- [ ] Create developer setup guide
+
+---
+
+## Priority Order
+1. **Phase 1**: Core functionality (QR scanning, data storage)
+2. **Phase 2**: Business features (cafe owner tools)
+3. **Phase 3**: Polish and advanced features
+4. **Phase 4**: Social and gamification features
+
+Last updated: July 4, 2025
