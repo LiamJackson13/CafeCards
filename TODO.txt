@@ -31,6 +31,8 @@
 - [x] Password change modal (COMPLETED)
 - [x] Theme support (COMPLETED)
 - [x] Role-based UI (COMPLETED)
+- [x] Global debug toggle for cafe/customer switching (COMPLETED)
+- [x] Auto-set debug toggle based on real user type (COMPLETED)
 - [ ] Add profile picture upload
 - [ ] Implement settings persistence
 - [ ] Add success/error toast notifications
