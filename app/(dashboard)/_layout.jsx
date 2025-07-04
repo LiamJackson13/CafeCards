@@ -36,21 +36,7 @@ const DashboardLayout = () => {
           tabBarInactiveTintColor: theme.iconColor,
         }}
       >
-        {/* Regular customer tabs */}
-        <Tabs.Screen
-          name="profile"
-          options={{
-            title: "Profile",
-            href: !isCafeUser ? "/profile" : "/profile",
-            tabBarIcon: ({ focused, color }) => (
-              <Ionicons
-                name={focused ? "person" : "person-outline"}
-                size={24}
-                color={color}
-              />
-            ),
-          }}
-        />
+        {/* Regular customer tabs - Cards first as default */}
         <Tabs.Screen
           name="cards"
           options={{
@@ -65,6 +51,7 @@ const DashboardLayout = () => {
             ),
           }}
         />
+
         <Tabs.Screen
           name="qr"
           options={{
@@ -79,9 +66,22 @@ const DashboardLayout = () => {
             ),
           }}
         />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: "Profile",
+            href: !isCafeUser ? "/profile" : "/profile",
+            tabBarIcon: ({ focused, color }) => (
+              <Ionicons
+                name={focused ? "person" : "person-outline"}
+                size={24}
+                color={color}
+              />
+            ),
+          }}
+        />
 
-        {/* Cafe user tabs */}
-
+        {/* Cafe user tabs - Camera first as default for cafe users */}
         <Tabs.Screen
           name="cafeCamera"
           options={{
