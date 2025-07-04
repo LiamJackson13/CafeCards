@@ -18,13 +18,18 @@ import ThemedText from "../../components/ThemedText";
 import ThemedView from "../../components/ThemedView";
 import { Colors } from "../../constants/Colors";
 import { useBooks } from "../../hooks/useBooks";
+import { useCafeUser } from "../../hooks/useCafeUser";
 
 const BooksScreen = () => {
   const { books } = useBooks();
   const router = useRouter();
+  const isCafeUser = useCafeUser();
 
   return (
     <ThemedView style={styles.container} safe>
+      {isCafeUser && (
+        <ThemedText style={styles.cafeUserText}>CAFE USER</ThemedText>
+      )}
       <Spacer />
       <ThemedText title style={styles.heading}>
         Your Cards

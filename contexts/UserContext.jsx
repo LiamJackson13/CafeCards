@@ -15,15 +15,28 @@ import { account } from "../lib/appwrite";
 
 export const UserContext = createContext();
 
+// Hardcoded cafe user IDs
+const CAFE_USER_IDS = [
+  "68678aaa002cdc721bfa",
+  // Add more cafe user IDs as needed
+];
+
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
+  const [isCafeUser, setIsCafeUser] = useState(false);
+
+  // Function to check if user is a cafe user
+  function checkIfCafeUser(userId) {
+    return CAFE_USER_IDS.includes(userId);
+  }
 
   async function login(email, password) {
     try {
       await account.createEmailPasswordSession(email, password);
       const response = await account.get();
       setUser(response);
+      setIsCafeUser(checkIfCafeUser(response.$id));
     } catch (error) {
       throw Error(error.message);
     }
@@ -31,7 +44,6 @@ export function UserProvider({ children }) {
   async function register(email, password) {
     try {
       await account.create(ID.unique(), email, password);
-
       await login(email, password);
     } catch (error) {
       throw Error(error.message);
@@ -40,14 +52,17 @@ export function UserProvider({ children }) {
   async function logout() {
     await account.deleteSession("current");
     setUser(null);
+    setIsCafeUser(false);
   }
 
   async function getInitialUserValue() {
     try {
       const response = await account.get();
       setUser(response);
+      setIsCafeUser(checkIfCafeUser(response.$id));
     } catch (error) {
       setUser(null);
+      setIsCafeUser(false);
     } finally {
       setAuthChecked(true);
     }
@@ -59,7 +74,7 @@ export function UserProvider({ children }) {
 
   return (
     <UserContext.Provider
-      value={{ user, login, register, logout, authChecked }}
+      value={{ user, login, register, logout, authChecked, isCafeUser }}
     >
       {children}
     </UserContext.Provider>
