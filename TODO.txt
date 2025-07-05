@@ -17,13 +17,18 @@
 - [x] Update scanner to handle new QR format (COMPLETED)
 - [x] Implement Appwrite database integration for scanned cards (COMPLETED)
 - [x] Create loyalty card data model and storage (COMPLETED)
-- [ ] Implement points/rewards system logic
+- [x] Implement points/rewards system logic (COMPLETED)
+- [x] Add stamp confirmation modal with custom stamp count (COMPLETED)
+- [x] Fix rewards system to handle stamps beyond 10 properly (COMPLETED)
+- [x] Implement proper reward accumulation and tracking (COMPLETED)
+- [x] Add availableRewards and totalRedeemed fields to database (COMPLETED)
 - [ ] Add card expiration handling
 
 ### Database & Backend
 - [x] Set up Appwrite collections for loyalty cards (COMPLETED)
 - [x] Implement real-time card updates (COMPLETED)
 - [x] Add Appwrite integration for card scanning and storage (COMPLETED)
+- [x] Create database migration script for rewards system update (COMPLETED)
 - [ ] Set up Appwrite collections for:
   - [ ] User profiles
   - [ ] Cafes/businesses

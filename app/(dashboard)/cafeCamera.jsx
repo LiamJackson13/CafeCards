@@ -1,3 +1,4 @@
+import Slider from "@react-native-community/slider";
 import { useFocusEffect } from "@react-navigation/native";
 import { Camera, CameraView } from "expo-camera";
 import { useCallback, useEffect, useState } from "react";
@@ -40,6 +41,9 @@ const CafeScannerScreen = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [cameraReady, setCameraReady] = useState(false);
   const [cameraKey, setCameraKey] = useState(0); // Force camera refresh
+  const [showStampModal, setShowStampModal] = useState(false);
+  const [pendingCustomer, setPendingCustomer] = useState(null);
+  const [stampsToAdd, setStampsToAdd] = useState(1);
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -126,7 +130,6 @@ const CafeScannerScreen = () => {
 
   const processCardScan = async (cardData) => {
     let customer;
-    let isValidQRFormat = false;
     let isRedemptionQR = false;
 
     try {
@@ -138,7 +141,6 @@ const CafeScannerScreen = () => {
         parsedData.app === "cafe-cards"
       ) {
         // New QR format from our app for adding stamps
-        isValidQRFormat = true;
         customer = {
           id: parsedData.userId,
           name: parsedData.customerName,
@@ -151,7 +153,6 @@ const CafeScannerScreen = () => {
         parsedData.app === "cafe-cards"
       ) {
         // Redemption QR format
-        isValidQRFormat = true;
         isRedemptionQR = true;
         customer = {
           id: parsedData.customerId,
@@ -159,6 +160,7 @@ const CafeScannerScreen = () => {
           email: parsedData.email,
           cardId: parsedData.cardId,
           currentStamps: parsedData.currentStamps,
+          availableRewards: parsedData.availableRewards || 0,
         };
       } else {
         throw new Error("Invalid QR format");
@@ -188,7 +190,7 @@ const CafeScannerScreen = () => {
       let actionType = "stamp_added";
 
       if (isRedemptionQR) {
-        // Handle reward redemption
+        // Handle reward redemption immediately (no confirmation needed)
         try {
           loyaltyCard = await redeemReward(customer.id, user.$id);
           actionType = "reward_redeemed";
@@ -196,6 +198,8 @@ const CafeScannerScreen = () => {
           // Update customer data with actual stored values
           customer.currentStamps = loyaltyCard.currentStamps;
           customer.totalStamps = loyaltyCard.totalStamps;
+          customer.availableRewards = loyaltyCard.availableRewards || 0;
+          customer.totalRedeemed = loyaltyCard.totalRedeemed || 0;
 
           // Add to scan history
           const scanEntry = {
@@ -208,11 +212,19 @@ const CafeScannerScreen = () => {
 
           setScanHistory((prev) => [scanEntry, ...prev.slice(0, 4)]);
 
-          Alert.alert(
-            "🎉 Reward Redeemed! 🎉",
-            `Customer: ${customer.name}\nEmail: ${customer.email}\n\n✅ Free coffee reward has been redeemed!\nStamps reset to: ${loyaltyCard.currentStamps}`,
-            [{ text: "OK" }]
-          );
+          // Generate message based on schema support
+          const supportsNewRewards = loyaltyCard.availableRewards !== undefined;
+          let redeemMessage;
+
+          if (supportsNewRewards) {
+            redeemMessage = `Customer: ${customer.name}\nEmail: ${customer.email}\n\n✅ Free coffee reward has been redeemed!\nRemaining rewards: ${loyaltyCard.availableRewards}\nCurrent progress: ${loyaltyCard.currentStamps}/10\nTotal redeemed: ${loyaltyCard.totalRedeemed}`;
+          } else {
+            redeemMessage = `Customer: ${customer.name}\nEmail: ${customer.email}\n\n✅ Free coffee reward has been redeemed!\nStamps reset to: ${loyaltyCard.currentStamps}`;
+          }
+
+          Alert.alert("🎉 Reward Redeemed! 🎉", redeemMessage, [
+            { text: "OK" },
+          ]);
 
           return;
         } catch (error) {
@@ -225,74 +237,10 @@ const CafeScannerScreen = () => {
           return;
         }
       } else {
-        // Handle stamp addition (existing logic)
-        if (isValidQRFormat) {
-          // For valid QR codes, try to find or create the card
-          loyaltyCard = await findLoyaltyCardByCustomerId(customer.id);
-
-          if (loyaltyCard) {
-            // Update existing card by adding a stamp
-            const updatedCard = await addStampToCard(customer.id, user.$id);
-            loyaltyCard = updatedCard;
-          } else {
-            // Create new card with customer data from QR
-            const cardData = {
-              customerId: customer.id,
-              customerName: customer.name,
-              customerEmail: customer.email,
-              cardId: customer.cardId,
-              currentStamps: 1,
-              totalStamps: 1,
-              issueDate: customer.issueDate,
-            };
-
-            loyaltyCard = await createLoyaltyCard(cardData, user.$id);
-          }
-        } else {
-          // For legacy/unknown format, create a basic entry
-          const cardData = {
-            customerId: customer.id,
-            customerName: customer.name,
-            customerEmail: customer.email,
-            cardId: customer.cardId,
-            currentStamps: 1,
-            totalStamps: 1,
-          };
-
-          loyaltyCard = await createLoyaltyCard(cardData, user.$id);
-        }
-
-        // Update customer data with actual stored values
-        customer.currentStamps = loyaltyCard.currentStamps;
-        customer.totalStamps = loyaltyCard.totalStamps;
-
-        // Add to scan history
-        const scanEntry = {
-          id: Date.now().toString(),
-          timestamp: new Date(),
-          customer: customer,
-          action: actionType,
-          savedToDatabase: true,
-        };
-
-        setScanHistory((prev) => [scanEntry, ...prev.slice(0, 4)]); // Keep last 5 scans
-
-        // Show success feedback with actual data
-        const stampsUntilReward = 10 - (loyaltyCard.currentStamps % 10);
-        const isRewardEarned =
-          loyaltyCard.currentStamps % 10 === 0 && loyaltyCard.currentStamps > 0;
-
-        Alert.alert(
-          isRewardEarned ? "🎉 Reward Earned! 🎉" : "Stamp Added! ✅",
-          `Customer: ${customer.name}\nEmail: ${customer.email}\nStamps: ${
-            loyaltyCard.currentStamps
-          }${
-            isRewardEarned
-              ? "\n\n🎁 Customer has earned a free coffee!"
-              : `\nNext reward in: ${stampsUntilReward} stamps`
-          }\nCard: ${customer.cardId}`,
-          [{ text: "OK" }]
-        );
+        // For stamp addition, show confirmation modal
+        setPendingCustomer(customer);
+        setStampsToAdd(1);
+        setShowStampModal(true);
       }
     } catch (error) {
       console.error("Database error:", error);
@@ -361,6 +309,167 @@ const CafeScannerScreen = () => {
     );
   };
 
+  const confirmAddStamps = async () => {
+    if (!pendingCustomer || !stampsToAdd || stampsToAdd < 1) {
+      Alert.alert("Error", "Please enter a valid number of stamps to add");
+      return;
+    }
+
+    const stampsCount = stampsToAdd;
+    setIsProcessing(true);
+
+    try {
+      let loyaltyCard;
+      const customer = pendingCustomer;
+
+      // Find existing card or create new one
+      loyaltyCard = await findLoyaltyCardByCustomerId(customer.id);
+
+      if (loyaltyCard) {
+        // Update existing card by adding multiple stamps
+        for (let i = 0; i < stampsCount; i++) {
+          loyaltyCard = await addStampToCard(customer.id, user.$id);
+        }
+      } else {
+        // Create new card with specified stamps
+        const newTotalStamps = stampsCount;
+
+        // Calculate currentStamps and availableRewards based on total
+        const availableRewards = Math.floor(newTotalStamps / 10);
+        const currentStamps = newTotalStamps % 10;
+
+        const cardData = {
+          customerId: customer.id,
+          customerName: customer.name,
+          customerEmail: customer.email,
+          cardId: customer.cardId,
+          currentStamps: currentStamps,
+          totalStamps: newTotalStamps,
+          availableRewards: availableRewards,
+          totalRedeemed: 0,
+          issueDate: customer.issueDate,
+        };
+
+        loyaltyCard = await createLoyaltyCard(cardData, user.$id);
+      }
+
+      // Update customer data with actual stored values
+      customer.currentStamps = loyaltyCard.currentStamps;
+      customer.totalStamps = loyaltyCard.totalStamps;
+
+      // Add to scan history
+      const scanEntry = {
+        id: Date.now().toString(),
+        timestamp: new Date(),
+        customer: customer,
+        action: `${stampsCount}_stamps_added`,
+        savedToDatabase: true,
+        stampsAdded: stampsCount,
+      };
+
+      setScanHistory((prev) => [scanEntry, ...prev.slice(0, 4)]);
+
+      // Close modal
+      setShowStampModal(false);
+      setPendingCustomer(null);
+      setStampsToAdd("1");
+
+      // Show success feedback
+      const supportsNewRewards = loyaltyCard.availableRewards !== undefined;
+
+      let successMessage;
+      if (supportsNewRewards) {
+        // New reward system
+        const stampsUntilNextReward = 10 - loyaltyCard.currentStamps;
+        const newRewardsEarned = loyaltyCard.availableRewards || 0;
+        const previousRewards = Math.floor(
+          (loyaltyCard.totalStamps - stampsCount) / 10
+        );
+        const earnedNewReward = newRewardsEarned > previousRewards;
+
+        successMessage = `Customer: ${customer.name}\nEmail: ${
+          customer.email
+        }\n\n${stampsCount} stamp${
+          stampsCount > 1 ? "s" : ""
+        } added!\nTotal stamps: ${loyaltyCard.totalStamps}\nCurrent progress: ${
+          loyaltyCard.currentStamps
+        }/10${
+          loyaltyCard.availableRewards > 0
+            ? `\n\n🎁 Available rewards: ${loyaltyCard.availableRewards}`
+            : ""
+        }${
+          earnedNewReward
+            ? `\n✨ Customer earned ${
+                newRewardsEarned - previousRewards
+              } new reward${newRewardsEarned - previousRewards > 1 ? "s" : ""}!`
+            : loyaltyCard.currentStamps === 0
+            ? ""
+            : `\nNext reward in: ${stampsUntilNextReward} stamps`
+        }\nCard: ${customer.cardId}`;
+
+        Alert.alert(
+          earnedNewReward ? "🎉 Reward Earned! 🎉" : "Stamps Added! ✅",
+          successMessage,
+          [{ text: "OK" }]
+        );
+      } else {
+        // Old reward system
+        const rewardsEarned = Math.floor(loyaltyCard.currentStamps / 10);
+        const stampsUntilReward = 10 - (loyaltyCard.currentStamps % 10);
+        const earnedNewReward =
+          rewardsEarned >
+          Math.floor((loyaltyCard.currentStamps - stampsCount) / 10);
+
+        successMessage = `Customer: ${customer.name}\nEmail: ${
+          customer.email
+        }\n\n${stampsCount} stamp${
+          stampsCount > 1 ? "s" : ""
+        } added!\nTotal stamps: ${loyaltyCard.currentStamps}${
+          earnedNewReward
+            ? "\n\n🎁 Customer has earned a free coffee!"
+            : stampsUntilReward === 10
+            ? ""
+            : `\nNext reward in: ${stampsUntilReward} stamps`
+        }\nCard: ${customer.cardId}`;
+
+        Alert.alert(
+          earnedNewReward ? "🎉 Reward Earned! 🎉" : "Stamps Added! ✅",
+          successMessage,
+          [{ text: "OK" }]
+        );
+      }
+    } catch (error) {
+      console.error("Error adding stamps:", error);
+
+      // Still add to local scan history even if database fails
+      const scanEntry = {
+        id: Date.now().toString(),
+        timestamp: new Date(),
+        customer: pendingCustomer,
+        action: `${stampsCount}_stamps_added`,
+        savedToDatabase: false,
+        error: error.message,
+        stampsAdded: stampsCount,
+      };
+
+      setScanHistory((prev) => [scanEntry, ...prev.slice(0, 4)]);
+
+      Alert.alert(
+        "Database Error",
+        `Failed to save stamp data: ${error.message}\n\nThe scan was recorded locally but may need to be synced later.`,
+        [{ text: "OK" }]
+      );
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const cancelAddStamps = () => {
+    setShowStampModal(false);
+    setPendingCustomer(null);
+    setStampsToAdd(1);
+  };
+
   if (hasPermission === null) {
     return (
       <ThemedView style={styles.container} safe>
@@ -385,12 +494,16 @@ const CafeScannerScreen = () => {
             title="Retry Camera"
             onPress={refreshCamera}
             style={[styles.actionButton, { backgroundColor: Colors.primary }]}
-          />
+          >
+            <ThemedText style={{ color: "#fff" }}>Retry Camera</ThemedText>
+          </ThemedButton>
           <ThemedButton
             title="Manual Entry"
             onPress={() => setIsManualEntryVisible(true)}
             style={[styles.actionButton, { backgroundColor: theme.iconColor }]}
-          />
+          >
+            <ThemedText style={{ color: "#fff" }}>Manual Entry</ThemedText>
+          </ThemedButton>
         </View>
       </ThemedView>
     );
@@ -415,7 +528,9 @@ const CafeScannerScreen = () => {
           key={cameraKey} // Force refresh when cameraKey changes
           style={styles.camera}
           facing="back"
-          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+          onBarcodeScanned={
+            scanned || showStampModal ? undefined : handleBarCodeScanned
+          }
           onCameraReady={handleCameraReady}
           onCameraMountError={handleCameraError}
           barcodeScannerSettings={{
@@ -473,8 +588,17 @@ const CafeScannerScreen = () => {
         <ThemedButton
           title="Manual Entry"
           onPress={() => setIsManualEntryVisible(true)}
-          style={[styles.actionButton, { backgroundColor: theme.iconColor }]}
-        />
+          style={[
+            styles.actionButton,
+            {
+              backgroundColor: theme.iconColor,
+              justifyContent: "center",
+              alignItems: "center",
+            },
+          ]}
+        >
+          <ThemedText style={{ color: "#fff" }}>Manual Entry</ThemedText>
+        </ThemedButton>
         <ThemedButton
           title="Refresh Camera"
           onPress={refreshCamera}
@@ -487,14 +611,25 @@ const CafeScannerScreen = () => {
             },
           ]}
         >
-          <ThemedText style={{}}>Refresh</ThemedText>
+          <ThemedText style={{ color: "#fff" }}>Refresh</ThemedText>
         </ThemedButton>
         <ThemedButton
           title={scanned ? "Tap to Scan Again" : "Scanner Ready"}
           onPress={() => setScanned(false)}
-          style={[styles.actionButton, { backgroundColor: Colors.primary }]}
+          style={[
+            styles.actionButton,
+            {
+              backgroundColor: Colors.primary,
+              justifyContent: "center",
+              alignItems: "center",
+            },
+          ]}
           disabled={isProcessing}
-        />
+        >
+          <ThemedText style={{ color: "#fff" }}>
+            {scanned ? "Scan Again" : "Scanner Ready"}
+          </ThemedText>
+        </ThemedButton>
       </View>
 
       <Spacer size={20} />
@@ -521,6 +656,8 @@ const CafeScannerScreen = () => {
                     <ThemedText style={styles.stampCount}>
                       {scan.action === "reward_redeemed"
                         ? "🎁 Redeemed"
+                        : scan.action.includes("_stamps_added")
+                        ? `+${scan.stampsAdded || 1} ⭐`
                         : `${scan.customer.currentStamps}/10 ⭐`}
                     </ThemedText>
                   </View>
@@ -562,15 +699,109 @@ const CafeScannerScreen = () => {
                   setIsManualEntryVisible(false);
                   setManualCardId("");
                 }}
-                style={[styles.modalButton, styles.cancelButton]}
-              />
+                style={[
+                  styles.modalButton,
+                  styles.cancelButton,
+                  { justifyContent: "center", alignItems: "center" },
+                ]}
+              >
+                <ThemedText style={{ color: "#fff" }}>Cancel</ThemedText>
+              </ThemedButton>
 
               <ThemedButton
                 title={isProcessing ? "Processing..." : "Add Stamp"}
                 onPress={handleManualEntry}
-                style={[styles.modalButton, styles.submitButton]}
+                style={[
+                  styles.modalButton,
+                  styles.submitButton,
+                  { justifyContent: "center", alignItems: "center" },
+                ]}
                 disabled={isProcessing || !manualCardId.trim()}
+              >
+                <ThemedText style={{ color: "#fff" }}>
+                  {isProcessing ? "Processing..." : "Add Stamp"}
+                </ThemedText>
+              </ThemedButton>
+            </View>
+          </ThemedCard>
+        </View>
+      </Modal>
+
+      {/* Stamp Confirmation Modal */}
+      <Modal
+        visible={showStampModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={cancelAddStamps}
+      >
+        <View style={styles.modalOverlay}>
+          <ThemedCard style={styles.modalContent}>
+            <ThemedText type="title" style={styles.modalTitle}>
+              Add Stamps
+            </ThemedText>
+
+            {pendingCustomer && (
+              <>
+                <ThemedText style={styles.customerInfoText}>
+                  Customer: {pendingCustomer.name}
+                </ThemedText>
+                <ThemedText style={styles.customerEmailText}>
+                  {pendingCustomer.email}
+                </ThemedText>
+              </>
+            )}
+
+            <ThemedText style={styles.modalSubtitle}>
+              How many stamps would you like to add?
+            </ThemedText>
+
+            <View style={styles.sliderContainer}>
+              <ThemedText style={styles.stampCountLabel}>
+                {stampsToAdd} stamp{stampsToAdd !== 1 ? "s" : ""}
+              </ThemedText>
+              <Slider
+                style={styles.slider}
+                minimumValue={1}
+                maximumValue={10}
+                value={stampsToAdd}
+                onValueChange={(value) => setStampsToAdd(Math.round(value))}
+                step={1}
+                minimumTrackTintColor="#007AFF"
+                maximumTrackTintColor="#E5E5E5"
+                thumbStyle={styles.sliderThumb}
               />
+              <View style={styles.sliderLabels}>
+                <ThemedText style={styles.sliderLabel}>1</ThemedText>
+                <ThemedText style={styles.sliderLabel}>10</ThemedText>
+              </View>
+            </View>
+
+            <View style={styles.modalButtons}>
+              <ThemedButton
+                title="Cancel"
+                onPress={cancelAddStamps}
+                style={[styles.modalButton, styles.cancelButton]}
+                disabled={isProcessing}
+              >
+                <ThemedText style={{ color: "#fff" }}>Cancel</ThemedText>
+              </ThemedButton>
+
+              <ThemedButton
+                title={
+                  isProcessing
+                    ? "Adding..."
+                    : `Add ${stampsToAdd} Stamp${stampsToAdd !== 1 ? "s" : ""}`
+                }
+                onPress={confirmAddStamps}
+                style={[styles.modalButton, styles.submitButton]}
+                disabled={isProcessing || stampsToAdd < 1}
+              >
+                <ThemedText style={{ color: "#fff" }}>
+                  {isProcessing
+                    ? "Adding..."
+                    : `Add ${stampsToAdd} Stamp${stampsToAdd !== 1 ? "s" : ""}`}
+                </ThemedText>
+              </ThemedButton>
             </View>
           </ThemedCard>
         </View>
@@ -777,6 +1008,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontSize: 14,
   },
+  customerInfoText: {
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
+    marginTop: 10,
+    marginBottom: 4,
+  },
+  customerEmailText: {
+    fontSize: 14,
+    opacity: 0.7,
+    textAlign: "center",
+    marginBottom: 15,
+  },
   textInput: {
     borderWidth: 1,
     borderColor: "#ddd",
@@ -800,6 +1044,47 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     backgroundColor: "#007AFF",
+  },
+  sliderContainer: {
+    marginBottom: 25,
+    paddingHorizontal: 10,
+  },
+  stampCountLabel: {
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 15,
+    color: "#007AFF",
+  },
+  slider: {
+    width: "100%",
+    height: 40,
+    marginBottom: 10,
+  },
+  sliderThumb: {
+    backgroundColor: "#007AFF",
+    width: 24,
+    height: 24,
+  },
+  sliderLabels: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+  },
+  sliderLabel: {
+    fontSize: 12,
+    opacity: 0.6,
+  },
+  stampConfirmationContainer: {
+    backgroundColor: "#f0f0f0",
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 15,
+  },
+  stampConfirmationText: {
+    fontSize: 16,
+    fontWeight: "500",
+    marginBottom: 5,
   },
 });
 

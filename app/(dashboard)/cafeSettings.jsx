@@ -5,6 +5,7 @@ import ThemedButton from "../../components/ThemedButton";
 import ThemedCard from "../../components/ThemedCard";
 import ThemedText from "../../components/ThemedText";
 import ThemedView from "../../components/ThemedView";
+import { MigrationHelper } from "../../components/debug/MigrationHelper";
 
 const CafeSettingsScreen = () => {
   const [notifications, setNotifications] = useState(true);
@@ -44,6 +45,9 @@ const CafeSettingsScreen = () => {
         <ThemedText style={styles.subtitle}>
           Customize your cafe loyalty card experience
         </ThemedText>
+
+        {/* TEMPORARY: Migration Helper - Remove after migration */}
+        <MigrationHelper />
 
         <Spacer size={20} />
 

@@ -89,17 +89,36 @@ const CardDetails = () => {
   const formatCardData = (cardData) => {
     if (!cardData) return null;
 
-    const rewardsEarned = Math.floor(cardData.currentStamps / 10);
-    const currentProgress = cardData.currentStamps % 10;
     const scanHistory = parseScanHistory(cardData.scanHistory);
 
-    return {
-      ...cardData,
-      rewardsEarned,
-      currentProgress,
-      scanHistory,
-      isComplete: currentProgress === 0 && cardData.currentStamps > 0,
-    };
+    // Check if this card uses new reward system
+    const supportsNewRewards = "availableRewards" in cardData;
+
+    if (supportsNewRewards) {
+      // New system: use availableRewards field
+      return {
+        ...cardData,
+        availableRewards: cardData.availableRewards || 0,
+        totalRedeemed: cardData.totalRedeemed || 0,
+        scanHistory,
+        hasAvailableRewards: (cardData.availableRewards || 0) > 0,
+        supportsNewRewards: true,
+      };
+    } else {
+      // Old system: calculate rewards from currentStamps
+      const rewardsEarned = Math.floor(cardData.currentStamps / 10);
+      const currentProgress = cardData.currentStamps % 10;
+
+      return {
+        ...cardData,
+        availableRewards: rewardsEarned,
+        totalRedeemed: 0, // Unknown in old system
+        currentStamps: currentProgress, // Override to show progress only
+        scanHistory,
+        hasAvailableRewards: rewardsEarned > 0,
+        supportsNewRewards: false,
+      };
+    }
   };
 
   const formattedCard = formatCardData(card);
@@ -116,6 +135,7 @@ const CardDetails = () => {
       email: card.customerEmail,
       cardId: card.cardId,
       currentStamps: card.currentStamps,
+      availableRewards: card.availableRewards || 0,
       timestamp: new Date().toISOString(),
     });
   };
@@ -256,30 +276,46 @@ const CardDetails = () => {
           <Spacer size={20} />
 
           <View style={styles.progressSection}>
-            <ProgressRing current={formattedCard.currentProgress} max={10} />
+            <ProgressRing current={formattedCard.currentStamps} max={10} />
             <View style={styles.progressStats}>
               <View style={styles.statItem}>
                 <ThemedText style={styles.statNumber}>
-                  {formattedCard.currentStamps}
+                  {formattedCard.totalStamps}
                 </ThemedText>
                 <ThemedText style={styles.statLabel}>Total Stamps</ThemedText>
               </View>
               <View style={styles.statItem}>
                 <ThemedText style={styles.statNumber}>
-                  {formattedCard.rewardsEarned}
+                  {formattedCard.availableRewards}
                 </ThemedText>
-                <ThemedText style={styles.statLabel}>Rewards Earned</ThemedText>
+                <ThemedText style={styles.statLabel}>
+                  Available Rewards
+                </ThemedText>
+              </View>
+              <View style={styles.statItem}>
+                <ThemedText style={styles.statNumber}>
+                  {formattedCard.totalRedeemed}
+                </ThemedText>
+                <ThemedText style={styles.statLabel}>Total Redeemed</ThemedText>
               </View>
             </View>
           </View>
 
           <Spacer size={20} />
-          <StampGrid current={formattedCard.currentProgress} max={10} />
+          <StampGrid current={formattedCard.currentStamps} max={10} />
 
           {/* Customer Redeem Button */}
-          {!isCafeUser && formattedCard.isComplete && (
+          {!isCafeUser && formattedCard.hasAvailableRewards && (
             <ThemedCard style={styles.actionsCard}>
-              <ThemedText style={styles.sectionTitle}>Reward Ready!</ThemedText>
+              <ThemedText style={styles.sectionTitle}>
+                {formattedCard.availableRewards > 1
+                  ? "Rewards Ready!"
+                  : "Reward Ready!"}
+              </ThemedText>
+              <ThemedText style={styles.rewardCount}>
+                You have {formattedCard.availableRewards} free coffee
+                {formattedCard.availableRewards > 1 ? "s" : ""} available!
+              </ThemedText>
               <Spacer size={15} />
               <ThemedButton
                 onPress={() => setShowRedeemModal(true)}
@@ -357,7 +393,9 @@ const CardDetails = () => {
             </ThemedText>
 
             <ThemedText style={styles.modalSubtitle}>
-              Show this QR code to the cafe staff to redeem your reward
+              Show this QR code to the cafe staff to redeem one of your{" "}
+              {formattedCard?.availableRewards || 1} available reward
+              {(formattedCard?.availableRewards || 1) > 1 ? "s" : ""}
             </ThemedText>
 
             <View style={styles.qrContainer}>
@@ -585,6 +623,12 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
+  },
+  rewardCount: {
+    fontSize: 14,
+    textAlign: "center",
+    opacity: 0.8,
+    fontWeight: "500",
   },
 
   // Redeem Button
