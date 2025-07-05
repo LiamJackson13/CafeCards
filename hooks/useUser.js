@@ -19,3 +19,14 @@ export function useUser() {
 
   return context;
 }
+
+/**
+ * Cafe User Hook
+ *
+ * Custom hook to check if the current user is a cafe user.
+ * Returns the isCafeUser boolean state from the UserContext.
+ */
+export function useCafeUser() {
+  const { isCafeUser } = useContext(UserContext);
+  return isCafeUser;
+}

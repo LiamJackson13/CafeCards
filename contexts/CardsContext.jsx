@@ -6,9 +6,14 @@
  * Manages cards state and provides methods for fetching cards, creating new cards,
  * and managing card operations. Integrates with user authentication and cafe user roles.
  */
-import { createContext, useCallback, useEffect, useState } from "react";
-import { useCafeUser } from "../hooks/useCafeUser";
-import { useUser } from "../hooks/useUser";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useCafeUser, useUser } from "../hooks/useUser";
 import {
   client,
   createLoyaltyCard,
@@ -26,6 +31,7 @@ export const CardsContext = createContext();
 export function CardsProvider({ children }) {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [recentRedemption, setRecentRedemption] = useState(null);
   const { user } = useUser();
   const isCafeUser = useCafeUser();
 
@@ -278,6 +284,28 @@ export function CardsProvider({ children }) {
                   "Updating card from real-time update:",
                   payload.$id
                 );
+
+                // Check if this is a redemption (for customer notifications)
+                if (!isCafeUser && card.customerId === user?.$id) {
+                  const oldRewards = card.availableRewards || 0;
+                  const newRewards = payload.availableRewards || 0;
+
+                  if (newRewards < oldRewards) {
+                    // This is a redemption - show notification
+                    setRecentRedemption({
+                      timestamp: new Date(),
+                      customerName: payload.customerName || "You",
+                      rewardsRedeemed: oldRewards - newRewards,
+                      remainingRewards: newRewards,
+                    });
+
+                    // Auto-dismiss after 5 seconds
+                    setTimeout(() => {
+                      setRecentRedemption(null);
+                    }, 5000);
+                  }
+                }
+
                 return payload;
               }
               return card;
@@ -337,6 +365,8 @@ export function CardsProvider({ children }) {
       value={{
         cards,
         loading,
+        recentRedemption,
+        dismissRedemption: () => setRecentRedemption(null),
         fetchCardById,
         fetchCards,
         fetchCardByUserId,
@@ -349,4 +379,13 @@ export function CardsProvider({ children }) {
       {children}
     </CardsContext.Provider>
   );
+}
+
+// Custom hook to use the CardsContext
+export function useCards() {
+  const context = useContext(CardsContext);
+  if (!context) {
+    throw new Error("useCards must be used within a CardsProvider");
+  }
+  return context;
 }

@@ -22,6 +22,49 @@
 - [x] Fix rewards system to handle stamps beyond 10 properly (COMPLETED)
 - [x] Implement proper reward accumulation and tracking (COMPLETED)
 - [x] Add availableRewards and totalRedeemed fields to database (COMPLETED)
+- [x] Refactor large lib/appwrite.js file (COMPLETED - Split into modular structure)
+- [x] Clean up unused files (BooksContext, useCafeUser) (COMPLETED)
+- [x] Phase 3 Refactoring: cafeCamera.jsx extraction (COMPLETED)
+  - [x] Extract camera state management (useCamera hook)
+  - [x] Extract scanner logic (useScanner hook)
+  - [x] Extract QR parsing/validation (lib/scanner/qr-parser.js)
+  - [x] Extract camera UI components (CameraView, ScanHistory, ManualEntryModal, StampModal)
+  - [x] Refactor main camera screen to use new hooks and components
+- [x] Phase 3 Refactoring: cards/[id].jsx extraction (COMPLETED)
+  - [x] Extract CardHeader component
+  - [x] Extract StampProgress component
+  - [x] Extract QRCodeModal component
+  - [x] Extract CardActions component
+  - [x] Extract ActivityHistory component
+  - [x] Create useCardDetails hook
+  - [x] Refactor main card details screen (751 → 126 lines, 83% reduction)
+- [x] Phase 3 Refactoring: cards.jsx extraction (COMPLETED)
+  - [x] Extract CardItem component
+  - [x] Extract CardsListHeader component
+  - [x] Extract ProgressIndicators components
+  - [x] Extract CardStates components (EmptyState, LoadingState)
+  - [x] Create useCardsList hook
+  - [x] Refactor main cards list screen (516 → 75 lines, 85% reduction)
+- [x] Phase 3 Refactoring: profile.jsx extraction (COMPLETED)
+  - [x] Extract ProfileHeader component (with debug toggle)
+  - [x] Extract AboutSection component
+  - [x] Extract LogoutButton component
+  - [x] Extract ProfileModals component
+  - [x] Create useProfile hook
+  - [x] Refactor main profile screen (425 → 106 lines, 75% reduction)
+
+### ✅ Phase 3 Refactoring COMPLETED!
+**All large component files have been successfully modularized:**
+- **cafeCamera.jsx**: 1091 → 126 lines (88% reduction)
+- **cards/[id].jsx**: 751 → 126 lines (83% reduction)
+- **cards.jsx**: 516 → 75 lines (85% reduction)
+- **profile.jsx**: 425 → 106 lines (75% reduction)
+
+**Total lines reduced**: 2,783 → 433 lines (84% overall reduction)
+**Components extracted**: 25+ reusable components
+**Hooks created**: 7 specialized hooks
+
+
 - [ ] Add card expiration handling
 
 ### Database & Backend
@@ -251,3 +294,36 @@ Last updated: July 5, 2025
 1. Create the loyalty_cards collection in Appwrite console using the instructions in APPWRITE_SETUP.md
 2. Update the LOYALTY_CARDS_COLLECTION_ID in lib/appwrite.js with the actual collection ID
 3. Test the scanner and cards functionality end-to-end
+
+## ✅ Recent Completion - Code Refactoring & Cleanup
+
+### Phase 1: Cleanup Completed ✅
+- **Removed unused files**: Deleted `BooksContext.jsx`, `useBooks.js`, and temporary migration helper
+- **Merged small hooks**: Combined `useCafeUser.js` into `useUser.js` to reduce fragmentation
+- **Updated imports**: Fixed all import statements throughout the app
+- **Cleaned directory structure**: Removed debug and temporary files
+
+### Phase 2: Appwrite Modularization Completed ✅
+- **Split large file**: Broke down 793-line `lib/appwrite.js` into focused modules
+- **New structure created**:
+  - `lib/appwrite/client.js` - Client configuration and services (35 lines)
+  - `lib/appwrite/auth.js` - Authentication functions (30 lines)
+  - `lib/appwrite/loyalty-cards.js` - Loyalty card operations (430 lines)
+  - `lib/appwrite/utils.js` - Helper utilities (150 lines)
+  - `lib/appwrite/migration.js` - Migration functions (70 lines)
+  - `lib/appwrite/index.js` - Main exports (10 lines)
+- **Maintained compatibility**: All existing imports continue to work seamlessly
+- **Improved maintainability**: Each module has a single responsibility
+
+### Benefits Achieved
+- **Better organization**: Related functions grouped logically
+- **Easier testing**: Smaller, focused modules are easier to test
+- **Improved performance**: Better tree-shaking potential
+- **Reduced complexity**: No more 1000+ line files
+- **Cleaner imports**: Clear separation of concerns
+
+### Files to Refactor Next (Phase 3)
+1. `cafeCamera.jsx` (1091 lines) - Scanner and camera logic
+2. `cards/[id].jsx` (751 lines) - Individual card details
+3. `cards.jsx` (515 lines) - Cards list
+4. `profile.jsx` (425 lines) - Profile screen

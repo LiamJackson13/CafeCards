@@ -51,9 +51,9 @@ const PasswordModal = ({ visible, onClose }) => {
     } catch (error) {
       console.error("Password change error:", error);
 
-      if (error.message.includes("Invalid credentials")) {
+      if (error.message?.includes("Invalid credentials")) {
         setPasswordError("Current password is incorrect");
-      } else if (error.message.includes("Password")) {
+      } else if (error.message?.includes("Password")) {
         setPasswordError("Password requirements not met");
       } else {
         setPasswordError("Failed to change password. Please try again.");

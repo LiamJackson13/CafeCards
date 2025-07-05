@@ -9,7 +9,6 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Colors } from "../constants/Colors";
-import { BooksProvider } from "../contexts/BooksContext";
 import { CardsProvider } from "../contexts/CardsContext";
 import { ThemeProvider, useTheme } from "../contexts/ThemeContext";
 import { UserProvider } from "../contexts/UserContext";
@@ -44,11 +43,9 @@ const RootLayout = () => {
   return (
     <ThemeProvider>
       <UserProvider>
-        <BooksProvider>
-          <CardsProvider>
-            <StackNavigator />
-          </CardsProvider>
-        </BooksProvider>
+        <CardsProvider>
+          <StackNavigator />
+        </CardsProvider>
       </UserProvider>
     </ThemeProvider>
   );

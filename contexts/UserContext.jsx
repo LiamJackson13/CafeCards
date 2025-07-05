@@ -18,6 +18,7 @@ export const UserContext = createContext();
 // Hardcoded cafe user IDs
 const CAFE_USER_IDS = [
   "68678aaa002cdc721bfa",
+  "6868da4c003d62b85e20",
   // Add more cafe user IDs as needed
 ];
 

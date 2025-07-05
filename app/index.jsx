@@ -14,8 +14,7 @@ import ThemedText from "../components/ThemedText";
 import ThemedView from "../components/ThemedView";
 import { Colors } from "../constants/Colors";
 import { useTheme } from "../contexts/ThemeContext";
-import { useCafeUser } from "../hooks/useCafeUser";
-import { useUser } from "../hooks/useUser";
+import { useCafeUser, useUser } from "../hooks/useUser";
 
 export default function Index() {
   const router = useRouter();
