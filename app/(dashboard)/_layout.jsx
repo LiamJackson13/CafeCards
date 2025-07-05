@@ -113,7 +113,7 @@ const DashboardLayout = () => {
         />
 
         {/* Hidden screens */}
-        <Tabs.Screen name="books/[id]" options={{ href: null }} />
+        <Tabs.Screen name="cards/[id]" options={{ href: null }} />
       </Tabs>
     </UserOnly>
   );

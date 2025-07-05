@@ -14,6 +14,7 @@ import {
   createLoyaltyCard,
   DATABASE_ID,
   findLoyaltyCardByCustomerId,
+  getLoyaltyCardById,
   getLoyaltyCardsByCafeUser,
   getLoyaltyCardsByCustomerId,
   LOYALTY_CARDS_COLLECTION_ID,
@@ -78,7 +79,9 @@ export function CardsProvider({ children }) {
     if (!cardId) return null;
 
     try {
-      const card = await findLoyaltyCardByCustomerId(cardId);
+      console.log("Fetching card by ID:", cardId);
+      const card = await getLoyaltyCardById(cardId);
+      console.log("Found card:", card ? "Yes" : "No");
       return card;
     } catch (error) {
       console.error("Error fetching card by ID:", error);

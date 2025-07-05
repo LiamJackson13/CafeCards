@@ -129,7 +129,7 @@ const CardsScreen = () => {
     const isComplete = item.stamps >= item.maxStamps;
 
     return (
-      <Pressable onPress={() => router.push(`/books/${item.id}`)}>
+      <Pressable onPress={() => router.push(`/cards/${item.id}`)}>
         <ThemedCard style={[styles.card, { borderLeftColor: item.color }]}>
           <View style={styles.cardHeader}>
             <ThemedText style={styles.cardIcon}>{item.icon}</ThemedText>

@@ -49,6 +49,7 @@
 - [x] Add pull-to-refresh functionality (COMPLETED)
 - [x] Role-based card display (customers vs cafe owners) (COMPLETED)
 - [x] Customer card visibility - customers can now see their own loyalty cards (COMPLETED)
+- [x] Card details page with progress tracking, scan history, and actions (COMPLETED)
 - [ ] Add card search/filter functionality
 - [ ] Implement card sorting options
 - [ ] Create add new card flow
