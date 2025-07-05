@@ -23,6 +23,7 @@ import {
   addStampToCard,
   createLoyaltyCard,
   findLoyaltyCardByCustomerId,
+  redeemReward,
 } from "../../lib/appwrite";
 
 const CafeScannerScreen = () => {
@@ -126,6 +127,7 @@ const CafeScannerScreen = () => {
   const processCardScan = async (cardData) => {
     let customer;
     let isValidQRFormat = false;
+    let isRedemptionQR = false;
 
     try {
       // Try to parse as JSON (new format)
@@ -135,7 +137,7 @@ const CafeScannerScreen = () => {
         parsedData.type === "loyalty_card" &&
         parsedData.app === "cafe-cards"
       ) {
-        // New QR format from our app
+        // New QR format from our app for adding stamps
         isValidQRFormat = true;
         customer = {
           id: parsedData.userId,
@@ -143,6 +145,20 @@ const CafeScannerScreen = () => {
           email: parsedData.email,
           cardId: parsedData.cardId,
           issueDate: parsedData.issueDate,
+        };
+      } else if (
+        parsedData.type === "reward_redemption" &&
+        parsedData.app === "cafe-cards"
+      ) {
+        // Redemption QR format
+        isValidQRFormat = true;
+        isRedemptionQR = true;
+        customer = {
+          id: parsedData.customerId,
+          name: parsedData.customerName,
+          email: parsedData.email,
+          cardId: parsedData.cardId,
+          currentStamps: parsedData.currentStamps,
         };
       } else {
         throw new Error("Invalid QR format");
@@ -163,23 +179,77 @@ const CafeScannerScreen = () => {
       if (!isCafeUser) {
         Alert.alert(
           "Access Denied",
-          "Only cafe staff can add stamps to loyalty cards."
+          "Only cafe staff can process loyalty cards."
         );
         return;
       }
 
       let loyaltyCard;
+      let actionType = "stamp_added";
 
-      if (isValidQRFormat) {
-        // For valid QR codes, try to find or create the card
-        loyaltyCard = await findLoyaltyCardByCustomerId(customer.id);
+      if (isRedemptionQR) {
+        // Handle reward redemption
+        try {
+          loyaltyCard = await redeemReward(customer.id, user.$id);
+          actionType = "reward_redeemed";
 
-        if (loyaltyCard) {
-          // Update existing card by adding a stamp
-          const updatedCard = await addStampToCard(customer.id, user.$id);
-          loyaltyCard = updatedCard;
+          // Update customer data with actual stored values
+          customer.currentStamps = loyaltyCard.currentStamps;
+          customer.totalStamps = loyaltyCard.totalStamps;
+
+          // Add to scan history
+          const scanEntry = {
+            id: Date.now().toString(),
+            timestamp: new Date(),
+            customer: customer,
+            action: actionType,
+            savedToDatabase: true,
+          };
+
+          setScanHistory((prev) => [scanEntry, ...prev.slice(0, 4)]);
+
+          Alert.alert(
+            "🎉 Reward Redeemed! 🎉",
+            `Customer: ${customer.name}\nEmail: ${customer.email}\n\n✅ Free coffee reward has been redeemed!\nStamps reset to: ${loyaltyCard.currentStamps}`,
+            [{ text: "OK" }]
+          );
+
+          return;
+        } catch (error) {
+          console.error("Redemption error:", error);
+          Alert.alert(
+            "Redemption Error",
+            error.message || "Failed to redeem reward. Please try again.",
+            [{ text: "OK" }]
+          );
+          return;
+        }
+      } else {
+        // Handle stamp addition (existing logic)
+        if (isValidQRFormat) {
+          // For valid QR codes, try to find or create the card
+          loyaltyCard = await findLoyaltyCardByCustomerId(customer.id);
+
+          if (loyaltyCard) {
+            // Update existing card by adding a stamp
+            const updatedCard = await addStampToCard(customer.id, user.$id);
+            loyaltyCard = updatedCard;
+          } else {
+            // Create new card with customer data from QR
+            const cardData = {
+              customerId: customer.id,
+              customerName: customer.name,
+              customerEmail: customer.email,
+              cardId: customer.cardId,
+              currentStamps: 1,
+              totalStamps: 1,
+              issueDate: customer.issueDate,
+            };
+
+            loyaltyCard = await createLoyaltyCard(cardData, user.$id);
+          }
         } else {
-          // Create new card with customer data from QR
+          // For legacy/unknown format, create a basic entry
           const cardData = {
             customerId: customer.id,
             customerName: customer.name,
@@ -187,56 +257,43 @@ const CafeScannerScreen = () => {
             cardId: customer.cardId,
             currentStamps: 1,
             totalStamps: 1,
-            issueDate: customer.issueDate,
           };
 
           loyaltyCard = await createLoyaltyCard(cardData, user.$id);
         }
-      } else {
-        // For legacy/unknown format, create a basic entry
-        const cardData = {
-          customerId: customer.id,
-          customerName: customer.name,
-          customerEmail: customer.email,
-          cardId: customer.cardId,
-          currentStamps: 1,
-          totalStamps: 1,
+
+        // Update customer data with actual stored values
+        customer.currentStamps = loyaltyCard.currentStamps;
+        customer.totalStamps = loyaltyCard.totalStamps;
+
+        // Add to scan history
+        const scanEntry = {
+          id: Date.now().toString(),
+          timestamp: new Date(),
+          customer: customer,
+          action: actionType,
+          savedToDatabase: true,
         };
 
-        loyaltyCard = await createLoyaltyCard(cardData, user.$id);
+        setScanHistory((prev) => [scanEntry, ...prev.slice(0, 4)]); // Keep last 5 scans
+
+        // Show success feedback with actual data
+        const stampsUntilReward = 10 - (loyaltyCard.currentStamps % 10);
+        const isRewardEarned =
+          loyaltyCard.currentStamps % 10 === 0 && loyaltyCard.currentStamps > 0;
+
+        Alert.alert(
+          isRewardEarned ? "🎉 Reward Earned! 🎉" : "Stamp Added! ✅",
+          `Customer: ${customer.name}\nEmail: ${customer.email}\nStamps: ${
+            loyaltyCard.currentStamps
+          }${
+            isRewardEarned
+              ? "\n\n🎁 Customer has earned a free coffee!"
+              : `\nNext reward in: ${stampsUntilReward} stamps`
+          }\nCard: ${customer.cardId}`,
+          [{ text: "OK" }]
+        );
       }
-
-      // Update customer data with actual stored values
-      customer.currentStamps = loyaltyCard.currentStamps;
-      customer.totalStamps = loyaltyCard.totalStamps;
-
-      // Add to scan history
-      const scanEntry = {
-        id: Date.now().toString(),
-        timestamp: new Date(),
-        customer: customer,
-        action: "stamp_added",
-        savedToDatabase: true,
-      };
-
-      setScanHistory((prev) => [scanEntry, ...prev.slice(0, 4)]); // Keep last 5 scans
-
-      // Show success feedback with actual data
-      const stampsUntilReward = 10 - (loyaltyCard.currentStamps % 10);
-      const isRewardEarned =
-        loyaltyCard.currentStamps % 10 === 0 && loyaltyCard.currentStamps > 0;
-
-      Alert.alert(
-        isRewardEarned ? "🎉 Reward Earned! 🎉" : "Stamp Added! ✅",
-        `Customer: ${customer.name}\nEmail: ${customer.email}\nStamps: ${
-          loyaltyCard.currentStamps
-        }${
-          isRewardEarned
-            ? "\n\n🎁 Customer has earned a free coffee!"
-            : `\nNext reward in: ${stampsUntilReward} stamps`
-        }\nCard: ${customer.cardId}`,
-        [{ text: "OK" }]
-      );
     } catch (error) {
       console.error("Database error:", error);
 
@@ -245,7 +302,7 @@ const CafeScannerScreen = () => {
         id: Date.now().toString(),
         timestamp: new Date(),
         customer: customer,
-        action: "stamp_added",
+        action: isRedemptionQR ? "reward_redeemed" : "stamp_added",
         savedToDatabase: false,
         error: error.message,
       };
@@ -346,8 +403,8 @@ const CafeScannerScreen = () => {
       </ThemedText>
 
       <ThemedText style={styles.subtitle}>
-        Point camera at QR code or barcode (supports QR, Code128, EAN, UPC, and
-        more)
+        Point camera at customer&apos;s QR code to add stamps or redeem rewards
+        (supports QR, Code128, EAN, UPC, and more)
       </ThemedText>
 
       <Spacer size={20} />
@@ -462,7 +519,9 @@ const CafeScannerScreen = () => {
                   </View>
                   <View style={styles.historyRight}>
                     <ThemedText style={styles.stampCount}>
-                      {scan.customer.currentStamps}/10 ⭐
+                      {scan.action === "reward_redeemed"
+                        ? "🎁 Redeemed"
+                        : `${scan.customer.currentStamps}/10 ⭐`}
                     </ThemedText>
                   </View>
                 </View>

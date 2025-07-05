@@ -15,7 +15,8 @@
 
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useContext, useEffect, useState } from "react";
-import { Alert, ScrollView, StyleSheet, View } from "react-native";
+import { Alert, Modal, ScrollView, StyleSheet, View } from "react-native";
+import QRCode from "react-native-qrcode-svg";
 import Spacer from "../../../components/Spacer";
 import ThemedButton from "../../../components/ThemedButton";
 import ThemedCard from "../../../components/ThemedCard";
@@ -33,6 +34,7 @@ const CardDetails = () => {
   const [card, setCard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [addingStamp, setAddingStamp] = useState(false);
+  const [showRedeemModal, setShowRedeemModal] = useState(false);
 
   const { id } = useLocalSearchParams();
   const { fetchCardById } = useContext(CardsContext);
@@ -101,6 +103,22 @@ const CardDetails = () => {
   };
 
   const formattedCard = formatCardData(card);
+
+  // Generate QR code data for redemption
+  const generateRedemptionQRData = () => {
+    if (!card || !user) return "";
+
+    return JSON.stringify({
+      type: "reward_redemption",
+      app: "cafe-cards",
+      customerId: card.customerId,
+      customerName: card.customerName,
+      email: card.customerEmail,
+      cardId: card.cardId,
+      currentStamps: card.currentStamps,
+      timestamp: new Date().toISOString(),
+    });
+  };
 
   if (loading) {
     return (
@@ -258,15 +276,20 @@ const CardDetails = () => {
           <Spacer size={20} />
           <StampGrid current={formattedCard.currentProgress} max={10} />
 
-          {formattedCard.isComplete && (
-            <>
-              <Spacer size={20} />
-              <View style={styles.rewardBanner}>
-                <ThemedText style={styles.rewardText}>
-                  🎉 Free Coffee Ready!
+          {/* Customer Redeem Button */}
+          {!isCafeUser && formattedCard.isComplete && (
+            <ThemedCard style={styles.actionsCard}>
+              <ThemedText style={styles.sectionTitle}>Reward Ready!</ThemedText>
+              <Spacer size={15} />
+              <ThemedButton
+                onPress={() => setShowRedeemModal(true)}
+                style={[styles.redeemButton, { backgroundColor: "#4CAF50" }]}
+              >
+                <ThemedText style={styles.redeemButtonText}>
+                  🎁 Redeem Free Coffee
                 </ThemedText>
-              </View>
-            </>
+              </ThemedButton>
+            </ThemedCard>
           )}
         </ThemedCard>
 
@@ -319,6 +342,49 @@ const CardDetails = () => {
 
         <Spacer size={30} />
       </ScrollView>
+
+      {/* Redemption QR Code Modal */}
+      <Modal
+        visible={showRedeemModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowRedeemModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <ThemedCard style={styles.modalContent}>
+            <ThemedText style={styles.modalTitle}>
+              🎉 Redeem Your Free Coffee!
+            </ThemedText>
+
+            <ThemedText style={styles.modalSubtitle}>
+              Show this QR code to the cafe staff to redeem your reward
+            </ThemedText>
+
+            <View style={styles.qrContainer}>
+              <QRCode
+                value={generateRedemptionQRData()}
+                size={200}
+                color="#000"
+                backgroundColor="#fff"
+              />
+            </View>
+
+            <ThemedText style={styles.qrInstructions}>
+              Have cafe staff scan this QR code with their scanner to complete
+              redemption
+            </ThemedText>
+
+            <View style={styles.modalButtons}>
+              <ThemedButton
+                onPress={() => setShowRedeemModal(false)}
+                style={[styles.modalButton, { backgroundColor: theme.primary }]}
+              >
+                <ThemedText style={styles.modalButtonText}>Close</ThemedText>
+              </ThemedButton>
+            </View>
+          </ThemedCard>
+        </View>
+      </Modal>
     </ThemedView>
   );
 };
@@ -516,6 +582,78 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   addStampText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+
+  // Redeem Button
+  redeemButton: {
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  redeemButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+
+  // Modal styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  modalContent: {
+    width: "100%",
+    maxWidth: 350,
+    padding: 25,
+    borderRadius: 15,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    opacity: 0.7,
+    textAlign: "center",
+    marginBottom: 25,
+    lineHeight: 20,
+  },
+  qrContainer: {
+    padding: 20,
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    marginBottom: 20,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  qrInstructions: {
+    fontSize: 12,
+    opacity: 0.6,
+    textAlign: "center",
+    marginBottom: 25,
+    lineHeight: 16,
+  },
+  modalButtons: {
+    width: "100%",
+  },
+  modalButton: {
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  modalButtonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
