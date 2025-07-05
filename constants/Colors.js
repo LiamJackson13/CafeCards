@@ -32,3 +32,14 @@ export const Colors = {
     uiBackground: "#DBCBB1", // Cards, buttons, inputs (latte beige)
   },
 };
+
+//   light: {
+//     text: "#000", // Body text (light brown-gray)
+//     title: "#000", // Titles / Headings (rich coffee brown)
+//     background: "#C9A9A6", // Light background (cream)
+//     navBackground: "#F8C8DC", // Nav bar (light tan)
+//     iconColor: "#FFC0CB", // Unfocused icons
+//     iconColorFocused: "#3B2F2F", // Focused icons
+//     uiBackground: "#FFB6C1", // Cards, buttons, inputs (latte beige)
+//   },
+// };

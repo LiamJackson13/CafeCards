@@ -17,9 +17,18 @@ import ThemedText from "../../components/ThemedText";
 import ThemedView from "../../components/ThemedView";
 import { Colors } from "../../constants/Colors";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useCafeUser } from "../../hooks/useCafeUser";
+import { useUser } from "../../hooks/useUser";
+import {
+  addStampToCard,
+  createLoyaltyCard,
+  findLoyaltyCardByCustomerId,
+} from "../../lib/appwrite";
 
 const CafeScannerScreen = () => {
   const { actualTheme } = useTheme();
+  const { user } = useUser();
+  const isCafeUser = useCafeUser();
   const theme = Colors[actualTheme] ?? Colors.light;
 
   const [hasPermission, setHasPermission] = useState(null);
@@ -116,6 +125,7 @@ const CafeScannerScreen = () => {
 
   const processCardScan = async (cardData) => {
     let customer;
+    let isValidQRFormat = false;
 
     try {
       // Try to parse as JSON (new format)
@@ -126,14 +136,13 @@ const CafeScannerScreen = () => {
         parsedData.app === "cafe-cards"
       ) {
         // New QR format from our app
+        isValidQRFormat = true;
         customer = {
           id: parsedData.userId,
           name: parsedData.customerName,
           email: parsedData.email,
           cardId: parsedData.cardId,
           issueDate: parsedData.issueDate,
-          currentStamps: Math.floor(Math.random() * 10), // Replace with real data
-          totalStamps: Math.floor(Math.random() * 50), // Replace with real data
         };
       } else {
         throw new Error("Invalid QR format");
@@ -146,29 +155,109 @@ const CafeScannerScreen = () => {
         email: "unknown@example.com",
         cardId:
           cardData.length > 20 ? cardData.substring(0, 20) + "..." : cardData,
-        currentStamps: Math.floor(Math.random() * 10),
-        totalStamps: Math.floor(Math.random() * 50),
       };
     }
 
-    // Add to scan history
-    const scanEntry = {
-      id: Date.now().toString(),
-      timestamp: new Date(),
-      customer: customer,
-      action: "stamp_added",
-    };
+    try {
+      // Only proceed with Appwrite operations for cafe users
+      if (!isCafeUser) {
+        Alert.alert(
+          "Access Denied",
+          "Only cafe staff can add stamps to loyalty cards."
+        );
+        return;
+      }
 
-    setScanHistory((prev) => [scanEntry, ...prev.slice(0, 4)]); // Keep last 5 scans
+      let loyaltyCard;
 
-    // Show success feedback with better formatting
-    Alert.alert(
-      "Scan Successful! ✅",
-      `Customer: ${customer.name}\nEmail: ${customer.email}\nStamps: ${
-        customer.currentStamps + 1
-      }/10\nCard: ${customer.cardId}`,
-      [{ text: "OK" }]
-    );
+      if (isValidQRFormat) {
+        // For valid QR codes, try to find or create the card
+        loyaltyCard = await findLoyaltyCardByCustomerId(customer.id);
+
+        if (loyaltyCard) {
+          // Update existing card by adding a stamp
+          const updatedCard = await addStampToCard(customer.id, user.$id);
+          loyaltyCard = updatedCard;
+        } else {
+          // Create new card with customer data from QR
+          const cardData = {
+            customerId: customer.id,
+            customerName: customer.name,
+            customerEmail: customer.email,
+            cardId: customer.cardId,
+            currentStamps: 1,
+            totalStamps: 1,
+            issueDate: customer.issueDate,
+          };
+
+          loyaltyCard = await createLoyaltyCard(cardData, user.$id);
+        }
+      } else {
+        // For legacy/unknown format, create a basic entry
+        const cardData = {
+          customerId: customer.id,
+          customerName: customer.name,
+          customerEmail: customer.email,
+          cardId: customer.cardId,
+          currentStamps: 1,
+          totalStamps: 1,
+        };
+
+        loyaltyCard = await createLoyaltyCard(cardData, user.$id);
+      }
+
+      // Update customer data with actual stored values
+      customer.currentStamps = loyaltyCard.currentStamps;
+      customer.totalStamps = loyaltyCard.totalStamps;
+
+      // Add to scan history
+      const scanEntry = {
+        id: Date.now().toString(),
+        timestamp: new Date(),
+        customer: customer,
+        action: "stamp_added",
+        savedToDatabase: true,
+      };
+
+      setScanHistory((prev) => [scanEntry, ...prev.slice(0, 4)]); // Keep last 5 scans
+
+      // Show success feedback with actual data
+      const stampsUntilReward = 10 - (loyaltyCard.currentStamps % 10);
+      const isRewardEarned =
+        loyaltyCard.currentStamps % 10 === 0 && loyaltyCard.currentStamps > 0;
+
+      Alert.alert(
+        isRewardEarned ? "🎉 Reward Earned! 🎉" : "Stamp Added! ✅",
+        `Customer: ${customer.name}\nEmail: ${customer.email}\nStamps: ${
+          loyaltyCard.currentStamps
+        }${
+          isRewardEarned
+            ? "\n\n🎁 Customer has earned a free coffee!"
+            : `\nNext reward in: ${stampsUntilReward} stamps`
+        }\nCard: ${customer.cardId}`,
+        [{ text: "OK" }]
+      );
+    } catch (error) {
+      console.error("Database error:", error);
+
+      // Still add to local scan history even if database fails
+      const scanEntry = {
+        id: Date.now().toString(),
+        timestamp: new Date(),
+        customer: customer,
+        action: "stamp_added",
+        savedToDatabase: false,
+        error: error.message,
+      };
+
+      setScanHistory((prev) => [scanEntry, ...prev.slice(0, 4)]);
+
+      Alert.alert(
+        "Database Error",
+        `Failed to save card data to database: ${error.message}\n\nThe scan was recorded locally but may need to be synced later.`,
+        [{ text: "OK" }]
+      );
+    }
   };
 
   const handleManualEntry = async () => {
@@ -373,7 +462,7 @@ const CafeScannerScreen = () => {
                   </View>
                   <View style={styles.historyRight}>
                     <ThemedText style={styles.stampCount}>
-                      {scan.customer.currentStamps + 1}/10 ⭐
+                      {scan.customer.currentStamps}/10 ⭐
                     </ThemedText>
                   </View>
                 </View>

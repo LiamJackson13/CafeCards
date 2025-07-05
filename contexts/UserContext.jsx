@@ -72,6 +72,29 @@ export function UserProvider({ children }) {
     }
   }
 
+  // Function to update user name and refresh user data
+  async function updateName(name) {
+    try {
+      const updatedUser = await account.updateName(name);
+      setUser(updatedUser);
+      return updatedUser;
+    } catch (error) {
+      throw Error(error.message);
+    }
+  }
+
+  // Function to refresh user data
+  async function refreshUser() {
+    try {
+      const response = await account.get();
+      setUser(response);
+      return response;
+    } catch (error) {
+      console.error("Error refreshing user data:", error);
+      throw Error(error.message);
+    }
+  }
+
   const getInitialUserValue = useCallback(async () => {
     try {
       const response = await account.get();
@@ -107,6 +130,8 @@ export function UserProvider({ children }) {
         login,
         register,
         logout,
+        updateName,
+        refreshUser,
         authChecked,
         isCafeUser: actualIsCafeUser,
         realIsCafeUser: isCafeUser, // The actual user status without debug override

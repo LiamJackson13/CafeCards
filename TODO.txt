@@ -15,17 +15,19 @@
 - [x] Implement QR code display with theming (COMPLETED)
 - [x] Add customer loyalty card QR with proper data format (COMPLETED)
 - [x] Update scanner to handle new QR format (COMPLETED)
-- [ ] Create loyalty card data model and storage
+- [x] Implement Appwrite database integration for scanned cards (COMPLETED)
+- [x] Create loyalty card data model and storage (COMPLETED)
 - [ ] Implement points/rewards system logic
 - [ ] Add card expiration handling
 
 ### Database & Backend
+- [x] Set up Appwrite collections for loyalty cards (COMPLETED)
+- [x] Implement real-time card updates (COMPLETED)
+- [x] Add Appwrite integration for card scanning and storage (COMPLETED)
 - [ ] Set up Appwrite collections for:
   - [ ] User profiles
-  - [ ] Loyalty cards
   - [ ] Cafes/businesses
   - [ ] Transactions/scans
-- [ ] Implement real-time card updates
 - [ ] Add data synchronization between devices
 
 ## 🎨 UI/UX Improvements
@@ -43,9 +45,12 @@
 
 ### Cards Screen
 - [x] Modern card layout (COMPLETED)
+- [x] Implement real loyalty card display from Appwrite database (COMPLETED)
+- [x] Add pull-to-refresh functionality (COMPLETED)
+- [x] Role-based card display (customers vs cafe owners) (COMPLETED)
+- [x] Customer card visibility - customers can now see their own loyalty cards (COMPLETED)
 - [ ] Add card search/filter functionality
 - [ ] Implement card sorting options
-- [ ] Add pull-to-refresh functionality
 - [ ] Create add new card flow
 
 ### Camera/Scanner Screen
@@ -155,6 +160,15 @@
 - [ ] Ensure proper navigation after logout
 - [ ] Fix any memory leaks in camera preview
 - [x] Fix clipboard native module error (COMPLETED - switched to expo-clipboard)
+- [x] Fix random "Document with the requested ID could not be found" errors (COMPLETED - added comprehensive error handling)
+
+### Error Handling Improvements (COMPLETED)
+- [x] Added defensive programming to prevent crashes on missing/invalid documents
+- [x] Improved real-time subscription error handling with automatic retries
+- [x] Added document validation and cleanup utilities
+- [x] Enhanced Appwrite function error handling with specific error messages
+- [x] Added card state validation to prevent corrupted data from causing crashes
+- [x] Implemented graceful fallbacks for permission and network errors
 
 ### Edge Cases
 - [ ] Handle network connectivity issues
@@ -207,4 +221,27 @@
 3. **Phase 3**: Polish and advanced features
 4. **Phase 4**: Social and gamification features
 
-Last updated: July 4, 2025
+Last updated: July 5, 2025
+
+## ✅ Recent Completion - Appwrite Database Integration
+
+### What was implemented:
+- **Scanner-Database Integration**: When cafe users scan customer QR codes, loyalty cards are now automatically saved to Appwrite database
+- **Card Management Functions**: Created comprehensive Appwrite functions for creating, updating, and querying loyalty cards
+- **Real-time Card Display**: Cards screen now displays actual loyalty cards from the database with real-time updates
+- **Role-based Views**: Different card displays for cafe users (showing customer cards they manage) vs regular customers
+- **Error Handling**: Proper error handling for database operations with fallback to local storage
+- **Data Structure**: Complete loyalty card data model with stamps, rewards, customer info, and scan history
+
+### Files modified:
+- `lib/appwrite.js` - Added loyalty card management functions
+- `app/(dashboard)/cafeCamera.jsx` - Added database integration to scanner
+- `app/(dashboard)/cards.jsx` - Updated to display real loyalty cards from database
+- `contexts/CardsContext.jsx` - Created context for loyalty card management
+- `hooks/useCards.js` - Added hook for accessing cards context
+- `APPWRITE_SETUP.md` - Created setup instructions for Appwrite collection
+
+### Next steps needed:
+1. Create the loyalty_cards collection in Appwrite console using the instructions in APPWRITE_SETUP.md
+2. Update the LOYALTY_CARDS_COLLECTION_ID in lib/appwrite.js with the actual collection ID
+3. Test the scanner and cards functionality end-to-end

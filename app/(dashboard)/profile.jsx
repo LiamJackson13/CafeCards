@@ -13,6 +13,7 @@
 import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import DebugToggle from "../../components/profile/DebugToggle";
+import NameModal from "../../components/profile/NameModal";
 import PasswordModal from "../../components/profile/PasswordModal";
 import ProfileOption from "../../components/profile/ProfileOption";
 import StatCard from "../../components/profile/StatCard";
@@ -23,18 +24,16 @@ import ThemedText from "../../components/ThemedText";
 import ThemedView from "../../components/ThemedView";
 import ThemeToggle from "../../components/ThemeToggle";
 import { Colors } from "../../constants/Colors";
-import { useTheme } from "../../contexts/ThemeContext";
 import { useCafeUser } from "../../hooks/useCafeUser";
 import { useUser } from "../../hooks/useUser";
 
 const ProfileScreen = () => {
-  const { logout, user } = useUser();
+  const { logout, user, refreshUser } = useUser();
   const isCafeUser = useCafeUser(); // This now includes debug override
-  const { actualTheme } = useTheme();
-  const theme = Colors[actualTheme] ?? Colors.light;
 
-  // Password change modal state
+  // Modal state
   const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
+  const [isNameModalVisible, setIsNameModalVisible] = useState(false);
 
   // Customer Stats
   const customerStats = [
@@ -54,6 +53,27 @@ const ProfileScreen = () => {
 
   const handleChangePassword = () => {
     setIsPasswordModalVisible(true);
+  };
+
+  const handleEditName = () => {
+    setIsNameModalVisible(true);
+  };
+
+  const handleNameUpdated = async (updatedUser) => {
+    // Refresh user data from the context
+    try {
+      await refreshUser();
+    } catch (error) {
+      console.error("Failed to refresh user data:", error);
+    }
+  };
+
+  // Get display name - use user's name if available, otherwise derive from email
+  const getDisplayName = () => {
+    if (user?.name && user.name.trim() !== "") {
+      return user.name;
+    }
+    return user?.email?.split("@")[0] || "User";
   };
 
   return (
@@ -79,12 +99,22 @@ const ProfileScreen = () => {
             ]}
           >
             <ThemedText style={styles.avatarText}>
-              {user?.email?.charAt(0).toUpperCase() || "U"}
+              {getDisplayName().charAt(0).toUpperCase()}
             </ThemedText>
           </View>
-          <ThemedText type="title" style={styles.userName}>
-            {user?.email?.split("@")[0] || "User"}
-          </ThemedText>
+
+          <View style={styles.nameContainer}>
+            <ThemedText type="title" style={styles.userName}>
+              {getDisplayName()}
+            </ThemedText>
+            <ThemedButton
+              onPress={handleEditName}
+              style={styles.editNameButton}
+            >
+              <ThemedText style={styles.editNameText}>Edit Name</ThemedText>
+            </ThemedButton>
+          </View>
+
           <ThemedText style={styles.userEmail}>
             {user?.email || "user@example.com"}
           </ThemedText>
@@ -249,6 +279,14 @@ const ProfileScreen = () => {
         visible={isPasswordModalVisible}
         onClose={() => setIsPasswordModalVisible(false)}
       />
+
+      {/* Name Edit Modal */}
+      <NameModal
+        visible={isNameModalVisible}
+        onClose={() => setIsNameModalVisible(false)}
+        currentName={user?.name || ""}
+        onNameUpdated={handleNameUpdated}
+      />
     </ThemedView>
   );
 };
@@ -279,10 +317,27 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#fff",
   },
+  nameContainer: {
+    alignItems: "center",
+    marginBottom: 10,
+  },
   userName: {
     fontSize: 24,
     fontWeight: "600",
-    marginBottom: 5,
+    marginBottom: 8,
+  },
+  editNameButton: {
+    backgroundColor: "transparent",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  editNameText: {
+    fontSize: 12,
+    fontWeight: "500",
+    opacity: 0.7,
   },
   userEmail: {
     fontSize: 16,

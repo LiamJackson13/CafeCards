@@ -41,7 +41,7 @@ const DashboardLayout = () => {
           name="cards"
           options={{
             title: "Cards",
-            href: !isCafeUser ? "/cards" : null,
+            href: !isCafeUser ? "/cards" : null, // Only show cards for customers
             tabBarIcon: ({ focused, color }) => (
               <Ionicons
                 name={focused ? "card" : "card-outline"}
