@@ -13,28 +13,62 @@
  * - Real-time updates from Appwrite database
  */
 import { useRouter } from "expo-router";
+import { useState } from "react";
 import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
 import ThemedLoader from "../../components/ThemedLoader";
 import ThemedView from "../../components/ThemedView";
 import { EmptyState, LoadingState } from "../../components/cards/CardStates";
 import CardsListHeader from "../../components/cards/CardsListHeader";
 import CustomCardItem from "../../components/cards/CustomCardItem";
+import QRCodeModal from "../../components/cards/QRCodeModal";
 import { Colors } from "../../constants/Colors";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useEnhancedCardsList } from "../../hooks/cards/useEnhancedCardsList";
-import { useCafeUser } from "../../hooks/useUser";
+import { useCafeUser, useUser } from "../../hooks/useUser";
 
 const CardsScreen = () => {
   const router = useRouter();
+  const { user } = useUser();
   const isCafeUser = useCafeUser();
   const { actualTheme } = useTheme();
   const { displayCards, loading, refreshing, onRefresh, updateCardInList } =
     useEnhancedCardsList();
 
+  // Modal state for redeem functionality
+  const [showRedeemModal, setShowRedeemModal] = useState(false);
+  const [selectedCard, setSelectedCard] = useState(null);
+
   const theme = Colors[actualTheme] ?? Colors.light;
 
-  const handleCardPress = (cardId) => {
-    router.push(`/cards/${cardId}`);
+  const handleCardPress = (cardId, options = {}) => {
+    if (options.redeem) {
+      // Find the card and show redeem modal
+      const card = displayCards.find((c) => c.id === cardId);
+      if (card && card.isReady) {
+        setSelectedCard(card);
+        setShowRedeemModal(true);
+      }
+    } else {
+      // Navigate to card details
+      router.push(`/cards/${cardId}`);
+    }
+  };
+
+  const generateRedemptionQRData = () => {
+    if (!selectedCard || !user) return "";
+
+    return JSON.stringify({
+      type: "reward_redemption",
+      app: "cafe-cards",
+      customerId: selectedCard.customerId || user.$id,
+      customerName: selectedCard.customerName || user.name,
+      email: selectedCard.customerEmail || user.email,
+      cardId: selectedCard.cardId || selectedCard.id,
+      currentStamps: selectedCard.stamps || selectedCard.currentStamps || 0,
+      availableRewards:
+        selectedCard.availableRewards || selectedCard.rewardsEarned || 1,
+      timestamp: new Date().toISOString(),
+    });
   };
 
   if (loading && displayCards.length === 0) {
@@ -80,6 +114,15 @@ const CardsScreen = () => {
           />
         }
         showsVerticalScrollIndicator={false}
+      />
+
+      {/* Redemption QR Code Modal */}
+      <QRCodeModal
+        visible={showRedeemModal}
+        onClose={() => setShowRedeemModal(false)}
+        qrData={generateRedemptionQRData()}
+        availableRewards={selectedCard?.availableRewards || 1}
+        theme={theme}
       />
     </ThemedView>
   );
