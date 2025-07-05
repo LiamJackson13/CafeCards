@@ -1,8 +1,14 @@
 import { StyleSheet, View } from "react-native";
+import ThemedButton from "../ThemedButton";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
-const CustomStampProgress = ({ formattedCard, theme, cafeDesign }) => {
+const CustomStampProgress = ({
+  formattedCard,
+  theme,
+  cafeDesign,
+  onRedeem,
+}) => {
   if (!cafeDesign) {
     return (
       <ThemedCard
@@ -22,6 +28,68 @@ const CustomStampProgress = ({ formattedCard, theme, cafeDesign }) => {
   const maxStamps = cafeDesign.maxStampsPerCard || 10;
   const currentStamps = formattedCard.currentStamps || 0;
   const progressPercentage = (currentStamps / maxStamps) * 100;
+
+  // If a reward is available, show redeem button instead of stamps/progress
+  if (formattedCard.hasAvailableRewards && onRedeem) {
+    return (
+      <ThemedCard
+        style={[
+          styles.progressCard,
+          {
+            backgroundColor: theme.card,
+            borderColor: theme.border,
+            borderWidth: 1,
+          },
+        ]}
+      >
+        <ThemedText style={[styles.sectionTitle, { color: theme.text }]}>
+          Reward Available!
+        </ThemedText>
+        <ThemedButton
+          onPress={onRedeem}
+          style={{ marginVertical: 16, backgroundColor: theme.primary }}
+        >
+          <ThemedText
+            style={{ color: "#fff", fontWeight: "bold", fontSize: 16 }}
+          >
+            🎁 Redeem Free Coffee
+          </ThemedText>
+        </ThemedButton>
+        <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+            <ThemedText style={[styles.statNumber, { color: theme.primary }]}>
+              {formattedCard.totalStamps || 0}
+            </ThemedText>
+            <ThemedText
+              style={[styles.statLabel, { color: theme.text, opacity: 0.7 }]}
+            >
+              Total Stamps
+            </ThemedText>
+          </View>
+          <View style={styles.statItem}>
+            <ThemedText style={[styles.statNumber, { color: theme.primary }]}>
+              {formattedCard.availableRewards || 0}
+            </ThemedText>
+            <ThemedText
+              style={[styles.statLabel, { color: theme.text, opacity: 0.7 }]}
+            >
+              Available Rewards
+            </ThemedText>
+          </View>
+          <View style={styles.statItem}>
+            <ThemedText style={[styles.statNumber, { color: theme.primary }]}>
+              {formattedCard.totalRedeemed || 0}
+            </ThemedText>
+            <ThemedText
+              style={[styles.statLabel, { color: theme.text, opacity: 0.7 }]}
+            >
+              Total Redeemed
+            </ThemedText>
+          </View>
+        </View>
+      </ThemedCard>
+    );
+  }
 
   return (
     <ThemedCard

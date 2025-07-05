@@ -217,23 +217,50 @@ const CustomCardItem = ({
 
       <Spacer height={10} />
 
-      <ProgressBar
-        current={item.stamps}
-        max={safeDesign.maxStampsPerCard}
-        color={dynamicTheme.primary}
-        backgroundColor={dynamicTheme.border}
-      />
-
-      <Spacer height={10} />
-
-      <CustomStampsIndicator
-        current={item.stamps}
-        max={safeDesign.maxStampsPerCard}
-        stampIcon={safeDesign.stampIcon}
-        stampColor={dynamicTheme.primary}
-        emptyColor={dynamicTheme.border}
-        theme={dynamicTheme}
-      />
+      {/* Customer Reward Section - replace stamps/progress with button if reward is available */}
+      {!isCafeUser && item.isReady ? (
+        <TouchableOpacity
+          onPress={() => onPress(item.id, { redeem: true })}
+          style={[
+            styles.redeemButton,
+            styles.customerRedeemButton,
+            {
+              backgroundColor: safeDesign.primaryColor,
+              shadowColor: safeDesign.primaryColor,
+              borderColor: safeDesign.primaryColor,
+            },
+          ]}
+          activeOpacity={0.85}
+        >
+          <ThemedText
+            style={[
+              styles.redeemText,
+              styles.customerRedeemText,
+              { color: safeDesign.textColor },
+            ]}
+          >
+            🎁 Reward available - Tap to view
+          </ThemedText>
+        </TouchableOpacity>
+      ) : (
+        <>
+          <ProgressBar
+            current={item.stamps}
+            max={safeDesign.maxStampsPerCard}
+            color={dynamicTheme.primary}
+            backgroundColor={dynamicTheme.border}
+          />
+          <Spacer height={10} />
+          <CustomStampsIndicator
+            current={item.stamps}
+            max={safeDesign.maxStampsPerCard}
+            stampIcon={safeDesign.stampIcon}
+            stampColor={dynamicTheme.primary}
+            emptyColor={dynamicTheme.border}
+            theme={dynamicTheme}
+          />
+        </>
+      )}
 
       <Spacer height={10} />
 
@@ -292,28 +319,6 @@ const CustomCardItem = ({
               </View>
             </>
           )}
-        </>
-      )}
-
-      {/* Customer Reward Section */}
-      {!isCafeUser && item.isReady && (
-        <>
-          <Spacer height={15} />
-          <View
-            style={[
-              styles.redeemButton,
-              styles.customerRedeemButton,
-              {
-                backgroundColor: "#4CAF50",
-                shadowColor: "#4CAF50",
-                borderColor: "#4CAF50",
-              },
-            ]}
-          >
-            <ThemedText style={[styles.redeemText, styles.customerRedeemText]}>
-              🎁 Reward available - Tap to view
-            </ThemedText>
-          </View>
         </>
       )}
     </View>
