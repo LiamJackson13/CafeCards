@@ -39,6 +39,10 @@ const QRCodeModal = ({ visible, onClose, qrData, availableRewards, theme }) => {
             Present this code at the counter for scanning
           </ThemedText>
 
+          <ThemedText style={[styles.statusText, { color: theme.primary }]}>
+            ⏱️ Waiting for cafe to scan...
+          </ThemedText>
+
           <ThemedButton
             onPress={onClose}
             style={[styles.closeButton, { backgroundColor: theme.primary }]}
@@ -94,6 +98,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center",
     opacity: 0.6,
+    marginBottom: 15,
+  },
+  statusText: {
+    fontSize: 11,
+    textAlign: "center",
+    fontStyle: "italic",
+    opacity: 0.7,
     marginBottom: 25,
   },
   closeButton: {

@@ -21,8 +21,21 @@ const CardItem = ({ item, onPress, isCafeUser }) => {
             </ThemedText>
           </View>
           {(isComplete || item.isReady) && (
-            <View style={styles.completeBadge}>
-              <ThemedText style={styles.completeText}>✓</ThemedText>
+            <View
+              style={[
+                styles.completeBadge,
+                item.isReady && styles.readyBadge,
+                {
+                  backgroundColor: item.isReady ? "#4CAF50" : "#4CAF50",
+                  shadowColor: item.isReady ? "#4CAF50" : "#4CAF50",
+                },
+              ]}
+            >
+              <ThemedText
+                style={[styles.completeText, item.isReady && styles.readyText]}
+              >
+                {item.isReady ? "🎁" : "✓"}
+              </ThemedText>
             </View>
           )}
         </View>
@@ -74,8 +87,24 @@ const CardItem = ({ item, onPress, isCafeUser }) => {
         </View>
 
         {(isComplete || item.isReady) && (
-          <View style={[styles.redeemButton, { backgroundColor: item.color }]}>
-            <ThemedText style={styles.redeemText}>Ready to Redeem!</ThemedText>
+          <View
+            style={[
+              styles.redeemButton,
+              styles.redeemButtonEnhanced,
+              {
+                backgroundColor: item.isReady ? "#4CAF50" : item.color,
+                shadowColor: item.isReady ? "#4CAF50" : item.color,
+              },
+            ]}
+          >
+            <ThemedText
+              style={[
+                styles.redeemText,
+                item.isReady && styles.redeemTextEnhanced,
+              ]}
+            >
+              {item.isReady ? "🎁 Reward available" : "Ready to Redeem!"}
+            </ThemedText>
           </View>
         )}
       </ThemedCard>
@@ -123,11 +152,27 @@ const styles = StyleSheet.create({
     backgroundColor: "#4CAF50",
     justifyContent: "center",
     alignItems: "center",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  readyBadge: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   completeText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  readyText: {
+    fontSize: 20,
   },
   rewardContainer: {
     flexDirection: "row",
@@ -148,10 +193,23 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
   },
+  redeemButtonEnhanced: {
+    paddingVertical: 13,
+    borderRadius: 10,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 4,
+  },
   redeemText: {
     color: "#fff",
     fontSize: 14,
     fontWeight: "600",
+  },
+  redeemTextEnhanced: {
+    fontSize: 15,
+    fontWeight: "700",
+    letterSpacing: 0.3,
   },
 });
 

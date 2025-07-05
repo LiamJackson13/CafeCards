@@ -16,19 +16,20 @@ import { useRouter } from "expo-router";
 import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
 import ThemedLoader from "../../components/ThemedLoader";
 import ThemedView from "../../components/ThemedView";
-import CardItem from "../../components/cards/CardItem";
 import { EmptyState, LoadingState } from "../../components/cards/CardStates";
 import CardsListHeader from "../../components/cards/CardsListHeader";
+import CustomCardItem from "../../components/cards/CustomCardItem";
 import { Colors } from "../../constants/Colors";
 import { useTheme } from "../../contexts/ThemeContext";
-import { useCardsList } from "../../hooks/cards/useCardsList";
+import { useEnhancedCardsList } from "../../hooks/cards/useEnhancedCardsList";
 import { useCafeUser } from "../../hooks/useUser";
 
 const CardsScreen = () => {
   const router = useRouter();
   const isCafeUser = useCafeUser();
   const { actualTheme } = useTheme();
-  const { displayCards, loading, refreshing, onRefresh } = useCardsList();
+  const { displayCards, loading, refreshing, onRefresh, updateCardInList } =
+    useEnhancedCardsList();
 
   const theme = Colors[actualTheme] ?? Colors.light;
 
@@ -53,13 +54,17 @@ const CardsScreen = () => {
         data={displayCards}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <CardItem
+          <CustomCardItem
             item={item}
             onPress={handleCardPress}
+            onUpdate={updateCardInList}
             isCafeUser={isCafeUser}
+            theme={theme}
+            actualTheme={actualTheme}
           />
         )}
         contentContainerStyle={styles.list}
+        ItemSeparatorComponent={() => <View style={styles.cardSeparator} />}
         ListHeaderComponent={
           <CardsListHeader
             isCafeUser={isCafeUser}
@@ -86,6 +91,9 @@ const styles = StyleSheet.create({
   },
   list: {
     flexGrow: 1,
+  },
+  cardSeparator: {
+    height: 16,
   },
   loadingContainer: {
     flex: 1,

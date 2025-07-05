@@ -118,6 +118,8 @@ const DashboardLayout = () => {
 
           {/* Hidden screens - always present but not in tab bar */}
           <Tabs.Screen name="cards/[id]" options={{ href: null }} />
+          <Tabs.Screen name="cafeDesign" options={{ href: null }} />
+          <Tabs.Screen name="reward-success" options={{ href: null }} />
         </Tabs>
 
         {/* Global Redemption Notification - Only show for customers */}

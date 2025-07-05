@@ -7,7 +7,7 @@ import { useContext, useState } from "react";
 import { CardsContext } from "../../contexts/CardsContext";
 
 export const useCardsList = () => {
-  const { cards, loading, fetchCards } = useContext(CardsContext);
+  const { cards, loading, fetchCards, updateCard } = useContext(CardsContext);
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = async () => {
@@ -21,11 +21,18 @@ export const useCardsList = () => {
     }
   };
 
+  // Function to update a specific card in the list
+  const updateCardInList = (updatedCard) => {
+    if (updateCard) {
+      updateCard(updatedCard);
+    }
+  };
+
   // Process and format cards data for display
   const processCardsData = (cardsData) => {
     if (!cardsData || cardsData.length === 0) return [];
 
-    return cardsData.map((card) => ({
+    const processedCards = cardsData.map((card) => ({
       id: card.$id || card.id,
       customerName: card.customerName || "Unknown Customer",
       customerEmail: card.customerEmail || "",
@@ -40,8 +47,21 @@ export const useCardsList = () => {
       color: "#007AFF",
       icon: "☕",
       isReady: (card.availableRewards || 0) > 0,
+      isPinned: card.isPinned || false,
       ...card,
     }));
+
+    // Sort cards: pinned cards first, then by last stamp date (most recent first)
+    return processedCards.sort((a, b) => {
+      // First, sort by pinned status (pinned cards first)
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+
+      // If both have same pinned status, sort by last stamp date
+      const dateA = new Date(a.lastStampDate || a.issueDate || 0);
+      const dateB = new Date(b.lastStampDate || b.issueDate || 0);
+      return dateB - dateA;
+    });
   };
 
   const displayCards = processCardsData(cards);
@@ -51,5 +71,6 @@ export const useCardsList = () => {
     loading,
     refreshing,
     onRefresh,
+    updateCardInList,
   };
 };

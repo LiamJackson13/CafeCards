@@ -1,9 +1,14 @@
 import { StyleSheet, View } from "react-native";
+import { Colors } from "../../constants/Colors";
+import { useTheme } from "../../contexts/ThemeContext";
 import ThemedButton from "../ThemedButton";
 import ThemedText from "../ThemedText";
 import DebugToggle from "./DebugToggle";
 
 const ProfileHeader = ({ user, isCafeUser, onEditName, getDisplayName }) => {
+  const { actualTheme } = useTheme();
+  const theme = Colors[actualTheme] ?? Colors.light;
+
   return (
     <>
       {/* Debug Toggle - Only visible in development */}
@@ -11,35 +16,59 @@ const ProfileHeader = ({ user, isCafeUser, onEditName, getDisplayName }) => {
 
       <View style={styles.header}>
         {isCafeUser && (
-          <View style={styles.cafeOwnerBadge}>
+          <View
+            style={[styles.cafeOwnerBadge, { backgroundColor: theme.primary }]}
+          >
             <ThemedText style={styles.badgeText}>🏪 Cafe Owner</ThemedText>
           </View>
         )}
-        <View
-          style={[
-            styles.avatarContainer,
-            isCafeUser && styles.cafeAvatarContainer,
-          ]}
-        >
-          <ThemedText style={styles.avatarText}>
-            {getDisplayName().charAt(0).toUpperCase()}
-          </ThemedText>
+
+        <View style={styles.avatarWrapper}>
+          <View
+            style={[
+              styles.avatarContainer,
+              {
+                backgroundColor: isCafeUser ? theme.primary : theme.secondary,
+                borderColor: theme.primary + "30",
+              },
+            ]}
+          >
+            <ThemedText style={styles.avatarText}>
+              {getDisplayName().charAt(0).toUpperCase()}
+            </ThemedText>
+          </View>
+          <View style={[styles.statusDot, { backgroundColor: "#4CAF50" }]} />
         </View>
 
         <View style={styles.nameContainer}>
           <ThemedText type="title" style={styles.userName}>
             {getDisplayName()}
           </ThemedText>
-          <ThemedButton onPress={onEditName} style={styles.editNameButton}>
-            <ThemedText style={styles.editNameText}>Edit Name</ThemedText>
+          <ThemedButton
+            onPress={onEditName}
+            style={[styles.editNameButton, { borderColor: theme.border }]}
+          >
+            <ThemedText style={[styles.editNameText, { color: theme.text }]}>
+              ✏️ Edit Name
+            </ThemedText>
           </ThemedButton>
         </View>
 
-        <ThemedText style={styles.userEmail}>
+        <ThemedText style={[styles.userEmail, { color: theme.text }]}>
           {user?.email || "user@example.com"}
         </ThemedText>
+
         {isCafeUser && (
-          <ThemedText style={styles.cafeRole}>Business Account</ThemedText>
+          <View
+            style={[
+              styles.roleContainer,
+              { backgroundColor: theme.primary + "20" },
+            ]}
+          >
+            <ThemedText style={[styles.cafeRole, { color: theme.primary }]}>
+              Business Account
+            </ThemedText>
+          </View>
         )}
       </View>
     </>
@@ -49,68 +78,92 @@ const ProfileHeader = ({ user, isCafeUser, onEditName, getDisplayName }) => {
 const styles = StyleSheet.create({
   header: {
     alignItems: "center",
-    paddingVertical: 20,
+    paddingVertical: 30,
+  },
+  avatarWrapper: {
+    position: "relative",
+    marginBottom: 20,
   },
   avatarContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "#AA7C48",
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 15,
+    borderWidth: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  cafeAvatarContainer: {
-    backgroundColor: "#4CAF50",
+  statusDot: {
+    position: "absolute",
+    bottom: 5,
+    right: 5,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 3,
+    borderColor: "#fff",
   },
   avatarText: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: "bold",
     color: "#fff",
   },
   nameContainer: {
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 15,
   },
   userName: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "600",
-    marginBottom: 8,
+    marginBottom: 10,
+    textAlign: "center",
   },
   editNameButton: {
     backgroundColor: "transparent",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#ddd",
   },
   editNameText: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: "500",
-    opacity: 0.7,
   },
   userEmail: {
     fontSize: 16,
     opacity: 0.7,
+    textAlign: "center",
+    marginBottom: 10,
   },
   cafeOwnerBadge: {
-    backgroundColor: "#4CAF50",
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginBottom: 15,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 25,
+    marginBottom: 20,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   badgeText: {
     color: "#fff",
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: "bold",
+  },
+  roleContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 15,
+    marginTop: 5,
   },
   cafeRole: {
     fontSize: 14,
-    opacity: 0.8,
-    marginTop: 5,
-    fontStyle: "italic",
+    fontWeight: "500",
+    textAlign: "center",
   },
 });
 

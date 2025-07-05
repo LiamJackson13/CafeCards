@@ -15,6 +15,8 @@ const CardsListHeader = ({ isCafeUser, displayCards }) => {
     (card) => card.stamps >= card.maxStamps || card.isReady
   ).length;
 
+  const pinnedCardsCount = displayCards.filter((card) => card.isPinned).length;
+
   const totalStamps = displayCards.reduce(
     (sum, card) => sum + (card.totalStamps || card.stamps),
     0
@@ -45,6 +47,9 @@ const CardsListHeader = ({ isCafeUser, displayCards }) => {
           value={displayCards.length}
           label={isCafeUser ? "Customer Cards" : "Active Cards"}
         />
+        {!isCafeUser && pinnedCardsCount > 0 && (
+          <StatsCard value={pinnedCardsCount} label="Pinned Cards" />
+        )}
         <StatsCard value={readyToRedeemCount} label="Ready to Redeem" />
         <StatsCard value={totalStamps} label="Total Stamps" />
       </View>

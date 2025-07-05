@@ -2,6 +2,13 @@
 
 ## 🚀 High Priority Features
 
+### Random Tasks
+- [x] Swap around layout file so that Profile tab is on the left and settings tab is on the right
+- [ ] Make profile screen show real data
+- [ ] Make custom card design
+- [ ] Make it so the user can choose the stamp emoji for each cafe
+- [ ] Add pinning cards
+
 ### Authentication & User Management
 - [ ] Implement user registration validation
 - [ ] Add email verification flow
@@ -178,7 +185,7 @@
 ### Deployment
 - [ ] Set up CI/CD pipeline
 - [ ] Configure app store builds
-- [ ] Add crash reporting (Sentry/Bugsnag)
+- [ ] Add crash reporting (Sentry)
 - [ ] Set up analytics (Amplitude/Mixpanel)
 
 ## 🎯 Nice-to-Have Features

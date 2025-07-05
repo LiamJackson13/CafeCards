@@ -3,22 +3,28 @@ import Spacer from "../Spacer";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
-const ScanHistoryItem = ({ scan, index }) => {
+const ScanHistoryItem = ({ scan, index, theme }) => {
   const date = new Date(scan.timestamp);
   const timeAgo = getTimeAgo(date);
 
   return (
     <View style={styles.historyItem}>
-      <View style={styles.historyIcon}>
-        <ThemedText style={styles.historyIconText}>
+      <View
+        style={[styles.historyIcon, { backgroundColor: theme.primary + "20" }]}
+      >
+        <ThemedText style={[styles.historyIconText, { color: theme.primary }]}>
           {scan.action === "stamp_added" ? "+" : "🎁"}
         </ThemedText>
       </View>
       <View style={styles.historyContent}>
-        <ThemedText style={styles.historyAction}>
+        <ThemedText style={[styles.historyAction, { color: theme.text }]}>
           {scan.action === "stamp_added" ? "Stamp Added" : "Reward Redeemed"}
         </ThemedText>
-        <ThemedText style={styles.historyTime}>{timeAgo}</ThemedText>
+        <ThemedText
+          style={[styles.historyTime, { color: theme.text, opacity: 0.6 }]}
+        >
+          {timeAgo}
+        </ThemedText>
       </View>
     </View>
   );
@@ -36,10 +42,20 @@ const getTimeAgo = (date) => {
   return `${diffDays}d ago`;
 };
 
-const ActivityHistory = ({ scanHistory }) => {
+const ActivityHistory = ({ scanHistory, theme }) => {
   return (
-    <ThemedCard style={styles.historyCard}>
-      <ThemedText style={styles.sectionTitle}>Recent Activity</ThemedText>
+    <ThemedCard
+      style={[
+        styles.historyCard,
+        {
+          backgroundColor: theme.card,
+          borderColor: theme.border,
+        },
+      ]}
+    >
+      <ThemedText style={[styles.sectionTitle, { color: theme.text }]}>
+        Recent Activity
+      </ThemedText>
       <Spacer height={15} />
 
       {scanHistory.length > 0 ? (
@@ -48,12 +64,22 @@ const ActivityHistory = ({ scanHistory }) => {
             .slice(-5) // Show last 5 scans
             .reverse() // Show most recent first
             .map((scan, index) => (
-              <ScanHistoryItem key={index} scan={scan} index={index} />
+              <ScanHistoryItem
+                key={index}
+                scan={scan}
+                index={index}
+                theme={theme}
+              />
             ))}
         </View>
       ) : (
         <View style={styles.emptyHistory}>
-          <ThemedText style={styles.emptyHistoryText}>
+          <ThemedText
+            style={[
+              styles.emptyHistoryText,
+              { color: theme.text, opacity: 0.6 },
+            ]}
+          >
             No activity yet
           </ThemedText>
         </View>
@@ -65,6 +91,7 @@ const ActivityHistory = ({ scanHistory }) => {
 const styles = StyleSheet.create({
   historyCard: {
     padding: 20,
+    borderWidth: 1,
   },
   sectionTitle: {
     fontSize: 18,
@@ -83,7 +110,6 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "#007AFF20",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
@@ -102,7 +128,6 @@ const styles = StyleSheet.create({
   },
   historyTime: {
     fontSize: 12,
-    opacity: 0.6,
   },
   emptyHistory: {
     alignItems: "center",
@@ -110,7 +135,6 @@ const styles = StyleSheet.create({
   },
   emptyHistoryText: {
     fontSize: 14,
-    opacity: 0.6,
   },
 });
 

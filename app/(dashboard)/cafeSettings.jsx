@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { ScrollView, StyleSheet, Switch, View } from "react-native";
 import Spacer from "../../components/Spacer";
@@ -7,6 +8,7 @@ import ThemedText from "../../components/ThemedText";
 import ThemedView from "../../components/ThemedView";
 
 const CafeSettingsScreen = () => {
+  const router = useRouter();
   const [notifications, setNotifications] = useState(true);
   const [autoScan, setAutoScan] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -93,6 +95,28 @@ const CafeSettingsScreen = () => {
             onValueChange={setAutoScan}
             icon="📷"
           />
+        </ThemedCard>
+
+        <Spacer size={15} />
+
+        {/* Cafe Design Settings */}
+        <ThemedCard style={styles.section}>
+          <ThemedText type="subtitle" style={styles.sectionTitle}>
+            Cafe Customization
+          </ThemedText>
+
+          <View style={styles.designButtonContainer}>
+            <ThemedText style={styles.designDescription}>
+              Customize your cafe&apos;s loyalty card design, colors, and
+              branding
+            </ThemedText>
+
+            <ThemedButton
+              title="Open Design Studio"
+              style={styles.designButton}
+              onPress={() => router.push("/cafeDesign")}
+            />
+          </View>
         </ThemedCard>
 
         <Spacer size={15} />
@@ -237,6 +261,20 @@ const styles = StyleSheet.create({
   resetButton: {
     backgroundColor: "#FF9500",
     marginHorizontal: 20,
+  },
+  designButtonContainer: {
+    alignItems: "center",
+  },
+  designDescription: {
+    fontSize: 14,
+    opacity: 0.7,
+    textAlign: "center",
+    marginBottom: 15,
+    lineHeight: 20,
+  },
+  designButton: {
+    backgroundColor: "#6B46C1",
+    minWidth: 200,
   },
 });
 

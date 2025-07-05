@@ -6,11 +6,13 @@
  * - Display of user email/account information
  * - Theme toggle for switching between light/dark modes
  * - Logout functionality
- * - Profile stats and information cards
+ * - Real-time profile stats and information cards
+ * - Pull-to-refresh functionality for updated stats
  * - Welcome message and app description
  * - Themed styling with safe area support
  */
-import { ScrollView, StyleSheet } from "react-native";
+import { useState } from "react";
+import { RefreshControl, ScrollView, StyleSheet } from "react-native";
 import AboutSection from "../../components/profile/AboutSection";
 import LogoutButton from "../../components/profile/LogoutButton";
 import ProfileHeader from "../../components/profile/ProfileHeader";
@@ -19,13 +21,21 @@ import SettingsSection from "../../components/profile/SettingsSection";
 import StatsSection from "../../components/profile/StatsSection";
 import Spacer from "../../components/Spacer";
 import ThemedView from "../../components/ThemedView";
+import { Colors } from "../../constants/Colors";
+import { useTheme } from "../../contexts/ThemeContext";
 import { useProfile } from "../../hooks/profile/useProfile";
 
 const ProfileScreen = () => {
+  const { actualTheme } = useTheme();
+  const theme = Colors[actualTheme] ?? Colors.light;
+  const [refreshing, setRefreshing] = useState(false);
+
   const {
     user,
     isCafeUser,
-    statsToShow,
+    stats,
+    statsLoading,
+    statsError,
     isPasswordModalVisible,
     setIsPasswordModalVisible,
     isNameModalVisible,
@@ -35,13 +45,33 @@ const ProfileScreen = () => {
     handleEditName,
     handleNameUpdated,
     getDisplayName,
+    refetchStats,
   } = useProfile();
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refetchStats();
+    } catch (error) {
+      console.error("Error refreshing profile data:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   return (
     <ThemedView style={styles.container} safe>
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={theme.text}
+            colors={[theme.primary]}
+          />
+        }
       >
         {/* Profile Header */}
         <ProfileHeader
@@ -54,7 +84,12 @@ const ProfileScreen = () => {
         <Spacer size={30} />
 
         {/* Stats Section */}
-        <StatsSection isCafeUser={isCafeUser} statsToShow={statsToShow} />
+        <StatsSection
+          isCafeUser={isCafeUser}
+          stats={stats}
+          loading={statsLoading}
+          error={statsError}
+        />
 
         <Spacer size={30} />
 

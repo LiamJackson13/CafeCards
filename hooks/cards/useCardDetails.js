@@ -8,11 +8,18 @@ import { Alert } from "react-native";
 import { CardsContext } from "../../contexts/CardsContext";
 import { addStampToCard, parseScanHistory } from "../../lib/appwrite";
 
-export const useCardDetails = (cardId, user, isCafeUser) => {
+export const useCardDetails = (
+  cardId,
+  user,
+  isCafeUser,
+  onRedemptionSuccess
+) => {
   const [card, setCard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [addingStamp, setAddingStamp] = useState(false);
   const [showRedeemModal, setShowRedeemModal] = useState(false);
+  const [previousAvailableRewards, setPreviousAvailableRewards] =
+    useState(null);
 
   const { fetchCardById } = useContext(CardsContext);
 
@@ -37,6 +44,61 @@ export const useCardDetails = (cardId, user, isCafeUser) => {
       loadCard();
     }
   }, [cardId, fetchCardById]);
+
+  // Monitor for reward redemptions and auto-close modal
+  useEffect(() => {
+    if (!card) return;
+
+    const currentAvailableRewards = card.availableRewards || 0;
+
+    // If we have a previous value and the current rewards decreased, a redemption occurred
+    if (
+      previousAvailableRewards !== null &&
+      currentAvailableRewards < previousAvailableRewards &&
+      showRedeemModal
+    ) {
+      // Close the modal with a slight delay to allow for UI feedback
+      setTimeout(() => {
+        setShowRedeemModal(false);
+
+        // Call the success callback if provided, otherwise show alert
+        if (onRedemptionSuccess) {
+          // Get cafe info from the current card data
+          const rewardInfo = {
+            cafeName: card.cafeName || "your favorite cafe",
+            rewardType: "free coffee",
+            rewardsRemaining: currentAvailableRewards,
+          };
+          onRedemptionSuccess(rewardInfo);
+        } else {
+          Alert.alert(
+            "Reward Redeemed! 🎉",
+            "Your reward has been successfully redeemed. Enjoy your free coffee!",
+            [{ text: "OK" }]
+          );
+        }
+      }, 500);
+    }
+
+    // Update the previous rewards count
+    setPreviousAvailableRewards(currentAvailableRewards);
+  }, [card, showRedeemModal, previousAvailableRewards, onRedemptionSuccess]);
+
+  // Poll for card updates while the redeem modal is open
+  useEffect(() => {
+    if (!showRedeemModal || !cardId) return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const updatedCard = await fetchCardById(cardId);
+        setCard(updatedCard);
+      } catch (error) {
+        console.error("Error polling for card updates:", error);
+      }
+    }, 2000); // Poll every 2 seconds
+
+    return () => clearInterval(pollInterval);
+  }, [showRedeemModal, cardId, fetchCardById]);
 
   // Format card data for display
   const formatCardData = (cardData) => {

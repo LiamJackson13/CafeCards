@@ -1,29 +1,20 @@
 import { useState } from "react";
 import { useCafeUser, useUser } from "../useUser";
+import { useProfileStats } from "./useProfileStats";
 
 export const useProfile = () => {
   const { logout, user, refreshUser } = useUser();
   const isCafeUser = useCafeUser(); // This now includes debug override
+  const {
+    stats,
+    loading: statsLoading,
+    error: statsError,
+    refetch: refetchStats,
+  } = useProfileStats();
 
   // Modal state
   const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
   const [isNameModalVisible, setIsNameModalVisible] = useState(false);
-
-  // Customer Stats
-  const customerStats = [
-    { title: "Cards Saved", value: "5", icon: "💳" },
-    { title: "Scans This Month", value: "12", icon: "📱" },
-    { title: "Points Earned", value: "248", icon: "⭐" },
-  ];
-
-  // Cafe Owner Stats
-  const cafeStats = [
-    { title: "Total Customers", value: "1,247", icon: "👥" },
-    { title: "Cards Issued", value: "89", icon: "🎫" },
-    { title: "Rewards Redeemed", value: "156", icon: "🎁" },
-  ];
-
-  const statsToShow = isCafeUser ? cafeStats : customerStats;
 
   const handleChangePassword = () => {
     setIsPasswordModalVisible(true);
@@ -37,6 +28,8 @@ export const useProfile = () => {
     // Refresh user data from the context
     try {
       await refreshUser();
+      // Also refresh stats since user data changed
+      await refetchStats();
     } catch (error) {
       console.error("Failed to refresh user data:", error);
     }
@@ -54,7 +47,9 @@ export const useProfile = () => {
     // User data
     user,
     isCafeUser,
-    statsToShow,
+    stats,
+    statsLoading,
+    statsError,
 
     // Modal state
     isPasswordModalVisible,
@@ -68,5 +63,6 @@ export const useProfile = () => {
     handleEditName,
     handleNameUpdated,
     getDisplayName,
+    refetchStats,
   };
 };
