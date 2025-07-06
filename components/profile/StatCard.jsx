@@ -53,7 +53,13 @@ const StatCard = ({ title, value, icon, color, loading = false }) => {
       <ThemedText style={[styles.statValue, { color: safeColor }]}>
         {value || "0"}
       </ThemedText>
-      <ThemedText style={styles.statTitle}>{title || "No Data"}</ThemedText>
+      <ThemedText
+        style={styles.statTitle}
+        numberOfLines={2}
+        adjustsFontSizeToFit={false}
+      >
+        {title || "No Data"}
+      </ThemedText>
     </ThemedCard>
   );
 };
@@ -87,6 +93,8 @@ const styles = StyleSheet.create({
     opacity: 0.7,
     textAlign: "center",
     lineHeight: 16,
+    width: 65,
+    minHeight: 32,
   },
   loadingIcon: {
     width: 50,
