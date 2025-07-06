@@ -35,9 +35,9 @@ const CustomerRedeemActions = ({ formattedCard, onRedeem, theme }) => {
           styles.redeemButton,
           styles.redeemButtonEnhanced,
           {
-            backgroundColor: "#4CAF50",
-            shadowColor: "#4CAF50",
-            borderColor: "#4CAF50",
+            backgroundColor: theme.primary || theme.accent,
+            shadowColor: theme.primary || theme.accent,
+            borderColor: theme.primary || theme.accent,
           },
         ]}
       >
