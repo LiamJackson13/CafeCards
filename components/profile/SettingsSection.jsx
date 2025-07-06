@@ -48,18 +48,6 @@ const CustomerSettings = ({ onChangePassword }) => (
 const CafeSettings = ({ onChangePassword }) => (
   <>
     <ProfileOption
-      title="Cafe Management"
-      subtitle="Manage your cafe details and offerings"
-      icon="☕"
-    />
-
-    <ProfileOption
-      title="Loyalty Programs"
-      subtitle="Configure reward systems and campaigns"
-      icon="🎯"
-    />
-
-    <ProfileOption
       title="Customer Analytics"
       subtitle="View detailed customer insights"
       icon="📊"

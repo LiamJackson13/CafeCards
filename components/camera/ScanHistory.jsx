@@ -32,7 +32,11 @@ const ScanHistory = ({ scanHistory, theme }) => {
                   ? "🎁 Redeemed"
                   : scan.action?.includes("_stamps_added") ||
                     scan.type === "stamp"
-                  ? `+${scan.stampsAdded || 1} ⭐`
+                  ? `+${
+                      scan.stampsAdded && scan.stampsAdded > 0
+                        ? scan.stampsAdded
+                        : scan.customer?.stampsAdded || 1
+                    } ⭐`
                   : `${scan.customer?.currentStamps || 0}/10 ⭐`}
               </ThemedText>
             </View>

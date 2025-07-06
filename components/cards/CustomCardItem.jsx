@@ -1,12 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Image,
-  ImageBackground,
-  Pressable,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import { usePinnedCards } from "../../hooks/cards/usePinnedCards";
 import { getCafeDesign } from "../../lib/appwrite/cafe-profiles";
 import Spacer from "../Spacer";
@@ -72,10 +65,6 @@ const CustomCardItem = ({
     location: cafeDesign.location || "Downtown",
     rewardDescription: cafeDesign.rewardDescription || "Free Coffee",
     maxStampsPerCard: cafeDesign.maxStampsPerCard || 10,
-    logoUrl: cafeDesign.logoUrl,
-    logoSize: cafeDesign.logoSize || 40,
-    backgroundImageUrl: cafeDesign.backgroundImageUrl,
-    backgroundImageOpacity: cafeDesign.backgroundImageOpacity || 0.1,
   };
 
   const isComplete = item.stamps >= (safeDesign.maxStampsPerCard || 10);
@@ -129,25 +118,11 @@ const CustomCardItem = ({
     <View style={styles.cardContent}>
       <View style={styles.cardHeader}>
         <View style={styles.iconContainer}>
-          {safeDesign.logoUrl ? (
-            <Image
-              source={{ uri: safeDesign.logoUrl }}
-              style={[
-                styles.logoImage,
-                {
-                  width: safeDesign.logoSize,
-                  height: safeDesign.logoSize,
-                },
-              ]}
-              resizeMode="contain"
-            />
-          ) : (
-            <ThemedText
-              style={[styles.cardIcon, { color: dynamicTheme.primary }]}
-            >
-              {safeDesign.stampIcon}
-            </ThemedText>
-          )}
+          <ThemedText
+            style={[styles.cardIcon, { color: dynamicTheme.primary }]}
+          >
+            {safeDesign.stampIcon}
+          </ThemedText>
         </View>
         <View style={styles.cardInfo}>
           <ThemedText
@@ -326,24 +301,9 @@ const CustomCardItem = ({
 
   return (
     <Pressable onPress={() => onPress(item.id)}>
-      {safeDesign.backgroundImageUrl ? (
-        <ThemedCard style={cardStyle}>
-          <ImageBackground
-            source={{ uri: safeDesign.backgroundImageUrl }}
-            style={styles.backgroundImage}
-            imageStyle={{
-              opacity: safeDesign.backgroundImageOpacity,
-              borderRadius: safeDesign.borderRadius,
-            }}
-          >
-            <CardContent />
-          </ImageBackground>
-        </ThemedCard>
-      ) : (
-        <ThemedCard style={cardStyle}>
-          <CardContent />
-        </ThemedCard>
-      )}
+      <ThemedCard style={cardStyle}>
+        <CardContent />
+      </ThemedCard>
     </Pressable>
   );
 };
@@ -409,9 +369,6 @@ const styles = StyleSheet.create({
   cardContent: {
     flex: 1,
   },
-  backgroundImage: {
-    flex: 1,
-  },
   cardHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -424,9 +381,6 @@ const styles = StyleSheet.create({
   },
   cardIcon: {
     fontSize: 32,
-  },
-  logoImage: {
-    borderRadius: 8,
   },
   cardInfo: {
     flex: 1,

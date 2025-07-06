@@ -36,8 +36,6 @@ const CafeDesignSettings = () => {
   const [textColor, setTextColor] = useState("#3B2F2F");
   const [stampIcon, setStampIcon] = useState("⭐");
   const [stampIconColor, setStampIconColor] = useState("#FFD700");
-  const [backgroundImageUrl, setBackgroundImageUrl] = useState("");
-  const [logoUrl, setLogoUrl] = useState("");
   const [rewardDescription, setRewardDescription] = useState("Free Coffee");
   const [maxStampsPerCard, setMaxStampsPerCard] = useState(10);
   const [borderRadius, setBorderRadius] = useState(15);
@@ -92,8 +90,6 @@ const CafeDesignSettings = () => {
         setTextColor(cafeProfile.textColor || "#3B2F2F");
         setStampIcon(cafeProfile.stampIcon || "⭐");
         setStampIconColor(cafeProfile.stampIconColor || "#FFD700");
-        setBackgroundImageUrl(cafeProfile.backgroundImageUrl || "");
-        setLogoUrl(cafeProfile.logoUrl || "");
         setRewardDescription(cafeProfile.rewardDescription || "Free Coffee");
         setMaxStampsPerCard(cafeProfile.maxStampsPerCard || 10);
         setBorderRadius(cafeProfile.borderRadius || 15);
@@ -123,8 +119,6 @@ const CafeDesignSettings = () => {
         textColor,
         stampIcon,
         stampIconColor,
-        backgroundImageUrl,
-        logoUrl,
         rewardDescription,
         maxStampsPerCard: parseInt(maxStampsPerCard) || 10,
         borderRadius: parseInt(borderRadius) || 15,
@@ -146,38 +140,6 @@ const CafeDesignSettings = () => {
     } finally {
       setSaving(false);
     }
-  };
-
-  const pickImage = async (type) => {
-    // Image picking functionality would go here
-    // For now, just show an alert
-    Alert.alert(
-      "Image Selection",
-      "Image selection functionality would be implemented here with expo-image-picker",
-      [
-        {
-          text: "Use URL Instead",
-          onPress: () => {
-            Alert.prompt(
-              "Enter Image URL",
-              type === "logo"
-                ? "Enter logo URL:"
-                : "Enter background image URL:",
-              (url) => {
-                if (url) {
-                  if (type === "logo") {
-                    setLogoUrl(url);
-                  } else {
-                    setBackgroundImageUrl(url);
-                  }
-                }
-              }
-            );
-          },
-        },
-        { text: "Cancel", style: "cancel" },
-      ]
-    );
   };
 
   if (loading) {
@@ -415,45 +377,6 @@ const CafeDesignSettings = () => {
 
         <Spacer size={15} />
 
-        {/* Images */}
-        <ThemedCard style={styles.section}>
-          <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Images
-          </ThemedText>
-
-          <View style={styles.inputGroup}>
-            <ThemedText style={styles.label}>Logo</ThemedText>
-            <ThemedButton
-              onPress={() => pickImage("logo")}
-              style={styles.imageButton}
-            >
-              <ThemedText>{logoUrl ? "Change Logo" : "Add Logo"}</ThemedText>
-            </ThemedButton>
-            {logoUrl && (
-              <ThemedText style={styles.imageInfo}>Logo selected</ThemedText>
-            )}
-          </View>
-
-          <View style={styles.inputGroup}>
-            <ThemedText style={styles.label}>Background Image</ThemedText>
-            <ThemedButton
-              onPress={() => pickImage("background")}
-              style={styles.imageButton}
-            >
-              <ThemedText>
-                {backgroundImageUrl ? "Change Background" : "Add Background"}
-              </ThemedText>
-            </ThemedButton>
-            {backgroundImageUrl && (
-              <ThemedText style={styles.imageInfo}>
-                Background image selected
-              </ThemedText>
-            )}
-          </View>
-        </ThemedCard>
-
-        <Spacer size={15} />
-
         {/* Card Style */}
         <ThemedCard style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
@@ -611,15 +534,6 @@ const styles = StyleSheet.create({
   },
   iconText: {
     fontSize: 24,
-  },
-  imageButton: {
-    backgroundColor: "#f0f0f0",
-    paddingVertical: 12,
-  },
-  imageInfo: {
-    fontSize: 12,
-    opacity: 0.7,
-    marginTop: 4,
   },
   settingRow: {
     flexDirection: "row",
