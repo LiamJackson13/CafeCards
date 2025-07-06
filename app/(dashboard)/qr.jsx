@@ -49,7 +49,7 @@ const QRDisplayScreen = () => {
       email: user?.email || "guest@example.com",
       cardId: `CARD_${userId.slice(-8)}`,
       type: "loyalty_card",
-      customerName: user?.email?.split("@")[0] || "Guest User",
+      customerName: user?.name || user?.email?.split("@")[0] || "Guest User",
       issueDate: new Date().toISOString().split("T")[0], // YYYY-MM-DD format
       version: "1.0",
       app: "cafe-cards",
@@ -112,7 +112,7 @@ const QRDisplayScreen = () => {
         {/* User Info */}
         <View style={styles.userInfo}>
           <ThemedText style={styles.userName}>
-            {JSON.parse(cardData).customerName}
+            {user?.name || user?.email?.split("@")[0] || "Guest User"}
           </ThemedText>
           <ThemedText style={styles.userEmail}>
             {user?.email || "guest@example.com"}

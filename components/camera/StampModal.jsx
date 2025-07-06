@@ -1,5 +1,5 @@
-import Slider from "@react-native-community/slider";
 import { Modal, StyleSheet, View } from "react-native";
+import IncrementDecrement from "../IncrementDecrement";
 import ThemedButton from "../ThemedButton";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
@@ -41,26 +41,12 @@ const StampModal = ({
             How many stamps would you like to add?
           </ThemedText>
 
-          <View style={styles.sliderContainer}>
-            <ThemedText style={styles.stampCountLabel}>
-              {stampsToAdd} stamp{stampsToAdd !== 1 ? "s" : ""}
-            </ThemedText>
-            <Slider
-              style={styles.slider}
-              minimumValue={1}
-              maximumValue={10}
-              value={stampsToAdd}
-              onValueChange={(value) => setStampsToAdd(Math.round(value))}
-              step={1}
-              minimumTrackTintColor="#007AFF"
-              maximumTrackTintColor="#E5E5E5"
-              thumbStyle={styles.sliderThumb}
-            />
-            <View style={styles.sliderLabels}>
-              <ThemedText style={styles.sliderLabel}>1</ThemedText>
-              <ThemedText style={styles.sliderLabel}>10</ThemedText>
-            </View>
-          </View>
+          <IncrementDecrement
+            value={stampsToAdd}
+            setValue={setStampsToAdd}
+            min={1}
+            max={10}
+          />
 
           <View style={styles.modalButtons}>
             <ThemedButton
@@ -129,34 +115,6 @@ const styles = StyleSheet.create({
     opacity: 0.7,
     textAlign: "center",
     marginBottom: 20,
-  },
-  sliderContainer: {
-    marginBottom: 30,
-  },
-  stampCountLabel: {
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 15,
-  },
-  slider: {
-    width: "100%",
-    height: 40,
-    marginBottom: 10,
-  },
-  sliderThumb: {
-    backgroundColor: "#007AFF",
-    width: 20,
-    height: 20,
-  },
-  sliderLabels: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 10,
-  },
-  sliderLabel: {
-    fontSize: 12,
-    opacity: 0.7,
   },
   modalButtons: {
     flexDirection: "row",

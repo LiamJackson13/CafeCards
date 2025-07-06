@@ -60,8 +60,14 @@ export const useScanner = (user, isCafeUser) => {
   }, [isProcessing]);
 
   const addToScanHistory = useCallback(
-    (customer, scanType, status, message) => {
-      const entry = createScanHistoryEntry(customer, scanType, status, message);
+    (customer, scanType, status, message, stampsAdded = 0) => {
+      const entry = createScanHistoryEntry(
+        customer,
+        scanType,
+        status,
+        message,
+        stampsAdded
+      );
       setScanHistory((prev) => [entry, ...prev].slice(0, 10)); // Keep last 10 entries
     },
     []
@@ -112,7 +118,8 @@ export const useScanner = (user, isCafeUser) => {
             customer,
             scanType,
             "error",
-            "Access denied: Cafe user required"
+            "Access denied: Cafe user required",
+            0
           );
           // Reset scanner state after showing error
           setTimeout(() => {
@@ -138,7 +145,8 @@ export const useScanner = (user, isCafeUser) => {
           { name: "Unknown" },
           "stamp",
           "error",
-          `Error: ${error.message}`
+          `Error: ${error.message}`,
+          0
         );
         // Reset scanner state after error
         setTimeout(() => {
@@ -167,7 +175,8 @@ export const useScanner = (user, isCafeUser) => {
           customer,
           "redemption",
           "success",
-          "Reward redeemed successfully!"
+          "Reward redeemed successfully!",
+          0
         );
 
         // Show success feedback
@@ -179,7 +188,8 @@ export const useScanner = (user, isCafeUser) => {
           customer,
           "redemption",
           "error",
-          `Redemption failed: ${error.message}`
+          `Redemption failed: ${error.message}`,
+          0
         );
       } finally {
         // Reset scanner state to allow for additional scans
@@ -207,7 +217,8 @@ export const useScanner = (user, isCafeUser) => {
         pendingCustomer,
         "stamp",
         "success",
-        `${stampsToAdd} ${stampText} added successfully!`
+        `${stampsToAdd} ${stampText} added successfully!`,
+        stampsToAdd
       );
     } catch (error) {
       console.error("Error adding stamps:", error);
@@ -215,7 +226,8 @@ export const useScanner = (user, isCafeUser) => {
         pendingCustomer,
         "stamp",
         "error",
-        `Failed to add stamps: ${error.message}`
+        `Failed to add stamps: ${error.message}`,
+        0
       );
     } finally {
       // Close modal and reset scanner state

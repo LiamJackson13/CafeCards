@@ -7,9 +7,11 @@
  * Serves as a simple navigation hub for users to access different app features.
  */
 import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { StatusBar, StyleSheet, View } from "react-native";
 import Spacer from "../components/Spacer";
 import ThemedButton from "../components/ThemedButton";
+import ThemedLoader from "../components/ThemedLoader";
 import ThemedText from "../components/ThemedText";
 import ThemedView from "../components/ThemedView";
 import { Colors } from "../constants/Colors";
@@ -23,6 +25,19 @@ export default function Index() {
   const { actualTheme } = useTheme();
 
   const theme = Colors[actualTheme] ?? Colors.light;
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate authentication check
+    const checkAuthentication = async () => {
+      // Add any necessary logic to check authentication here
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      setIsLoading(false);
+    };
+
+    checkAuthentication();
+  }, []);
 
   const handleDashboardNavigation = () => {
     if (!user) {
@@ -45,6 +60,14 @@ export default function Index() {
   const handleRegister = () => {
     router.push("/register");
   };
+
+  if (isLoading) {
+    return (
+      <ThemedView style={styles.container} safe>
+        <ThemedLoader />
+      </ThemedView>
+    );
+  }
 
   return (
     <ThemedView style={styles.container} safe>

@@ -30,13 +30,10 @@ const ScanHistory = ({ scanHistory, theme }) => {
               <ThemedText style={styles.stampCount}>
                 {scan.type === "redemption"
                   ? "🎁 Redeemed"
-                  : scan.action?.includes("_stamps_added") ||
-                    scan.type === "stamp"
-                  ? `+${
-                      scan.stampsAdded && scan.stampsAdded > 0
-                        ? scan.stampsAdded
-                        : scan.customer?.stampsAdded || 1
-                    } ⭐`
+                  : scan.type === "stamp" && scan.status === "success"
+                  ? `+${scan.stampsAdded || 0} ⭐`
+                  : scan.type === "stamp" && scan.status === "error"
+                  ? "❌ Failed"
                   : `${scan.customer?.currentStamps || 0}/10 ⭐`}
               </ThemedText>
             </View>
