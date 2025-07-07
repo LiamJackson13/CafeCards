@@ -7,6 +7,17 @@ const ScanHistory = ({ scanHistory, theme }) => {
     return <ThemedText style={styles.noHistory}>No recent scans</ThemedText>;
   }
 
+  // Helper function to get display name similar to useProfile
+  const getDisplayName = (customer) => {
+    if (customer?.name && customer.name.trim() !== "") {
+      return customer.name;
+    }
+    if (customer?.customerName && customer.customerName.trim() !== "") {
+      return customer.customerName;
+    }
+    return customer?.email?.split("@")[0] || "Unknown Customer";
+  };
+
   return (
     <ScrollView
       style={styles.historyContainer}
@@ -17,10 +28,10 @@ const ScanHistory = ({ scanHistory, theme }) => {
           <View style={styles.historyContent}>
             <View style={styles.historyLeft}>
               <ThemedText style={styles.customerName}>
-                {scan.customer.name}
+                {getDisplayName(scan.customer)}
               </ThemedText>
               <ThemedText style={styles.customerEmail}>
-                {scan.customer.email}
+                {scan.customer?.email || "No email"}
               </ThemedText>
               <ThemedText style={styles.scanTime}>
                 {scan.timestamp.toLocaleTimeString()}

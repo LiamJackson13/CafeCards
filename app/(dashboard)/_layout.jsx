@@ -72,13 +72,13 @@ const DashboardLayout = () => {
             }}
           />
           <Tabs.Screen
-            name="cafeSettings"
+            name="cafeDesign"
             options={{
-              title: "Settings",
+              title: "Design",
               href: isCafeUser ? undefined : null,
               tabBarIcon: ({ focused, color }) => (
                 <Ionicons
-                  name={focused ? "settings" : "settings-outline"}
+                  name={focused ? "color-palette" : "color-palette-outline"}
                   size={24}
                   color={color}
                 />
@@ -118,7 +118,7 @@ const DashboardLayout = () => {
 
           {/* Hidden screens - always present but not in tab bar */}
           <Tabs.Screen name="cards/[id]" options={{ href: null }} />
-          <Tabs.Screen name="cafeDesign" options={{ href: null }} />
+
           <Tabs.Screen name="reward-success" options={{ href: null }} />
         </Tabs>
 

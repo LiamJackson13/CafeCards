@@ -51,17 +51,25 @@ export const useCardDetails = (
 
     const currentAvailableRewards = card.availableRewards || 0;
 
+    console.log("Monitoring rewards:", {
+      previous: previousAvailableRewards,
+      current: currentAvailableRewards,
+      modalOpen: showRedeemModal,
+    });
+
     // If we have a previous value and the current rewards decreased, a redemption occurred
     if (
       previousAvailableRewards !== null &&
       currentAvailableRewards < previousAvailableRewards &&
       showRedeemModal
     ) {
-      // Close the modal with a slight delay to allow for UI feedback
-      setTimeout(() => {
-        setShowRedeemModal(false);
+      console.log("Redemption detected! Closing modal...");
 
-        // Call the success callback if provided, otherwise show alert
+      // Close the modal immediately
+      setShowRedeemModal(false);
+
+      // Call the success callback with a slight delay for better UX
+      setTimeout(() => {
         if (onRedemptionSuccess) {
           // Get cafe info from the current card data
           const rewardInfo = {
@@ -77,7 +85,7 @@ export const useCardDetails = (
             [{ text: "OK" }]
           );
         }
-      }, 500);
+      }, 300);
     }
 
     // Update the previous rewards count
@@ -88,16 +96,27 @@ export const useCardDetails = (
   useEffect(() => {
     if (!showRedeemModal || !cardId) return;
 
+    console.log("Starting polling for card updates...");
+
     const pollInterval = setInterval(async () => {
       try {
+        console.log("Polling for card updates...");
         const updatedCard = await fetchCardById(cardId);
+        console.log("Updated card data:", {
+          cardId,
+          availableRewards: updatedCard?.availableRewards,
+          timestamp: new Date().toISOString(),
+        });
         setCard(updatedCard);
       } catch (error) {
         console.error("Error polling for card updates:", error);
       }
-    }, 2000); // Poll every 2 seconds
+    }, 1500); // Poll every 1.5 seconds for faster response
 
-    return () => clearInterval(pollInterval);
+    return () => {
+      console.log("Stopping polling for card updates");
+      clearInterval(pollInterval);
+    };
   }, [showRedeemModal, cardId, fetchCardById]);
 
   // Format card data for display
@@ -144,7 +163,7 @@ export const useCardDetails = (
       type: "reward_redemption",
       app: "cafe-cards",
       customerId: card.customerId,
-      customerName: card.customerName,
+      customerName: card.customerName || user.name,
       email: card.customerEmail,
       cardId: card.cardId,
       currentStamps: card.currentStamps,

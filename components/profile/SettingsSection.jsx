@@ -19,51 +19,27 @@ const ChangePasswordButton = ({ onPress }) => (
 const CustomerSettings = ({ onChangePassword }) => (
   <>
     <ProfileOption
-      title="Notifications"
-      subtitle="Manage your notification preferences"
-      icon="🔔"
-    />
-
-    <ProfileOption
       title="Change Password"
       subtitle="Update your account password"
       icon="🔑"
       action={<ChangePasswordButton onPress={onChangePassword} />}
-    />
-
-    <ProfileOption
-      title="Privacy & Security"
-      subtitle="Manage your account security"
-      icon="🔒"
-    />
-
-    <ProfileOption
-      title="Help & Support"
-      subtitle="Get help and contact support"
-      icon="❓"
     />
   </>
 );
 
 const CafeSettings = ({ onChangePassword }) => (
   <>
-    <ProfileOption
+    {/* <ProfileOption
       title="Customer Analytics"
       subtitle="View detailed customer insights"
       icon="📊"
-    />
+    /> */}
 
     <ProfileOption
       title="Change Password"
       subtitle="Update your account password"
       icon="🔑"
       action={<ChangePasswordButton onPress={onChangePassword} />}
-    />
-
-    <ProfileOption
-      title="Business Settings"
-      subtitle="Manage business account preferences"
-      icon="⚙️"
     />
   </>
 );

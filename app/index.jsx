@@ -47,7 +47,7 @@ export default function Index() {
 
     // Route to appropriate default screen based on user type
     if (isCafeUser) {
-      router.push("/(dashboard)/cafeSettings");
+      router.push("/(dashboard)/cafeCamera");
     } else {
       router.push("/(dashboard)/cards");
     }

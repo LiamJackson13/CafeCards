@@ -1,11 +1,27 @@
 import { Modal, StyleSheet, View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
+import { useUser } from "../../hooks/useUser";
 import ThemedButton from "../ThemedButton";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
 const QRCodeModal = ({ visible, onClose, qrData, availableRewards, theme }) => {
+  const { user } = useUser();
+
   if (!qrData) return null;
+
+  // Parse and modify QR data to ensure it uses the current user's name
+  let modifiedQRData = qrData;
+  try {
+    const parsedData = JSON.parse(qrData);
+    if (parsedData.type === "reward_redemption" && user?.name) {
+      parsedData.customerName = user.name;
+      modifiedQRData = JSON.stringify(parsedData);
+    }
+  } catch (error) {
+    // If parsing fails, use original data
+    console.warn("Could not parse QR data:", error);
+  }
 
   return (
     <Modal
@@ -28,7 +44,7 @@ const QRCodeModal = ({ visible, onClose, qrData, availableRewards, theme }) => {
 
           <View style={styles.qrContainer}>
             <QRCode
-              value={qrData}
+              value={modifiedQRData}
               size={200}
               backgroundColor="white"
               color="black"

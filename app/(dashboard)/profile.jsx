@@ -12,14 +12,16 @@
  * - Themed styling with safe area support
  */
 import { useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet } from "react-native";
-import AboutSection from "../../components/profile/AboutSection";
+import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import LogoutButton from "../../components/profile/LogoutButton";
 import ProfileHeader from "../../components/profile/ProfileHeader";
 import ProfileModals from "../../components/profile/ProfileModals";
 import SettingsSection from "../../components/profile/SettingsSection";
 import StatsSection from "../../components/profile/StatsSection";
 import Spacer from "../../components/Spacer";
+import ThemedButton from "../../components/ThemedButton";
+import ThemedCard from "../../components/ThemedCard";
+import ThemedText from "../../components/ThemedText";
 import ThemedView from "../../components/ThemedView";
 import { Colors } from "../../constants/Colors";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -101,10 +103,54 @@ const ProfileScreen = () => {
 
         <Spacer size={30} />
 
-        {/* About Section */}
-        <AboutSection />
+        {/* Data Management */}
+        <ThemedCard style={styles.section}>
+          <ThemedText type="subtitle" style={styles.sectionTitle}>
+            Data Management
+          </ThemedText>
 
-        <Spacer size={30} />
+          <View style={styles.dataButtons}>
+            <ThemedButton
+              title="Export Data"
+              style={[styles.dataButton, styles.exportButton]}
+            >
+              <ThemedText>Export Data</ThemedText>
+            </ThemedButton>
+
+            <ThemedButton
+              title="Clear All Data"
+              style={[styles.dataButton, styles.clearButton]}
+            >
+              <ThemedText>Clear All Data</ThemedText>
+            </ThemedButton>
+          </View>
+        </ThemedCard>
+
+        <Spacer size={15} />
+
+        {/* App Information */}
+        <ThemedCard style={styles.section}>
+          <ThemedText type="subtitle" style={styles.sectionTitle}>
+            App Information
+          </ThemedText>
+
+          <View style={styles.infoRow}>
+            <ThemedText style={styles.infoLabel}>Version:</ThemedText>
+            <ThemedText style={styles.infoValue}>1.0.0</ThemedText>
+          </View>
+
+          <View style={styles.infoRow}>
+            <ThemedText style={styles.infoLabel}>Build:</ThemedText>
+            <ThemedText style={styles.infoValue}>2025.1.1</ThemedText>
+          </View>
+
+          <View style={styles.infoRow}>
+            <ThemedText style={styles.infoLabel}>Last Updated:</ThemedText>
+            <ThemedText style={styles.infoValue}>July 4, 2025</ThemedText>
+          </View>
+        </ThemedCard>
+
+        <Spacer size={20} />
 
         {/* Logout Button */}
         <LogoutButton onPress={logout} />
