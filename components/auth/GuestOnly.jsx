@@ -1,11 +1,9 @@
 /**
- * Guest Only Route Guard Component
+ * GuestOnly Route Guard
  *
- * A route protection component that ensures only unauthenticated (guest) users
- * can access wrapped screens. Automatically redirects authenticated users to
- * the profile screen. Displays a loading state while checking authentication
- * status. Used to protect auth screens like login and registration from
- * being accessed by already logged-in users.
+ * Protects routes/screens so only unauthenticated users can access them.
+ * - Redirects authenticated users to the profile screen.
+ * - Shows a loading indicator while authentication status is being checked.
  */
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
@@ -13,22 +11,22 @@ import { useUser } from "../../hooks/useUser";
 import ThemedLoader from "../ThemedLoader";
 
 const GuestOnly = ({ children }) => {
-  const { user, authChecked } = useUser();
+  const { user, authChecked } = useUser(); // Get user and auth status
   const router = useRouter();
 
-  useEffect(
-    () => {
-      if (authChecked && user !== null) {
-        router.replace("/profile");
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [user, authChecked]
-  );
+  useEffect(() => {
+    // If authentication has been checked and a user is found, redirect to profile
+    if (authChecked && user) {
+      router.replace("/profile");
+    }
+  }, [user, authChecked, router]);
 
+  // Show loader while checking auth or if user is present
   if (!authChecked || user) {
     return <ThemedLoader />;
   }
+
+  // Render protected content for guests (unauthenticated users)
   return children;
 };
 

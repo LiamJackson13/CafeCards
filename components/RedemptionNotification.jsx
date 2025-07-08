@@ -3,9 +3,32 @@ import { Animated, StyleSheet, View } from "react-native";
 import ThemedCard from "./ThemedCard";
 import ThemedText from "./ThemedText";
 
+/**
+ * RedemptionNotification
+ *
+ * Animated notification for reward redemption events.
+ * Slides in from the top and auto-dismisses after 4 seconds.
+ */
 const RedemptionNotification = ({ visible, redemption, onDismiss }) => {
   const [slideAnim] = useState(new Animated.Value(-100));
   const [opacityAnim] = useState(new Animated.Value(0));
+
+  const hideNotification = useCallback(() => {
+    Animated.parallel([
+      Animated.timing(slideAnim, {
+        toValue: -100,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacityAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      onDismiss?.();
+    });
+  }, [slideAnim, opacityAnim, onDismiss]);
 
   useEffect(() => {
     if (visible && redemption) {
@@ -33,23 +56,6 @@ const RedemptionNotification = ({ visible, redemption, onDismiss }) => {
       hideNotification();
     }
   }, [visible, redemption, slideAnim, opacityAnim, hideNotification]);
-
-  const hideNotification = useCallback(() => {
-    Animated.parallel([
-      Animated.timing(slideAnim, {
-        toValue: -100,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacityAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      onDismiss?.();
-    });
-  }, [slideAnim, opacityAnim, onDismiss]);
 
   if (!visible || !redemption) return null;
 

@@ -1,11 +1,9 @@
 /**
- * Theme Toggle Component
+ * ThemeToggle
  *
- * A user interface component that allows users to switch between light and dark themes.
- * Provides both switch and button interfaces for theme toggling with platform-specific
- * optimizations. Integrates with ThemeContext to persist theme preferences and
- * immediately applies changes throughout the app. Includes visual feedback and
- * themed styling that adapts to the current theme.
+ * Allows users to switch between light and dark themes.
+ * Uses native Switch on mobile, custom switch on web.
+ * Integrates with ThemeContext to persist and apply theme changes.
  */
 import {
   Platform,
@@ -36,7 +34,7 @@ const ThemeToggle = () => {
 
   const isOn = actualTheme === "dark";
 
-  // Use native Switch on iOS and Android, custom switch on web
+  // Use native Switch on iOS/Android, custom switch on web
   const renderSwitch = () => {
     if (Platform.OS === "web") {
       return (

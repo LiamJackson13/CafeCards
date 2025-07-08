@@ -33,7 +33,7 @@ const DebugToggle = () => {
                 Global Debug Mode
               </ThemedText>
               <ThemedText style={styles.debugSubtitle}>
-                Switch entire app between Customer/Cafe
+                Switch app between Customer/Cafe
                 {debugCafeMode === realIsCafeUser && user ? " (Auto-set)" : ""}
               </ThemedText>
             </View>

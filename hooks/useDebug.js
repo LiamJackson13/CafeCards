@@ -1,5 +1,5 @@
 /**
- * Debug Utilities Hook
+ * useDebug
  *
  * Custom hook to access debug-related functions from the UserContext.
  * Provides access to the global debug cafe mode toggle that affects
@@ -13,8 +13,8 @@ export function useDebug() {
     useContext(UserContext);
 
   return {
-    debugCafeMode,
-    setDebugCafeMode,
-    isDebugMode,
+    debugCafeMode, // Boolean: current debug cafe mode state
+    setDebugCafeMode, // Function: toggle debug cafe mode
+    isDebugMode, // Boolean: true if in development mode
   };
 }

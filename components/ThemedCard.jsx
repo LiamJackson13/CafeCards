@@ -1,10 +1,8 @@
 /**
- * Themed Card Component
+ * ThemedCard
  *
- * A reusable card container component that provides consistent card styling throughout the app.
- * Automatically applies theme-based background colors and includes standard card styling
- * like padding, border radius, and shadow effects. Used for displaying content in
- * card-based layouts such as loyalty cards, team cards, and other grouped content.
+ * Simple reusable card container with theme-based background.
+ * Use for grouping content in a card layout.
  */
 import { StyleSheet, View } from "react-native";
 import { Colors } from "../constants/Colors";
@@ -26,7 +24,7 @@ export default ThemedCard;
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 5,
-    padding: 20,
+    borderRadius: 5, // Rounded corners
+    padding: 20, // Standard padding
   },
 });

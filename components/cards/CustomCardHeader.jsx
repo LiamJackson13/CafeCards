@@ -2,9 +2,16 @@ import { Image, ImageBackground, StyleSheet, View } from "react-native";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
+/**
+ * CustomCardHeader
+ *
+ * Displays a custom card header with cafe branding, logo, and background.
+ * - Shows loading state if cafeDesign is not loaded.
+ * - Supports custom logo, background image, and reward badge.
+ */
 const CustomCardHeader = ({ formattedCard, isCafeUser, theme, cafeDesign }) => {
+  // Show loading state if cafeDesign is not loaded
   if (!cafeDesign) {
-    // Show loading state
     return (
       <ThemedCard
         style={[
@@ -33,6 +40,7 @@ const CustomCardHeader = ({ formattedCard, isCafeUser, theme, cafeDesign }) => {
     );
   }
 
+  // Card style with dynamic border radius and shadow
   const cardStyle = [
     styles.headerCard,
     {
@@ -42,7 +50,6 @@ const CustomCardHeader = ({ formattedCard, isCafeUser, theme, cafeDesign }) => {
       borderWidth: 1,
     },
   ];
-
   if (!cafeDesign.shadowEnabled) {
     cardStyle.push({
       shadowOpacity: 0,
@@ -50,6 +57,7 @@ const CustomCardHeader = ({ formattedCard, isCafeUser, theme, cafeDesign }) => {
     });
   }
 
+  // Header content with logo/icon and info
   const HeaderContent = () => (
     <View style={styles.cardHeader}>
       <View
@@ -99,27 +107,24 @@ const CustomCardHeader = ({ formattedCard, isCafeUser, theme, cafeDesign }) => {
     </View>
   );
 
-  return (
-    <>
-      {cafeDesign.backgroundImageUrl ? (
-        <ThemedCard style={cardStyle}>
-          <ImageBackground
-            source={{ uri: cafeDesign.backgroundImageUrl }}
-            style={styles.backgroundImage}
-            imageStyle={{
-              opacity: cafeDesign.backgroundImageOpacity || 0.1,
-              borderRadius: cafeDesign.borderRadius - 2,
-            }}
-          >
-            <HeaderContent />
-          </ImageBackground>
-        </ThemedCard>
-      ) : (
-        <ThemedCard style={cardStyle}>
-          <HeaderContent />
-        </ThemedCard>
-      )}
-    </>
+  // Render with or without background image
+  return cafeDesign.backgroundImageUrl ? (
+    <ThemedCard style={cardStyle}>
+      <ImageBackground
+        source={{ uri: cafeDesign.backgroundImageUrl }}
+        style={styles.backgroundImage}
+        imageStyle={{
+          opacity: cafeDesign.backgroundImageOpacity || 0.1,
+          borderRadius: cafeDesign.borderRadius - 2,
+        }}
+      >
+        <HeaderContent />
+      </ImageBackground>
+    </ThemedCard>
+  ) : (
+    <ThemedCard style={cardStyle}>
+      <HeaderContent />
+    </ThemedCard>
   );
 };
 

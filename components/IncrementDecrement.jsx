@@ -1,6 +1,13 @@
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import ThemedText from "./ThemedText";
 
+/**
+ * IncrementDecrement
+ *
+ * A simple component for incrementing/decrementing a numeric value.
+ * - Disables buttons at min/max.
+ * - Shows current value.
+ */
 const IncrementDecrement = ({ value, setValue, min = 1, max = 10 }) => {
   const increment = () => {
     if (value < max) {
@@ -20,6 +27,8 @@ const IncrementDecrement = ({ value, setValue, min = 1, max = 10 }) => {
         onPress={decrement}
         style={[styles.button, value <= min && styles.disabledButton]}
         disabled={value <= min}
+        accessibilityLabel="Decrease value"
+        accessibilityRole="button"
       >
         <ThemedText style={styles.buttonText}>-</ThemedText>
       </TouchableOpacity>
@@ -30,6 +39,8 @@ const IncrementDecrement = ({ value, setValue, min = 1, max = 10 }) => {
         onPress={increment}
         style={[styles.button, value >= max && styles.disabledButton]}
         disabled={value >= max}
+        accessibilityLabel="Increase value"
+        accessibilityRole="button"
       >
         <ThemedText style={styles.buttonText}>+</ThemedText>
       </TouchableOpacity>

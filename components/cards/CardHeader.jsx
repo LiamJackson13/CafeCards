@@ -2,27 +2,32 @@ import { StyleSheet, View } from "react-native";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
-const CardHeader = ({ formattedCard, isCafeUser }) => {
-  return (
-    <ThemedCard style={styles.headerCard}>
-      <View style={styles.cardHeader}>
-        <View style={styles.cardIcon}>
-          <ThemedText style={styles.cardIconText}>
-            {formattedCard.isComplete ? "🎉" : "☕"}
-          </ThemedText>
-        </View>
-        <View style={styles.cardInfo}>
-          <ThemedText style={styles.customerName}>
-            {isCafeUser ? formattedCard.customerName : "Local Cafe"}
-          </ThemedText>
-          <ThemedText style={styles.customerEmail}>
-            {isCafeUser ? formattedCard.customerEmail : "Your loyalty card"}
-          </ThemedText>
-        </View>
+/**
+ * CardHeader
+ *
+ * Displays the card header with icon and customer/cafe info.
+ * - Shows a celebration icon if the card is complete, otherwise a coffee cup.
+ * - Cafe users see customer info, customers see cafe info.
+ */
+const CardHeader = ({ formattedCard, isCafeUser }) => (
+  <ThemedCard style={styles.headerCard}>
+    <View style={styles.cardHeader}>
+      <View style={styles.cardIcon}>
+        <ThemedText style={styles.cardIconText}>
+          {formattedCard.isComplete ? "🎉" : "☕"}
+        </ThemedText>
       </View>
-    </ThemedCard>
-  );
-};
+      <View style={styles.cardInfo}>
+        <ThemedText style={styles.customerName}>
+          {isCafeUser ? formattedCard.customerName : "Local Cafe"}
+        </ThemedText>
+        <ThemedText style={styles.customerEmail}>
+          {isCafeUser ? formattedCard.customerEmail : "Your loyalty card"}
+        </ThemedText>
+      </View>
+    </View>
+  </ThemedCard>
+);
 
 const styles = StyleSheet.create({
   headerCard: {

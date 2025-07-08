@@ -1,8 +1,11 @@
 /**
- * Enhanced Card List Hook with Cafe Design Integration
+ * useEnhancedCardsList
  *
- * Manages cards data loading, formatting, and cafe design integration for the cards list.
+ * Custom React hook for managing the list of loyalty cards with cafe design integration.
+ * Loads and caches cafe design data for each unique cafe, merges it with card data,
+ * and provides formatted cards for display. Handles refresh logic and error fallback.
  */
+
 import { useContext, useEffect, useState } from "react";
 import { CardsContext } from "../../contexts/CardsContext";
 import { getCafeDesign } from "../../lib/appwrite/cafe-profiles";
@@ -30,7 +33,7 @@ export const useEnhancedCardsList = () => {
           designs[cafeUserId] = design;
         } catch (error) {
           console.error(`Error loading design for cafe ${cafeUserId}:`, error);
-          // Use default design
+          // Use default design if fetch fails
           designs[cafeUserId] = {
             primaryColor: "#AA7C48",
             secondaryColor: "#7B6F63",
@@ -53,6 +56,7 @@ export const useEnhancedCardsList = () => {
     loadCafeDesigns();
   }, [cards]);
 
+  // Pull-to-refresh handler for card list
   const onRefresh = async () => {
     try {
       setRefreshing(true);
@@ -64,10 +68,8 @@ export const useEnhancedCardsList = () => {
     }
   };
 
-  // Function to update a specific card in the list
+  // Update a specific card in the list (refreshes cards from backend)
   const updateCardInList = async (updatedCard) => {
-    // Since the database update already happened in updateCardPinnedStatus,
-    // just refresh the cards list to get the latest data
     try {
       await fetchCards();
     } catch (error) {
@@ -75,7 +77,7 @@ export const useEnhancedCardsList = () => {
     }
   };
 
-  // Process and format cards data for display with cafe design
+  // Merge card data with cafe design for display
   const processCardsData = (cardsData) => {
     if (!cardsData || cardsData.length === 0) return [];
 
@@ -114,19 +116,15 @@ export const useEnhancedCardsList = () => {
         icon: cafeDesign.stampIcon || "☕",
         isReady: (card.availableRewards || 0) > 0,
         isPinned: card.isPinned || false,
-        // Include the full cafe design for the custom components
-        cafeDesign: cafeDesign,
+        cafeDesign: cafeDesign, // Attach full design for custom UI
         ...card,
       };
     });
 
-    // Sort cards: pinned cards first, then by last stamp date (most recent first)
+    // Sort: pinned cards first, then by last stamp date (most recent first)
     return processedCards.sort((a, b) => {
-      // First, sort by pinned status (pinned cards first)
       if (a.isPinned && !b.isPinned) return -1;
       if (!a.isPinned && b.isPinned) return 1;
-
-      // If both have same pinned status, sort by last stamp date
       const dateA = new Date(a.lastStampDate || a.issueDate || 0);
       const dateB = new Date(b.lastStampDate || b.issueDate || 0);
       return dateB - dateA;
@@ -136,11 +134,11 @@ export const useEnhancedCardsList = () => {
   const displayCards = processCardsData(cards);
 
   return {
-    displayCards,
-    loading,
-    refreshing,
-    onRefresh,
-    updateCardInList,
-    cafeDesigns,
+    displayCards, // Array of formatted cards for UI
+    loading, // Loading state from CardsContext
+    refreshing, // Pull-to-refresh state
+    onRefresh, // Handler to refresh cards
+    updateCardInList, // Handler to update a card in the list
+    cafeDesigns, // Map of cafeUserId to design object
   };
 };

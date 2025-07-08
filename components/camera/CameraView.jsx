@@ -5,6 +5,14 @@ import ThemedButton from "../ThemedButton";
 import ThemedText from "../ThemedText";
 import ThemedView from "../ThemedView";
 
+/**
+ * CameraScanner
+ *
+ * Handles camera permissions, loading, error states, and barcode scanning.
+ * - Shows loading or error UI as needed.
+ * - Displays a scanning frame overlay when camera is ready.
+ * - Calls onBarCodeScanned when a barcode is detected (unless blocked).
+ */
 const CameraScanner = ({
   hasPermission,
   cameraReady,
@@ -17,39 +25,24 @@ const CameraScanner = ({
   refreshCamera,
 }) => {
   const [cameraError, setCameraError] = useState(false);
-  const [showRefreshButton, setShowRefreshButton] = useState(false);
-
-  // Show refresh button if camera doesn't load after 8 seconds
-  useEffect(() => {
-    if (hasPermission === true && !cameraReady) {
-      const timer = setTimeout(() => {
-        setShowRefreshButton(true);
-      }, 8000);
-
-      return () => clearTimeout(timer);
-    } else {
-      setShowRefreshButton(false);
-    }
-  }, [hasPermission, cameraReady, cameraKey]);
 
   // Reset error state when camera key changes
   useEffect(() => {
     setCameraError(false);
-    setShowRefreshButton(false);
   }, [cameraKey]);
 
+  // Handle camera mount error
   const handleCameraError = () => {
-    console.log("Camera error detected");
     setCameraError(true);
-    setShowRefreshButton(true);
   };
 
+  // Retry camera initialization
   const handleRefresh = () => {
     setCameraError(false);
-    setShowRefreshButton(false);
     refreshCamera?.();
   };
 
+  // Show loading indicator while requesting permission or loading
   if (hasPermission === null || isLoading) {
     return (
       <ThemedView style={styles.scannerContainer}>
@@ -63,6 +56,7 @@ const CameraScanner = ({
     );
   }
 
+  // Show error if no camera permission
   if (hasPermission === false) {
     return (
       <ThemedView style={styles.scannerContainer}>
@@ -76,6 +70,7 @@ const CameraScanner = ({
     );
   }
 
+  // Show error UI if camera fails to load
   if (cameraError) {
     return (
       <ThemedView style={styles.scannerContainer}>
@@ -94,6 +89,7 @@ const CameraScanner = ({
     );
   }
 
+  // Main camera view
   return (
     <View style={styles.scannerContainer}>
       <CameraView
@@ -101,18 +97,12 @@ const CameraScanner = ({
         style={styles.camera}
         facing="back"
         onCameraReady={() => {
-          console.log("Camera: Camera ready");
-          setCameraReady(); // Use the passed callback instead of direct state update
+          setCameraReady();
           setCameraError(false);
         }}
         onBarcodeScanned={
           scanned || showStampModal
-            ? (scan) => {
-                console.log("Scanner blocked - ignoring scan:", {
-                  scanned,
-                  showStampModal,
-                });
-              }
+            ? () => {} // Ignore scans if blocked
             : onBarCodeScanned
         }
         onMountError={handleCameraError}
@@ -126,7 +116,7 @@ const CameraScanner = ({
         </View>
       )}
 
-      {/* Scanning Frame */}
+      {/* Scanning Frame Overlay */}
       {cameraReady && (
         <View style={styles.scanningFrame}>
           <View style={[styles.corner, styles.topLeft]} />
@@ -158,10 +148,10 @@ const styles = StyleSheet.create({
   },
   scanningFrame: {
     position: "absolute",
-    top: "25%",
+    top: "20%",
     left: "15%",
     width: "70%",
-    height: "50%",
+    height: "60%",
     backgroundColor: "transparent",
   },
   corner: {

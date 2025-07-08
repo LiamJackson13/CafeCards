@@ -3,6 +3,12 @@ import ThemedButton from "../ThemedButton";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
+/**
+ * CustomStampProgress
+ *
+ * Shows progress, stamps grid, and stats for a custom cafe card.
+ * - If a reward is available, shows a redeem button instead.
+ */
 const CustomStampProgress = ({
   formattedCard,
   theme,
@@ -176,6 +182,11 @@ const CustomStampProgress = ({
   );
 };
 
+/**
+ * CustomStampsGrid
+ *
+ * Renders a grid layout of stamp icons for the card.
+ */
 const CustomStampsGrid = ({
   current,
   max,
@@ -184,7 +195,6 @@ const CustomStampsGrid = ({
   emptyColor,
   theme,
 }) => {
-  // Create a grid layout for stamps
   const stampsPerRow = 5;
   const rows = Math.ceil(max / stampsPerRow);
 
@@ -195,7 +205,6 @@ const CustomStampsGrid = ({
           {Array.from({ length: stampsPerRow }).map((_, colIndex) => {
             const stampIndex = rowIndex * stampsPerRow + colIndex;
             if (stampIndex >= max) return null;
-
             const isStamped = stampIndex < current;
             return (
               <View

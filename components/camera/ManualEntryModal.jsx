@@ -3,6 +3,14 @@ import ThemedButton from "../ThemedButton";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
+/**
+ * ManualEntryModal
+ *
+ * Modal for manually entering a card ID or QR code data.
+ * - Allows user to input card ID.
+ * - Disables submit button if input is empty or processing.
+ * - Calls onSubmit when "Add Stamp" is pressed.
+ */
 const ManualEntryModal = ({
   visible,
   onClose,
@@ -11,6 +19,7 @@ const ManualEntryModal = ({
   onSubmit,
   isProcessing,
 }) => {
+  // Handle cancel: close modal and reset input
   const handleCancel = () => {
     onClose();
     setCardId("");
@@ -20,7 +29,7 @@ const ManualEntryModal = ({
     <Modal
       visible={visible}
       animationType="slide"
-      transparent={true}
+      transparent
       onRequestClose={handleCancel}
     >
       <View style={styles.modalOverlay}>
@@ -44,7 +53,6 @@ const ManualEntryModal = ({
 
           <View style={styles.modalButtons}>
             <ThemedButton
-              title="Cancel"
               onPress={handleCancel}
               style={[
                 styles.modalButton,
@@ -56,7 +64,6 @@ const ManualEntryModal = ({
             </ThemedButton>
 
             <ThemedButton
-              title={isProcessing ? "Processing..." : "Add Stamp"}
               onPress={onSubmit}
               style={[
                 styles.modalButton,

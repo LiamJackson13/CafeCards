@@ -1,14 +1,14 @@
 /**
  * QR Code Display Screen
  *
- * This screen displays the user's loyalty card QR code for scanning by cafe owners.
- * Features include:
- * - Generates QR code containing user's loyalty card data
- * - Themed QR code (black on white in light mode, white on black in dark mode)
- * - User information display
- * - Responsive design with proper spacing
- * - Copy card ID functionality
- * - Refresh QR code functionality
+ * Shows the user's loyalty card QR code for scanning by cafe staff.
+ * Features:
+ * - Generates QR code with user/card data
+ * - Themed QR code (dark/light)
+ * - User info and card ID (copyable)
+ * - Refresh QR code
+ * - Instructions for use
+ * - Responsive, modern UI
  */
 import * as Clipboard from "expo-clipboard";
 import { useRouter } from "expo-router";
@@ -35,11 +35,11 @@ const QRDisplayScreen = () => {
   const { user } = useUser();
   const { actualTheme } = useTheme();
   const theme = Colors[actualTheme] ?? Colors.light;
-  const [qrKey, setQrKey] = useState(0); // For refreshing QR code
+  const [qrKey, setQrKey] = useState(0);
   const router = useRouter();
 
   const screenWidth = Dimensions.get("window").width;
-  const qrSize = Math.min(screenWidth * 0.7, 300); // Responsive QR size
+  const qrSize = Math.min(screenWidth * 0.7, 300);
 
   // Generate loyalty card data for QR code
   const generateCardData = () => {
@@ -50,7 +50,7 @@ const QRDisplayScreen = () => {
       cardId: `CARD_${userId.slice(-8)}`,
       type: "loyalty_card",
       customerName: user?.name || user?.email?.split("@")[0] || "Guest User",
-      issueDate: new Date().toISOString().split("T")[0], // YYYY-MM-DD format
+      issueDate: new Date().toISOString().split("T")[0],
       version: "1.0",
       app: "cafe-cards",
     };
@@ -59,6 +59,7 @@ const QRDisplayScreen = () => {
 
   const cardData = generateCardData();
 
+  // Copy card ID to clipboard
   const copyCardId = async () => {
     const data = JSON.parse(cardData);
     try {
@@ -70,6 +71,7 @@ const QRDisplayScreen = () => {
     }
   };
 
+  // Refresh QR code
   const refreshQR = () => {
     setQrKey((prev) => prev + 1);
     Alert.alert("QR Code Refreshed", "Your QR code has been updated");
@@ -172,6 +174,7 @@ const QRDisplayScreen = () => {
 
 export default QRDisplayScreen;
 
+// --- Styles ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,

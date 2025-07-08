@@ -4,12 +4,20 @@ import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 import { ProgressBar, StampsIndicator } from "./ProgressIndicators";
 
+/**
+ * CardItem
+ *
+ * Displays a summary card for a loyalty card.
+ * - Shows progress, rewards, and status.
+ * - Cafe users see customer info; customers see cafe info.
+ */
 const CardItem = ({ item, onPress, isCafeUser }) => {
   const isComplete = item.stamps >= item.maxStamps;
 
   return (
     <Pressable onPress={() => onPress(item.id)}>
       <ThemedCard style={[styles.card, { borderLeftColor: item.color }]}>
+        {/* Header: Icon and Info */}
         <View style={styles.cardHeader}>
           <ThemedText style={styles.cardIcon}>{item.icon}</ThemedText>
           <View style={styles.cardInfo}>
@@ -26,8 +34,8 @@ const CardItem = ({ item, onPress, isCafeUser }) => {
                 styles.completeBadge,
                 item.isReady && styles.readyBadge,
                 {
-                  backgroundColor: item.isReady ? "#4CAF50" : "#4CAF50",
-                  shadowColor: item.isReady ? "#4CAF50" : "#4CAF50",
+                  backgroundColor: "#4CAF50",
+                  shadowColor: "#4CAF50",
                 },
               ]}
             >
@@ -42,6 +50,7 @@ const CardItem = ({ item, onPress, isCafeUser }) => {
 
         <Spacer height={10} />
 
+        {/* Progress Bar */}
         <ProgressBar
           current={item.stamps}
           max={item.maxStamps}
@@ -50,14 +59,16 @@ const CardItem = ({ item, onPress, isCafeUser }) => {
 
         <Spacer height={10} />
 
+        {/* Stamps Indicator (max 5 visually) */}
         <StampsIndicator
-          current={Math.min(item.stamps, 5)} // Show max 5 stamps visually
+          current={Math.min(item.stamps, 5)}
           max={Math.min(item.maxStamps, 5)}
           color={item.color}
         />
 
         <Spacer height={10} />
 
+        {/* Cafe user: show totals */}
         {isCafeUser && (
           <>
             <View style={styles.rewardContainer}>
@@ -79,6 +90,7 @@ const CardItem = ({ item, onPress, isCafeUser }) => {
           </>
         )}
 
+        {/* Reward info */}
         <View style={styles.rewardContainer}>
           <ThemedText style={styles.rewardLabel}>Reward:</ThemedText>
           <ThemedText style={[styles.rewardText, { color: item.color }]}>
@@ -86,6 +98,7 @@ const CardItem = ({ item, onPress, isCafeUser }) => {
           </ThemedText>
         </View>
 
+        {/* Redeem status */}
         {(isComplete || item.isReady) && (
           <View
             style={[

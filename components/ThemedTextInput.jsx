@@ -1,11 +1,9 @@
 /**
- * Themed Text Input Component
+ * ThemedTextInput
  *
- * A reusable text input component that automatically applies theme-based styling.
- * Provides consistent input field appearance across the app with proper theming support.
- * Includes platform-specific optimizations for web (outline removal, cursor styling).
- * Automatically adapts colors based on current theme and provides standard input styling
- * like padding, border radius, and background colors.
+ * Reusable text input with theme-based styling.
+ * Applies consistent appearance and adapts to light/dark mode.
+ * Optimizes for web (removes outline, sets cursor/user-select).
  */
 import { Platform, TextInput } from "react-native";
 import { Colors } from "../constants/Colors";
@@ -15,6 +13,7 @@ const ThemedTextInput = ({ style, ...props }) => {
   const { actualTheme } = useTheme();
   const theme = Colors[actualTheme] ?? Colors.light;
 
+  // Platform-specific tweaks for web
   const webStyles =
     Platform.OS === "web"
       ? {

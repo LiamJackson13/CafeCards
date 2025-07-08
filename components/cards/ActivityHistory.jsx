@@ -3,7 +3,12 @@ import Spacer from "../Spacer";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
-const ScanHistoryItem = ({ scan, index, theme }) => {
+/**
+ * ScanHistoryItem
+ *
+ * Renders a single scan activity row with icon, action, and time ago.
+ */
+const ScanHistoryItem = ({ scan, theme }) => {
   const date = new Date(scan.timestamp);
   const timeAgo = getTimeAgo(date);
 
@@ -30,6 +35,11 @@ const ScanHistoryItem = ({ scan, index, theme }) => {
   );
 };
 
+/**
+ * getTimeAgo
+ *
+ * Returns a human-readable time difference string (e.g., "2h ago").
+ */
 const getTimeAgo = (date) => {
   const now = new Date();
   const diffMs = now - date;
@@ -42,51 +52,46 @@ const getTimeAgo = (date) => {
   return `${diffDays}d ago`;
 };
 
-const ActivityHistory = ({ scanHistory, theme }) => {
-  return (
-    <ThemedCard
-      style={[
-        styles.historyCard,
-        {
-          backgroundColor: theme.card,
-          borderColor: theme.border,
-        },
-      ]}
-    >
-      <ThemedText style={[styles.sectionTitle, { color: theme.text }]}>
-        Recent Activity
-      </ThemedText>
-      <Spacer height={15} />
+/**
+ * ActivityHistory
+ *
+ * Card showing the last 5 scan activities, or a message if none.
+ */
+const ActivityHistory = ({ scanHistory, theme }) => (
+  <ThemedCard
+    style={[
+      styles.historyCard,
+      {
+        backgroundColor: theme.card,
+        borderColor: theme.border,
+      },
+    ]}
+  >
+    <ThemedText style={[styles.sectionTitle, { color: theme.text }]}>
+      Recent Activity
+    </ThemedText>
+    <Spacer height={15} />
 
-      {scanHistory.length > 0 ? (
-        <View style={styles.historyList}>
-          {scanHistory
-            .slice(-5) // Show last 5 scans
-            .reverse() // Show most recent first
-            .map((scan, index) => (
-              <ScanHistoryItem
-                key={index}
-                scan={scan}
-                index={index}
-                theme={theme}
-              />
-            ))}
-        </View>
-      ) : (
-        <View style={styles.emptyHistory}>
-          <ThemedText
-            style={[
-              styles.emptyHistoryText,
-              { color: theme.text, opacity: 0.6 },
-            ]}
-          >
-            No activity yet
-          </ThemedText>
-        </View>
-      )}
-    </ThemedCard>
-  );
-};
+    {scanHistory.length > 0 ? (
+      <View style={styles.historyList}>
+        {scanHistory
+          .slice(-5) // Show last 5 scans
+          .reverse() // Most recent first
+          .map((scan, index) => (
+            <ScanHistoryItem key={index} scan={scan} theme={theme} />
+          ))}
+      </View>
+    ) : (
+      <View style={styles.emptyHistory}>
+        <ThemedText
+          style={[styles.emptyHistoryText, { color: theme.text, opacity: 0.6 }]}
+        >
+          No activity yet
+        </ThemedText>
+      </View>
+    )}
+  </ThemedCard>
+);
 
 const styles = StyleSheet.create({
   historyCard: {

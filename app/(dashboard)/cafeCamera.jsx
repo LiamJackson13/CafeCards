@@ -1,3 +1,14 @@
+/**
+ * Cafe Scanner Screen
+ *
+ * Allows cafe staff to scan customer QR codes to add stamps or redeem rewards.
+ * Features:
+ * - Camera QR scanning and manual entry fallback
+ * - Stamp confirmation and redemption modals
+ * - Recent scan history
+ * - Access control (cafe users only)
+ * - Themed, responsive layout
+ */
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 import { StyleSheet } from "react-native";
@@ -62,6 +73,7 @@ const CafeScannerScreen = () => {
     }, [refreshCamera])
   );
 
+  // Restrict access to cafe users only
   if (!isCafeUser) {
     return (
       <ThemedView style={styles.container} safe>
@@ -106,7 +118,7 @@ const CafeScannerScreen = () => {
         style={styles.manualButton}
         disabled={isProcessing}
       >
-        <ThemedText style={{ color: "#fff" }}>Manual Entry</ThemedText>
+        <ThemedText style={styles.manualButtonText}>Manual Entry</ThemedText>
       </ThemedButton>
 
       <Spacer height={10} />
@@ -114,14 +126,13 @@ const CafeScannerScreen = () => {
       <ThemedButton
         title="Reset Scanner"
         onPress={() => {
-          console.log("Manual scanner reset triggered");
           resetScanner();
           refreshCamera();
         }}
-        style={[styles.manualButton, { backgroundColor: "#ff6b6b" }]}
+        style={[styles.manualButton, styles.resetButton]}
         disabled={isProcessing}
       >
-        <ThemedText style={{ color: "#fff" }}>Reset Scanner</ThemedText>
+        <ThemedText style={styles.manualButtonText}>Reset Scanner</ThemedText>
       </ThemedButton>
 
       <Spacer height={20} />
@@ -168,6 +179,7 @@ const CafeScannerScreen = () => {
   );
 };
 
+// --- Styles ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -187,6 +199,12 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
+  },
+  manualButtonText: {
+    color: "#fff",
+  },
+  resetButton: {
+    backgroundColor: "#ff6b6b",
   },
   historyTitle: {
     fontSize: 18,

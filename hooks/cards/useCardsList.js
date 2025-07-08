@@ -1,8 +1,11 @@
 /**
- * Cards List Hook
+ * useCardsList
  *
- * Manages cards list state, refresh logic, and data formatting.
+ * Custom React hook for managing the list of loyalty cards.
+ * Handles refresh logic, card updates, and formatting for display.
+ * Integrates with CardsContext for global card state and actions.
  */
+
 import { useContext, useState } from "react";
 import { CardsContext } from "../../contexts/CardsContext";
 
@@ -10,6 +13,7 @@ export const useCardsList = () => {
   const { cards, loading, fetchCards, updateCard } = useContext(CardsContext);
   const [refreshing, setRefreshing] = useState(false);
 
+  // Pull-to-refresh handler for card list
   const onRefresh = async () => {
     setRefreshing(true);
     try {
@@ -21,14 +25,14 @@ export const useCardsList = () => {
     }
   };
 
-  // Function to update a specific card in the list
+  // Update a specific card in the list (delegates to CardsContext)
   const updateCardInList = (updatedCard) => {
     if (updateCard) {
       updateCard(updatedCard);
     }
   };
 
-  // Process and format cards data for display
+  // Format and process cards for display (adds defaults, sorts, etc.)
   const processCardsData = (cardsData) => {
     if (!cardsData || cardsData.length === 0) return [];
 
@@ -51,26 +55,24 @@ export const useCardsList = () => {
       ...card,
     }));
 
-    // Sort cards: pinned cards first, then by last stamp date (most recent first)
+    // Sort: pinned cards first, then by last stamp date (most recent first)
     return processedCards.sort((a, b) => {
-      // First, sort by pinned status (pinned cards first)
       if (a.isPinned && !b.isPinned) return -1;
       if (!a.isPinned && b.isPinned) return 1;
-
-      // If both have same pinned status, sort by last stamp date
       const dateA = new Date(a.lastStampDate || a.issueDate || 0);
       const dateB = new Date(b.lastStampDate || b.issueDate || 0);
       return dateB - dateA;
     });
   };
 
+  // Cards ready for display in UI
   const displayCards = processCardsData(cards);
 
   return {
-    displayCards,
-    loading,
-    refreshing,
-    onRefresh,
-    updateCardInList,
+    displayCards, // Array of formatted cards for UI
+    loading, // Loading state from CardsContext
+    refreshing, // Pull-to-refresh state
+    onRefresh, // Handler to refresh cards
+    updateCardInList, // Handler to update a card in the list
   };
 };

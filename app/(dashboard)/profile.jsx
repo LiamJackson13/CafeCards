@@ -1,15 +1,16 @@
 /**
  * User Profile Screen
  *
- * This screen displays user profile information and account management options.
- * Features include:
- * - Display of user email/account information
- * - Theme toggle for switching between light/dark modes
- * - Logout functionality
- * - Real-time profile stats and information cards
- * - Pull-to-refresh functionality for updated stats
- * - Welcome message and app description
- * - Themed styling with safe area support
+ * Displays user profile info, stats, and account management options.
+ * Features:
+ * - Profile header and editable display name
+ * - Stats section (customer/cafe user)
+ * - Settings (password change, etc.)
+ * - Data management actions (export/clear)
+ * - App info/version/build
+ * - Logout
+ * - Pull-to-refresh for stats
+ * - Themed, safe-area layout
  */
 import { useState } from "react";
 import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
@@ -50,6 +51,7 @@ const ProfileScreen = () => {
     refetchStats,
   } = useProfile();
 
+  // Pull-to-refresh handler
   const onRefresh = async () => {
     setRefreshing(true);
     try {
@@ -108,7 +110,6 @@ const ProfileScreen = () => {
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Data Management
           </ThemedText>
-
           <View style={styles.dataButtons}>
             <ThemedButton
               title="Export Data"
@@ -116,7 +117,6 @@ const ProfileScreen = () => {
             >
               <ThemedText>Export Data</ThemedText>
             </ThemedButton>
-
             <ThemedButton
               title="Clear All Data"
               style={[styles.dataButton, styles.clearButton]}
@@ -133,17 +133,14 @@ const ProfileScreen = () => {
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             App Information
           </ThemedText>
-
           <View style={styles.infoRow}>
             <ThemedText style={styles.infoLabel}>Version:</ThemedText>
             <ThemedText style={styles.infoValue}>1.0.0</ThemedText>
           </View>
-
           <View style={styles.infoRow}>
             <ThemedText style={styles.infoLabel}>Build:</ThemedText>
             <ThemedText style={styles.infoValue}>2025.1.1</ThemedText>
           </View>
-
           <View style={styles.infoRow}>
             <ThemedText style={styles.infoLabel}>Last Updated:</ThemedText>
             <ThemedText style={styles.infoValue}>July 4, 2025</ThemedText>
@@ -171,6 +168,7 @@ const ProfileScreen = () => {
   );
 };
 
+// --- Styles ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -178,6 +176,45 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     padding: 20,
+  },
+  section: {
+    marginBottom: 20,
+    padding: 18,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 12,
+  },
+  dataButtons: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 10,
+    marginBottom: 5,
+  },
+  dataButton: {
+    flex: 1,
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  exportButton: {
+    backgroundColor: "#3498DB",
+  },
+  clearButton: {
+    backgroundColor: "#E74C3C",
+  },
+  infoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 6,
+  },
+  infoLabel: {
+    fontWeight: "500",
+    opacity: 0.7,
+  },
+  infoValue: {
+    fontWeight: "400",
   },
 });
 

@@ -5,6 +5,13 @@ import ThemedButton from "../ThemedButton";
 import ThemedText from "../ThemedText";
 import DebugToggle from "./DebugToggle";
 
+/**
+ * ProfileHeader
+ *
+ * Displays the profile header with avatar, name, email, and edit button.
+ * - Shows debug toggle in development.
+ * - Cafe users see business badges.
+ */
 const ProfileHeader = ({ user, isCafeUser, onEditName, getDisplayName }) => {
   const { actualTheme } = useTheme();
   const theme = Colors[actualTheme] ?? Colors.light;
@@ -15,6 +22,7 @@ const ProfileHeader = ({ user, isCafeUser, onEditName, getDisplayName }) => {
       <DebugToggle />
 
       <View style={styles.header}>
+        {/* Cafe Owner Badge */}
         {isCafeUser && (
           <View
             style={[styles.cafeOwnerBadge, { backgroundColor: theme.primary }]}
@@ -23,6 +31,7 @@ const ProfileHeader = ({ user, isCafeUser, onEditName, getDisplayName }) => {
           </View>
         )}
 
+        {/* Avatar */}
         <View style={styles.avatarWrapper}>
           <View
             style={[
@@ -40,6 +49,7 @@ const ProfileHeader = ({ user, isCafeUser, onEditName, getDisplayName }) => {
           <View style={[styles.statusDot, { backgroundColor: "#4CAF50" }]} />
         </View>
 
+        {/* Name and Edit Button */}
         <View style={styles.nameContainer}>
           <ThemedText type="title" style={styles.userName}>
             {getDisplayName()}
@@ -54,10 +64,12 @@ const ProfileHeader = ({ user, isCafeUser, onEditName, getDisplayName }) => {
           </ThemedButton>
         </View>
 
+        {/* Email */}
         <ThemedText style={[styles.userEmail, { color: theme.text }]}>
           {user?.email || "user@example.com"}
         </ThemedText>
 
+        {/* Cafe Role Badge */}
         {isCafeUser && (
           <View
             style={[

@@ -1,3 +1,10 @@
+/**
+ * useProfileStats
+ *
+ * Custom hook for fetching and calculating profile statistics for both customers and cafe users.
+ * Handles loading, error, and refetch logic. Returns stats formatted for display in StatCard components.
+ */
+
 import { useEffect, useState } from "react";
 import {
   getLoyaltyCardsByCafeUser,
@@ -12,6 +19,7 @@ export const useProfileStats = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Fetch stats on mount and when user/cafe role changes
   useEffect(() => {
     const fetchStats = async () => {
       if (!user?.$id) {
@@ -26,12 +34,10 @@ export const useProfileStats = () => {
         if (isCafeUser) {
           // Fetch cafe owner stats
           const cafeCards = await getLoyaltyCardsByCafeUser(user.$id);
-          console.log("Fetched cafe cards:", cafeCards);
           calculatedStats = calculateCafeStats(cafeCards);
         } else {
           // Fetch customer stats
           const customerCards = await getLoyaltyCardsByCustomerId(user.$id);
-          console.log("Fetched customer cards:", customerCards);
           calculatedStats = calculateCustomerStats(customerCards);
         }
 
@@ -50,6 +56,7 @@ export const useProfileStats = () => {
     fetchStats();
   }, [user?.$id, isCafeUser]);
 
+  // Manual refetch handler
   const refetchStats = async () => {
     if (!user?.$id) return;
 
@@ -59,11 +66,9 @@ export const useProfileStats = () => {
 
       if (isCafeUser) {
         const cafeCards = await getLoyaltyCardsByCafeUser(user.$id);
-        console.log("Refetching cafe cards:", cafeCards);
         calculatedStats = calculateCafeStats(cafeCards);
       } else {
         const customerCards = await getLoyaltyCardsByCustomerId(user.$id);
-        console.log("Refetching customer cards:", customerCards);
         calculatedStats = calculateCustomerStats(customerCards);
       }
 
@@ -80,8 +85,11 @@ export const useProfileStats = () => {
   return { stats, loading, error, refetch: refetchStats };
 };
 
+/**
+ * Calculate stats for customer users.
+ * Returns array of stat objects for StatCard display.
+ */
 const calculateCustomerStats = (cards) => {
-  // Ensure cards is an array
   if (!Array.isArray(cards)) {
     console.warn("Cards data is not an array:", cards);
     cards = [];
@@ -119,8 +127,11 @@ const calculateCustomerStats = (cards) => {
   ];
 };
 
+/**
+ * Calculate stats for cafe owner users.
+ * Returns array of stat objects for StatCard display.
+ */
 const calculateCafeStats = (cards) => {
-  // Ensure cards is an array
   if (!Array.isArray(cards)) {
     console.warn("Cafe cards data is not an array:", cards);
     cards = [];
@@ -165,6 +176,10 @@ const calculateCafeStats = (cards) => {
   ];
 };
 
+/**
+ * Get fallback stats in case of error or no data.
+ * Returns array of stat objects with zero values.
+ */
 const getFallbackStats = (isCafeUser) => {
   if (isCafeUser) {
     return [

@@ -1,12 +1,3 @@
-/**
- * Authentication Layout Component
- *
- * This layout component wraps all authentication-related screens (login, register).
- * It uses the GuestOnly component to ensure only unauthenticated users can access
- * these screens. Provides a Stack navigator for auth screens with no headers
- * and handles automatic redirection for already authenticated users.
- */
-
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import GuestOnly from "../../components/auth/GuestOnly";
@@ -18,8 +9,11 @@ export default function AuthLayout() {
 
   return (
     <GuestOnly>
+      {/* Only unauthenticated users can see this page */}
       <StatusBar style="auto" />
-      <Stack screenOptions={{ headerShown: false, animation: "none" }} />
+      {/* Ensures the status bar on the phone matches the theme of the app */}
+      <Stack screenOptions={{ headerShown: false, animation: "none" }} />{" "}
+      {/* Sets the nav options to be Stack and hides the header */}
     </GuestOnly>
   );
 }

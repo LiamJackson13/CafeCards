@@ -10,12 +10,22 @@
 import { Pressable, StyleSheet } from "react-native";
 import { Colors } from "../constants/Colors";
 
-function ThemedButton({ style, ...props }) {
+/**
+ * ThemedButton
+ *
+ * @param {object} props
+ * @param {object} [props.style] - Additional styles for the button
+ * @param {React.ReactNode} [props.children] - Button content
+ * @param {...any} props - Other Pressable props
+ */
+function ThemedButton({ style, children, ...props }) {
   return (
     <Pressable
       style={({ pressed }) => [styles.button, pressed && styles.pressed, style]}
       {...props}
-    />
+    >
+      {children}
+    </Pressable>
   );
 }
 
@@ -25,6 +35,8 @@ const styles = StyleSheet.create({
     padding: 18,
     borderRadius: 6,
     marginVertical: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
   pressed: {
     opacity: 0.5,

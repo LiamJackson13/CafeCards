@@ -5,6 +5,13 @@ import ThemedButton from "../ThemedButton";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
+/**
+ * QRCodeModal
+ *
+ * Shows a modal with a QR code for reward redemption.
+ * - Ensures the QR data uses the current user's name.
+ * - Displays available rewards and instructions.
+ */
 const QRCodeModal = ({ visible, onClose, qrData, availableRewards, theme }) => {
   const { user } = useUser();
 

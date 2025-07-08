@@ -2,6 +2,11 @@
 
 ## 🚀 High Priority Features
 
+### Do first
+- [ ] Fix recent activity on card [id] page (test this by adding 5 new stamps)
+- [ ] Fix appwrite IDs to be in .env file
+- [ ] Shorten loyalty_cards.js file
+
 ### Random Tasks
 - [x] Swap around layout file so that Profile tab is on the left and settings tab is on the right
 - [ ] Make profile screen show real data

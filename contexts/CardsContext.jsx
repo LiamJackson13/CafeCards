@@ -1,11 +1,11 @@
 /**
- * Loyalty Cards Data Management Context
+ * CardsContext
  *
- * Provides data management for loyalty cards throughout the app.
- * Handles CRUD operations for loyalty cards using Appwrite database services.
- * Manages cards state and provides methods for fetching cards, creating new cards,
- * and managing card operations. Integrates with user authentication and cafe user roles.
+ * Provides global state and CRUD operations for loyalty cards.
+ * Handles fetching, updating, and real-time syncing of cards for both cafe users and customers.
+ * Integrates with Appwrite for database and real-time updates.
  */
+
 import {
   createContext,
   useCallback,
@@ -28,90 +28,76 @@ import {
 
 export const CardsContext = createContext();
 
+/**
+ * CardsProvider
+ *
+ * Wraps children with CardsContext and provides card state and actions.
+ */
 export function CardsProvider({ children }) {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(false);
   const [recentRedemption, setRecentRedemption] = useState(null);
+
   const { user } = useUser();
   const isCafeUser = useCafeUser();
 
+  /**
+   * Fetch all cards for the current user (cafe or customer).
+   */
   const fetchCards = useCallback(async () => {
     if (!user) return;
-
+    setLoading(true);
     try {
-      setLoading(true);
-      let cardDocuments = [];
+      let cardDocuments = isCafeUser
+        ? await getLoyaltyCardsByCafeUser(user.$id)
+        : await getLoyaltyCardsByCustomerId(user.$id);
 
-      if (isCafeUser) {
-        // Fetch cards managed by this cafe user
-        cardDocuments = await getLoyaltyCardsByCafeUser(user.$id);
-      } else {
-        // Fetch cards for this customer
-        cardDocuments = await getLoyaltyCardsByCustomerId(user.$id);
-      }
-
-      // Filter out any invalid cards and log warnings
-      const validCards = cardDocuments.filter((card) => {
-        if (!card || !card.$id) {
-          console.warn("Found invalid card document (missing $id):", card);
-          return false;
-        }
-        if (!card.customerId || !card.cafeUserId) {
-          console.warn("Found card missing required fields:", card);
-          return false;
-        }
-        return true;
-      });
-
-      if (validCards.length !== cardDocuments.length) {
-        console.warn(
-          `Filtered out ${
-            cardDocuments.length - validCards.length
-          } invalid cards`
-        );
-      }
-
+      // Filter out invalid cards
+      const validCards = cardDocuments.filter(
+        (card) => card && card.$id && card.customerId && card.cafeUserId
+      );
       setCards(validCards);
     } catch (error) {
       console.error("Error fetching cards:", error);
-      // Don't throw the error, just set empty cards to prevent app crashes
       setCards([]);
     } finally {
       setLoading(false);
     }
   }, [user, isCafeUser]);
 
-  async function fetchCardById(cardId) {
+  /**
+   * Fetch a single card by its ID.
+   */
+  const fetchCardById = async (cardId) => {
     if (!cardId) return null;
-
     try {
-      console.log("Fetching card by ID:", cardId);
-      const card = await getLoyaltyCardById(cardId);
-      console.log("Found card:", card ? "Yes" : "No");
-      return card;
+      return await getLoyaltyCardById(cardId);
     } catch (error) {
       console.error("Error fetching card by ID:", error);
       return null;
     }
-  }
+  };
 
-  async function fetchCardByUserId(userId) {
+  /**
+   * Fetch a card by customer user ID.
+   */
+  const fetchCardByUserId = async (userId) => {
     if (!userId) return null;
-
     try {
-      const card = await findLoyaltyCardByCustomerId(userId);
-      return card;
+      return await findLoyaltyCardByCustomerId(userId);
     } catch (error) {
       console.error("Error fetching card by user ID:", error);
       return null;
     }
-  }
+  };
 
-  async function createCard(data) {
+  /**
+   * Create a new loyalty card (cafe users only).
+   */
+  const createCard = async (data) => {
     if (!user || !isCafeUser) {
       throw new Error("Only cafe users can create cards");
     }
-
     try {
       const newCard = await createLoyaltyCard(data, user.$id);
       setCards((prev) => [newCard, ...prev]);
@@ -120,62 +106,47 @@ export function CardsProvider({ children }) {
       console.error("Error creating card:", error);
       throw error;
     }
-  }
+  };
 
-  async function updateCard(cardId, updateData) {
+  /**
+   * Update a loyalty card by ID.
+   */
+  const updateCard = async (cardId, updateData) => {
+    if (!cardId) throw new Error("Card ID is required for update");
     try {
-      if (!cardId) {
-        throw new Error("Card ID is required for update");
-      }
-
       const updatedCard = await updateLoyaltyCard(cardId, updateData);
-
       if (!updatedCard || !updatedCard.$id) {
         throw new Error("Invalid response from card update");
       }
-
       setCards((prev) =>
-        prev.map((card) => {
-          if (!card || !card.$id) {
-            console.warn("Found invalid card in state during update:", card);
-            return card;
-          }
-          return card.$id === cardId ? updatedCard : card;
-        })
+        prev.map((card) => (card && card.$id === cardId ? updatedCard : card))
       );
-
       return updatedCard;
     } catch (error) {
       console.error("Error updating card:", error);
-
-      // If the card was not found, remove it from local state
+      // Remove card from state if not found
       if (error.message?.includes("Loyalty card not found")) {
-        console.log(
-          "Removing card from local state as it was not found:",
-          cardId
-        );
         setCards((prev) => prev.filter((card) => card && card.$id !== cardId));
       }
-
       throw error;
     }
-  }
+  };
 
-  async function deleteCard(id) {
-    try {
-      // We'll implement this when needed
-      console.log("Delete card not implemented yet:", id);
-    } catch (error) {
-      console.error("Error deleting card:", error);
-    }
-  }
+  /**
+   * Delete a card (not implemented).
+   */
+  const deleteCard = async (id) => {
+    // Placeholder for future implementation
+    console.log("Delete card not implemented yet:", id);
+  };
 
-  // Debug function to help identify issues with cards
+  /**
+   * Debug helper to log card state.
+   */
   function debugCards() {
     console.log("=== CARDS DEBUG INFO ===");
     console.log("Total cards:", cards.length);
     console.log("User:", user?.$id, "isCafeUser:", isCafeUser);
-
     cards.forEach((card, index) => {
       if (!card) {
         console.warn(`Card ${index}: NULL/UNDEFINED`);
@@ -191,11 +162,10 @@ export function CardsProvider({ children }) {
         );
       }
     });
-
     console.log("=== END CARDS DEBUG ===");
   }
 
-  // Refresh cards when user changes
+  // Fetch cards when user or role changes
   useEffect(() => {
     if (user) {
       fetchCards();
@@ -204,7 +174,10 @@ export function CardsProvider({ children }) {
     }
   }, [user, isCafeUser, fetchCards]);
 
-  // Set up real-time subscriptions for card updates
+  /**
+   * Real-time subscription handler for Appwrite card updates.
+   * Handles create, update, and delete events.
+   */
   useEffect(() => {
     if (!user) return;
 
@@ -216,142 +189,89 @@ export function CardsProvider({ children }) {
         const { events, payload } = response;
 
         // Validate response structure
-        if (!response || !events || !Array.isArray(events)) {
-          console.warn(
-            "Invalid response structure in real-time update:",
-            response
-          );
+        if (!response || !Array.isArray(events) || !payload || !payload.$id) {
+          console.warn("Invalid real-time update:", response);
           return;
         }
-
-        // Validate payload exists and has required properties
-        if (!payload || !payload.$id) {
-          console.warn(
-            "Invalid payload received in real-time update:",
-            payload
-          );
-          return;
-        }
-
-        // Additional validation for required fields
         if (!payload.customerId || !payload.cafeUserId) {
-          console.warn(
-            "Payload missing required fields (customerId or cafeUserId):",
-            payload
-          );
+          console.warn("Payload missing required fields:", payload);
           return;
         }
 
-        // Check if this event is relevant to the current user
+        // Only update if relevant to current user
         const isRelevant = isCafeUser
-          ? payload.cafeUserId === user.$id // For cafe users, check if they manage this card
-          : payload.customerId === user.$id; // For customers, check if it's their card
+          ? payload.cafeUserId === user.$id
+          : payload.customerId === user.$id;
+        if (!isRelevant) return;
 
-        if (!isRelevant) {
-          console.log(
-            "Real-time update not relevant to current user, ignoring"
-          );
-          return;
-        }
-
+        // Handle create
         if (events.includes("databases.*.collections.*.documents.*.create")) {
-          setCards((prev) => {
-            // Check if card already exists to prevent duplicates
-            const exists = prev.some(
-              (card) => card && card.$id === payload.$id
-            );
-            if (exists) {
-              console.log(
-                "Card already exists, not adding duplicate:",
-                payload.$id
-              );
-              return prev;
-            }
-            console.log("Adding new card from real-time update:", payload.$id);
-            return [payload, ...prev];
-          });
-        } else if (
+          setCards((prev) =>
+            prev.some((card) => card && card.$id === payload.$id)
+              ? prev
+              : [payload, ...prev]
+          );
+        }
+        // Handle update
+        else if (
           events.includes("databases.*.collections.*.documents.*.update")
         ) {
           setCards((prev) =>
             prev.map((card) => {
-              if (!card || !card.$id) {
-                console.warn("Found invalid card in state:", card);
-                return card;
-              }
+              if (!card || !card.$id) return card;
               if (card.$id === payload.$id) {
-                console.log(
-                  "Updating card from real-time update:",
-                  payload.$id
-                );
-
-                // Check if this is a redemption (for customer notifications)
+                // Customer: show redemption notification if rewards decrease
                 if (!isCafeUser && card.customerId === user?.$id) {
                   const oldRewards = card.availableRewards || 0;
                   const newRewards = payload.availableRewards || 0;
-
                   if (newRewards < oldRewards) {
-                    // This is a redemption - show notification
                     setRecentRedemption({
                       timestamp: new Date(),
                       customerName: payload.customerName || "You",
                       rewardsRedeemed: oldRewards - newRewards,
                       remainingRewards: newRewards,
                     });
-
-                    // Auto-dismiss after 5 seconds
-                    setTimeout(() => {
-                      setRecentRedemption(null);
-                    }, 5000);
+                    setTimeout(() => setRecentRedemption(null), 5000);
                   }
                 }
-
                 return payload;
               }
               return card;
             })
           );
-        } else if (
+        }
+        // Handle delete
+        else if (
           events.includes("databases.*.collections.*.documents.*.delete")
         ) {
-          console.log(
-            "Removing deleted card from real-time update:",
-            payload.$id
-          );
           setCards((prev) =>
             prev.filter((card) => card && card.$id !== payload.$id)
           );
         }
       } catch (error) {
         console.error("Error handling real-time update:", error);
-        // Don't crash the app, just log the error and continue
-        // This prevents the app from crashing on malformed real-time updates
       }
     };
 
-    const setupSubscription = async () => {
+    // Subscribe to Appwrite real-time updates
+    const setupSubscription = () => {
       try {
-        console.log("Setting up real-time subscription for cards...");
         unsubscribe = client.subscribe(channel, handleRealtimeUpdate);
-        console.log("Real-time subscription established successfully");
       } catch (error) {
         console.error("Failed to set up real-time subscription:", error);
-        // Schedule a retry in 5 seconds
+        // Retry after 5 seconds if failed
         setTimeout(() => {
-          if (user) {
-            console.log("Retrying real-time subscription setup...");
-            setupSubscription();
-          }
+          if (user) setupSubscription();
         }, 5000);
       }
     };
 
     setupSubscription();
 
+    // Cleanup on unmount
     return () => {
       if (unsubscribe) {
         try {
-          console.log("Cleaning up real-time subscription");
           unsubscribe();
         } catch (error) {
           console.error("Error cleaning up subscription:", error);
@@ -373,7 +293,7 @@ export function CardsProvider({ children }) {
         createCard,
         updateCard,
         deleteCard,
-        debugCards, // Add debug function for troubleshooting
+        debugCards,
       }}
     >
       {children}
@@ -381,7 +301,12 @@ export function CardsProvider({ children }) {
   );
 }
 
-// Custom hook to use the CardsContext
+/**
+ * useCards
+ *
+ * Custom hook to access CardsContext.
+ * Throws if used outside of CardsProvider.
+ */
 export function useCards() {
   const context = useContext(CardsContext);
   if (!context) {

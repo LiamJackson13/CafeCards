@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   },
   optionSubtitle: {
     fontSize: 14,
-    opacity: 0.6,
+    opacity: 0.7,
   },
 });
 

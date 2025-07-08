@@ -7,6 +7,13 @@ import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 import { ProgressBar } from "./ProgressIndicators";
 
+/**
+ * CustomCardItem
+ *
+ * Displays a loyalty card with custom cafe branding and reward logic.
+ * - Shows dynamic design, progress, and reward status.
+ * - Cafe users see customer info; customers see cafe info and pin option.
+ */
 const CustomCardItem = ({
   item,
   onPress,
@@ -19,14 +26,14 @@ const CustomCardItem = ({
   const [loading, setLoading] = useState(true);
   const { updatingPinStatus, toggleCardPin } = usePinnedCards();
 
+  // Load cafe design on mount or when cafeUserId changes
   useEffect(() => {
     const loadCafeDesign = async () => {
       try {
         const design = await getCafeDesign(item.cafeUserId);
         setCafeDesign(design);
       } catch (error) {
-        console.error("Error loading cafe design:", error);
-        // Use default design
+        // Fallback to default design if error
         setCafeDesign({
           primaryColor: "#AA7C48",
           secondaryColor: "#7B6F63",
@@ -43,15 +50,12 @@ const CustomCardItem = ({
         setLoading(false);
       }
     };
-
     loadCafeDesign();
   }, [item.cafeUserId]);
 
-  if (loading || !cafeDesign) {
-    return null;
-  }
+  if (loading || !cafeDesign) return null;
 
-  // Ensure cafeDesign has all required properties with fallbacks
+  // Ensure all design props have fallbacks
   const safeDesign = {
     primaryColor: cafeDesign.primaryColor || "#AA7C48",
     secondaryColor: cafeDesign.secondaryColor || "#7B6F63",
@@ -67,9 +71,9 @@ const CustomCardItem = ({
     maxStampsPerCard: cafeDesign.maxStampsPerCard || 10,
   };
 
-  const isComplete = item.stamps >= (safeDesign.maxStampsPerCard || 10);
+  const isComplete = item.stamps >= safeDesign.maxStampsPerCard;
 
-  // Create dynamic theme based on cafe design and app theme
+  // Dynamic theme based on cafe design and app theme
   const dynamicTheme = {
     primary: safeDesign.primaryColor,
     secondary: safeDesign.secondaryColor,
@@ -80,7 +84,7 @@ const CustomCardItem = ({
     border: safeDesign.primaryColor,
   };
 
-  // Enhanced card styling with dynamic theming and optional background image
+  // Card style with dynamic theming and optional shadow
   const cardStyle = [
     styles.card,
     {
@@ -90,8 +94,6 @@ const CustomCardItem = ({
       borderRadius: safeDesign.borderRadius,
     },
   ];
-
-  // Apply shadow only if enabled in design and not in dark mode
   if (safeDesign.shadowEnabled && actualTheme !== "dark") {
     cardStyle.push({
       shadowColor: dynamicTheme.primary,
@@ -106,7 +108,6 @@ const CustomCardItem = ({
       elevation: 0,
     });
   }
-
   if (actualTheme === "dark") {
     cardStyle.push({
       shadowColor: dynamicTheme.text,
@@ -114,8 +115,10 @@ const CustomCardItem = ({
     });
   }
 
+  // Card content: header, progress, stamps, rewards, and actions
   const CardContent = () => (
     <View style={styles.cardContent}>
+      {/* Header: Icon, Info, Pin, Complete Badge */}
       <View style={styles.cardHeader}>
         <View style={styles.iconContainer}>
           <ThemedText
@@ -144,8 +147,7 @@ const CustomCardItem = ({
               : safeDesign.location || item.location}
           </ThemedText>
         </View>
-
-        {/* Pin Button - Only show for customers */}
+        {/* Pin Button for customers */}
         {!isCafeUser && (
           <TouchableOpacity
             onPress={() => toggleCardPin(item, onUpdate)}
@@ -174,7 +176,7 @@ const CustomCardItem = ({
             </ThemedText>
           </TouchableOpacity>
         )}
-
+        {/* Complete badge for cafe users */}
         {isComplete && !item.isReady && (
           <View
             style={[
@@ -192,7 +194,7 @@ const CustomCardItem = ({
 
       <Spacer height={10} />
 
-      {/* Customer Reward Section - replace stamps/progress with button if reward is available */}
+      {/* Customer Reward Section - button if reward is available */}
       {!isCafeUser && item.isReady ? (
         <TouchableOpacity
           onPress={() => onPress(item.id, { redeem: true })}
@@ -239,6 +241,7 @@ const CustomCardItem = ({
 
       <Spacer height={10} />
 
+      {/* Cafe user: show totals and available rewards */}
       {isCafeUser && (
         <>
           <View style={styles.rewardContainer}>
@@ -272,7 +275,6 @@ const CustomCardItem = ({
               {item.rewardsEarned}
             </ThemedText>
           </View>
-
           {item.isReady && (
             <>
               <Spacer height={15} />
@@ -308,6 +310,11 @@ const CustomCardItem = ({
   );
 };
 
+/**
+ * CustomStampsIndicator
+ *
+ * Renders a grid of stamp icons for the card.
+ */
 const CustomStampsIndicator = ({
   current,
   max,
@@ -326,7 +333,6 @@ const CustomStampsIndicator = ({
           {Array.from({ length: stampsPerRow }).map((_, colIndex) => {
             const stampIndex = rowIndex * stampsPerRow + colIndex;
             if (stampIndex >= max) return null;
-
             const isStamped = stampIndex < current;
             return (
               <View

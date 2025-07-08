@@ -15,7 +15,7 @@ const StatCard = ({ title, value, icon, color, loading = false }) => {
   const { actualTheme } = useTheme();
   const theme = Colors[actualTheme] ?? Colors.light;
 
-  // Ensure color is always defined with multiple fallbacks
+  // Ensure color is always defined with multiple fallback
   const safeColor = color || Colors.primary || "#4CAF50";
 
   if (loading) {

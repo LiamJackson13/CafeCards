@@ -1,6 +1,11 @@
 import NameModal from "./NameModal";
 import PasswordModal from "./PasswordModal";
 
+/**
+ * ProfileModals
+ *
+ * Renders modals for editing name and changing password.
+ */
 const ProfileModals = ({
   isPasswordModalVisible,
   setIsPasswordModalVisible,

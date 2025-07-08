@@ -3,20 +3,34 @@ import { Colors } from "../../constants/Colors";
 import Spacer from "../Spacer";
 import ThemedText from "../ThemedText";
 
-const StatsCard = ({ title, value, label }) => (
+/**
+ * StatsCard
+ *
+ * Displays a single stat value and label.
+ */
+const StatsCard = ({ value, label }) => (
   <View style={styles.statItem}>
     <ThemedText style={styles.statNumber}>{value}</ThemedText>
     <ThemedText style={styles.statLabel}>{label}</ThemedText>
   </View>
 );
 
+/**
+ * CardsListHeader
+ *
+ * Header for the cards list, showing quick stats and context info.
+ * - Shows different headings and stats for cafe users vs. customers.
+ */
 const CardsListHeader = ({ isCafeUser, displayCards }) => {
+  // Count cards ready to redeem (full or flagged as ready)
   const readyToRedeemCount = displayCards.filter(
     (card) => card.stamps >= card.maxStamps || card.isReady
   ).length;
 
+  // Count pinned cards (for customers)
   const pinnedCardsCount = displayCards.filter((card) => card.isPinned).length;
 
+  // Total stamps across all cards
   const totalStamps = displayCards.reduce(
     (sum, card) => sum + (card.totalStamps || card.stamps),
     0
@@ -24,12 +38,14 @@ const CardsListHeader = ({ isCafeUser, displayCards }) => {
 
   return (
     <View>
+      {/* Cafe user badge */}
       {isCafeUser && (
         <View style={styles.cafeUserBadge}>
           <ThemedText style={styles.cafeUserText}>🏪 CAFE MANAGER</ThemedText>
         </View>
       )}
 
+      {/* Heading and subtitle */}
       <View style={styles.header}>
         <ThemedText type="title" style={styles.heading}>
           {isCafeUser ? "Customer Loyalty Cards" : "Your Loyalty Cards"}
@@ -47,6 +63,7 @@ const CardsListHeader = ({ isCafeUser, displayCards }) => {
           value={displayCards.length}
           label={isCafeUser ? "Customer Cards" : "Active Cards"}
         />
+        {/* Only show pinned cards stat for customers */}
         {!isCafeUser && pinnedCardsCount > 0 && (
           <StatsCard value={pinnedCardsCount} label="Pinned Cards" />
         )}

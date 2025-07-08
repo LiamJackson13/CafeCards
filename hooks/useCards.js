@@ -1,9 +1,9 @@
 /**
- * Custom hook for accessing Cards Context
+ * useCards
  *
+ * Custom hook for accessing CardsContext.
  * Provides access to loyalty cards data and management functions.
- * Must be used within a CardsProvider component. Returns all context
- * values including cards array, loading state, and CRUD operations.
+ * Must be used within a CardsProvider component.
  */
 import { useContext } from "react";
 import { CardsContext } from "../contexts/CardsContext";

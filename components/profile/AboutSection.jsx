@@ -4,6 +4,11 @@ import { useTheme } from "../../contexts/ThemeContext";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
+/**
+ * AboutSection
+ *
+ * Shows app info, features, and version/build details.
+ */
 const AboutSection = () => {
   const { actualTheme } = useTheme();
   const theme = Colors[actualTheme] ?? Colors.light;
@@ -15,6 +20,7 @@ const AboutSection = () => {
       </ThemedText>
 
       <ThemedCard style={styles.aboutCard}>
+        {/* App Icon */}
         <View
           style={[
             styles.iconContainer,
@@ -24,16 +30,19 @@ const AboutSection = () => {
           <ThemedText style={styles.appIcon}>☕</ThemedText>
         </View>
 
+        {/* Title */}
         <ThemedText style={[styles.aboutTitle, { color: theme.text }]}>
           Your Digital Loyalty Companion
         </ThemedText>
 
+        {/* Description */}
         <ThemedText style={[styles.aboutDescription, { color: theme.text }]}>
           Collect stamps, earn rewards, and never lose a loyalty card again.
           Connect with your favorite cafes and enjoy a seamless reward
           experience.
         </ThemedText>
 
+        {/* Features List */}
         <View style={styles.featuresList}>
           <FeatureItem icon="📱" text="Digital loyalty cards" theme={theme} />
           <FeatureItem
@@ -45,6 +54,7 @@ const AboutSection = () => {
           <FeatureItem icon="🌙" text="Dark & light themes" theme={theme} />
         </View>
 
+        {/* App Info */}
         <View style={[styles.appInfo, { borderTopColor: theme.border }]}>
           <ThemedText style={[styles.appInfoText, { color: theme.text }]}>
             Version 1.0.0
@@ -61,6 +71,11 @@ const AboutSection = () => {
   );
 };
 
+/**
+ * FeatureItem
+ *
+ * Renders a single feature row with icon and text.
+ */
 const FeatureItem = ({ icon, text, theme }) => (
   <View style={styles.featureItem}>
     <ThemedText style={styles.featureIcon}>{icon}</ThemedText>

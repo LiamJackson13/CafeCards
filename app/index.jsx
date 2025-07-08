@@ -1,10 +1,10 @@
 /**
  * Home/Landing Screen
  *
- * This is the main entry point screen for the Cafe Cards app.
- * Displays the app title, description, and navigation links to key sections
- * including login, registration, cards dashboard, and teams management.
- * Serves as a simple navigation hub for users to access different app features.
+ * Main entry point for the Cafe Cards app.
+ * - App title, description, and feature highlights
+ * - Navigation to login, registration, or dashboard
+ * - Responsive, themed layout
  */
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -23,29 +23,24 @@ export default function Index() {
   const isCafeUser = useCafeUser();
   const { user } = useUser();
   const { actualTheme } = useTheme();
-
   const theme = Colors[actualTheme] ?? Colors.light;
-
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Simulate authentication check
     const checkAuthentication = async () => {
-      // Add any necessary logic to check authentication here
       await new Promise((resolve) => setTimeout(resolve, 500));
       setIsLoading(false);
     };
-
     checkAuthentication();
   }, []);
 
+  // Navigate to dashboard or login based on user type
   const handleDashboardNavigation = () => {
     if (!user) {
       router.push("/login");
       return;
     }
-
-    // Route to appropriate default screen based on user type
     if (isCafeUser) {
       router.push("/(dashboard)/cafeCamera");
     } else {
@@ -53,13 +48,8 @@ export default function Index() {
     }
   };
 
-  const handleLogin = () => {
-    router.push("/login");
-  };
-
-  const handleRegister = () => {
-    router.push("/register");
-  };
+  const handleLogin = () => router.push("/login");
+  const handleRegister = () => router.push("/register");
 
   if (isLoading) {
     return (
@@ -82,15 +72,11 @@ export default function Index() {
           <ThemedText style={styles.logoEmoji}>☕</ThemedText>
           <ThemedText style={styles.title}>Cafe Cards</ThemedText>
         </View>
-
         <Spacer size={16} />
-
         <ThemedText style={styles.subtitle}>
           Simplifying Cafe Loyalty Cards
         </ThemedText>
-
         <Spacer size={8} />
-
         <ThemedText style={styles.description}>
           Collect stamps, earn rewards, and discover your favorite cafes all in
           one place.
@@ -141,9 +127,7 @@ export default function Index() {
                 Get Started
               </ThemedText>
             </ThemedButton>
-
             <Spacer size={12} />
-
             <ThemedButton
               onPress={handleRegister}
               style={[styles.secondaryButton, { borderColor: Colors.primary }]}
@@ -171,6 +155,7 @@ export default function Index() {
   );
 }
 
+// --- Styles ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -236,10 +221,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     alignItems: "center",
     shadowColor: Colors.primary,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 6,

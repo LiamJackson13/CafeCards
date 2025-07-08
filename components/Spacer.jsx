@@ -9,15 +9,15 @@
 
 import { View } from "react-native";
 
-const Spacer = ({ width = "100%", height = 40 }) => {
-  return (
-    <View
-      style={{
-        width: width,
-        height: height,
-      }}
-    />
-  );
-};
+/**
+ * Spacer
+ *
+ * @param {object} props
+ * @param {number|string} [props.width="100%"] - Width of the spacer
+ * @param {number} [props.height=40] - Height of the spacer
+ */
+const Spacer = ({ width = "100%", height = 40 }) => (
+  <View style={{ width, height }} />
+);
 
 export default Spacer;

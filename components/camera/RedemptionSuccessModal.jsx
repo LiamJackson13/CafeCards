@@ -3,13 +3,20 @@ import ThemedButton from "../ThemedButton";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
-const RedemptionSuccessModal = ({ visible, customer, onDismiss, theme }) => {
+/**
+ * RedemptionSuccessModal
+ *
+ * Modal shown after a successful reward redemption.
+ * - Displays customer info and reward details.
+ * - Calls onDismiss when "Continue Scanning" is pressed.
+ */
+const RedemptionSuccessModal = ({ visible, customer, onDismiss }) => {
   if (!customer) return null;
 
   return (
     <Modal
       visible={visible}
-      transparent={true}
+      transparent
       animationType="fade"
       onRequestClose={onDismiss}
     >

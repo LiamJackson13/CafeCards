@@ -2,13 +2,16 @@ import { StyleSheet } from "react-native";
 import ThemedButton from "../ThemedButton";
 import ThemedText from "../ThemedText";
 
-const LogoutButton = ({ onPress }) => {
-  return (
-    <ThemedButton onPress={onPress} style={styles.logoutButton}>
-      <ThemedText style={styles.logoutText}>Sign Out</ThemedText>
-    </ThemedButton>
-  );
-};
+/**
+ * LogoutButton
+ *
+ * Button for signing out of the app.
+ */
+const LogoutButton = ({ onPress }) => (
+  <ThemedButton onPress={onPress} style={styles.logoutButton}>
+    <ThemedText style={styles.logoutText}>Sign Out</ThemedText>
+  </ThemedButton>
+);
 
 const styles = StyleSheet.create({
   logoutButton: {

@@ -1,14 +1,13 @@
 /**
  * User Registration Screen
  *
- * This screen provides the user interface for new users to create an account.
- * Features include:
- * - Email and password input fields with validation
- * - Account creation handling with error display
- * - Integration with UserContext for registration and automatic login
- * - Navigation link to login screen for existing users
- * - Responsive design with keyboard dismissal
- * - Themed styling that adapts to light/dark mode
+ * Allows new users to create an account.
+ * Features:
+ * - Email/password input with validation
+ * - Error display
+ * - Integration with UserContext for registration/login
+ * - Navigation to login screen
+ * - Responsive, themed design
  */
 import { Link } from "expo-router";
 import { useState } from "react";
@@ -31,20 +30,22 @@ const RegisterScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-
   const { register } = useUser();
 
+  // Handles registration and error state
   const handleSubmit = async () => {
     setError(null);
     try {
       await register(email, password);
-    } catch (error) {
-      setError(error.message);
+    } catch (e) {
+      setError(e?.message || "Registration failed.");
     }
   };
+
   return (
     <TouchableWithoutFeedback
       onPress={Platform.OS !== "web" ? Keyboard.dismiss : undefined}
+      accessible={false}
     >
       <ThemedView style={styles.container}>
         <Spacer />
@@ -53,24 +54,18 @@ const RegisterScreen = () => {
         </ThemedText>
         <ThemedTextInput
           placeholder="Email"
-          style={{
-            width: "80%",
-            marginBottom: 20,
-          }}
           keyboardType="email-address"
           autoCapitalize="none"
           onChangeText={setEmail}
           value={email}
+          style={styles.INPUT_STYLE}
         />
         <ThemedTextInput
           placeholder="Password"
           secureTextEntry
-          style={{
-            width: "80%",
-            marginBottom: 20,
-          }}
           onChangeText={setPassword}
           value={password}
+          style={styles.INPUT_STYLE}
         />
         <ThemedButton onPress={handleSubmit}>
           <Text style={{ color: "#f2f2f2" }}>Register</Text>
@@ -79,7 +74,7 @@ const RegisterScreen = () => {
         {error && <Text style={styles.error}>{error}</Text>}
         <Spacer height={100} />
         <Link href="/login">
-          <ThemedText style={{ textAlign: "center" }}>
+          <ThemedText style={styles.link}>
             Already have an account? Login Instead
           </ThemedText>
         </Link>
@@ -90,11 +85,13 @@ const RegisterScreen = () => {
 
 export default RegisterScreen;
 
+// Styles grouped and documented for clarity
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    // Responsive web adjustments
     ...(Platform.OS === "web" && {
       minHeight: "100vh",
       paddingVertical: 20,
@@ -115,7 +112,13 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginHorizontal: 10,
   },
-  input: {
+  link: {
+    textAlign: "center",
+  },
+  // Shared input style for consistency
+  INPUT_STYLE: {
+    width: "80%",
+    marginBottom: 20,
     ...(Platform.OS === "web" && {
       maxWidth: 400,
       width: "calc(100% - 80px)",

@@ -1,9 +1,16 @@
+import { useRef } from "react";
 import { Modal, StyleSheet, View } from "react-native";
 import IncrementDecrement from "../IncrementDecrement";
 import ThemedButton from "../ThemedButton";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
+/**
+ * StampModal
+ *
+ * Modal for adding stamps to a customer's card.
+ * - Prevents multiple submissions by disabling the confirm button after first press.
+ */
 const StampModal = ({
   visible,
   onClose,
@@ -13,11 +20,26 @@ const StampModal = ({
   onConfirm,
   isProcessing,
 }) => {
+  // Prevent multiple presses of the confirm button
+  const pressedRef = useRef(false);
+
+  // Handle confirm: only allow once per open
+  const handleConfirm = () => {
+    if (pressedRef.current) return;
+    pressedRef.current = true;
+    onConfirm();
+  };
+
+  // Reset pressedRef when modal closes
+  if (!visible && pressedRef.current) {
+    pressedRef.current = false;
+  }
+
   return (
     <Modal
       visible={visible}
       animationType="slide"
-      transparent={true}
+      transparent
       onRequestClose={onClose}
     >
       <View style={styles.modalOverlay}>
@@ -26,6 +48,7 @@ const StampModal = ({
             Add Stamps
           </ThemedText>
 
+          {/* Show customer info if available */}
           {pendingCustomer && (
             <>
               <ThemedText style={styles.customerInfoText}>
@@ -50,7 +73,6 @@ const StampModal = ({
 
           <View style={styles.modalButtons}>
             <ThemedButton
-              title="Cancel"
               onPress={onClose}
               style={[styles.modalButton, styles.cancelButton]}
               disabled={isProcessing}
@@ -59,14 +81,9 @@ const StampModal = ({
             </ThemedButton>
 
             <ThemedButton
-              title={
-                isProcessing
-                  ? "Adding..."
-                  : `Add ${stampsToAdd} Stamp${stampsToAdd !== 1 ? "s" : ""}`
-              }
-              onPress={onConfirm}
+              onPress={handleConfirm}
               style={[styles.modalButton, styles.submitButton]}
-              disabled={isProcessing || stampsToAdd < 1}
+              disabled={isProcessing || stampsToAdd < 1 || pressedRef.current}
             >
               <ThemedText style={{ color: "#fff" }}>
                 {isProcessing

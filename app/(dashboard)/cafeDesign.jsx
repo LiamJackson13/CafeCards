@@ -1,3 +1,13 @@
+/**
+ * Cafe Design Settings Screen
+ *
+ * Allows cafe owners to customize their loyalty card appearance and info.
+ * Features:
+ * - Edit cafe name, location, description, reward, and stamp requirements
+ * - Choose card/stamp colors and icons
+ * - Card style options (border radius, shadow)
+ * - Loads and saves design to backend
+ */
 import { useCallback, useEffect, useState } from "react";
 import {
   Alert,
@@ -20,6 +30,21 @@ import {
   updateCafeProfile,
 } from "../../lib/appwrite/cafe-profiles";
 
+const colorOptions = [
+  "#AA7C48", // Coffee Brown
+  "#E74C3C", // Red
+  "#3498DB", // Blue
+  "#2ECC71", // Green
+  "#9B59B6", // Purple
+  "#F39C12", // Orange
+  "#1ABC9C", // Teal
+  "#34495E", // Dark Blue
+  "#E67E22", // Orange
+  "#95A5A6", // Gray
+];
+
+const stampIcons = ["⭐", "☕", "💫", "🎯", "💎", "🏆", "❤️", "🎁", "🌟", "✨"];
+
 const CafeDesignSettings = () => {
   const { user } = useUser();
   const [loading, setLoading] = useState(true);
@@ -41,44 +66,12 @@ const CafeDesignSettings = () => {
   const [borderRadius, setBorderRadius] = useState(15);
   const [shadowEnabled, setShadowEnabled] = useState(true);
 
-  // Predefined color options
-  const colorOptions = [
-    "#AA7C48", // Coffee Brown
-    "#E74C3C", // Red
-    "#3498DB", // Blue
-    "#2ECC71", // Green
-    "#9B59B6", // Purple
-    "#F39C12", // Orange
-    "#1ABC9C", // Teal
-    "#34495E", // Dark Blue
-    "#E67E22", // Orange
-    "#95A5A6", // Gray
-  ];
-
-  const stampIcons = [
-    "⭐",
-    "☕",
-    "💫",
-    "🎯",
-    "💎",
-    "🏆",
-    "❤️",
-    "🎁",
-    "🌟",
-    "✨",
-  ];
-
-  useEffect(() => {
-    loadCafeProfile();
-  }, [user, loadCafeProfile]);
-
+  // Load cafe profile on mount or user change
   const loadCafeProfile = useCallback(async () => {
     if (!user?.$id) return;
-
     try {
       setLoading(true);
       const cafeProfile = await getCafeProfile(user.$id);
-
       if (cafeProfile) {
         setProfile(cafeProfile);
         setCafeName(cafeProfile.cafeName || "");
@@ -103,12 +96,15 @@ const CafeDesignSettings = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    loadCafeProfile();
+  }, [user, loadCafeProfile]);
+
+  // Save profile to backend
   const saveProfile = async () => {
     if (!user?.$id) return;
-
     try {
       setSaving(true);
-
       const profileData = {
         cafeName,
         location,
@@ -124,7 +120,6 @@ const CafeDesignSettings = () => {
         borderRadius: parseInt(borderRadius) || 15,
         shadowEnabled,
       };
-
       let result;
       if (profile?.$id) {
         result = await updateCafeProfile(profile.$id, profileData);
@@ -132,7 +127,6 @@ const CafeDesignSettings = () => {
         result = await createCafeProfile(profileData, user.$id);
         setProfile(result);
       }
-
       Alert.alert("Success", "Cafe design settings saved successfully!");
     } catch (error) {
       console.error("Error saving cafe profile:", error);
@@ -162,7 +156,6 @@ const CafeDesignSettings = () => {
         <ThemedText style={styles.subtitle}>
           Customize how your loyalty cards look to customers
         </ThemedText>
-
         <Spacer size={20} />
 
         {/* Basic Info */}
@@ -170,7 +163,6 @@ const CafeDesignSettings = () => {
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Basic Information
           </ThemedText>
-
           <View style={styles.inputGroup}>
             <ThemedText style={styles.label}>Cafe Name *</ThemedText>
             <TextInput
@@ -181,7 +173,6 @@ const CafeDesignSettings = () => {
               placeholderTextColor="#999"
             />
           </View>
-
           <View style={styles.inputGroup}>
             <ThemedText style={styles.label}>Location</ThemedText>
             <TextInput
@@ -192,7 +183,6 @@ const CafeDesignSettings = () => {
               placeholderTextColor="#999"
             />
           </View>
-
           <View style={styles.inputGroup}>
             <ThemedText style={styles.label}>Description</ThemedText>
             <TextInput
@@ -205,7 +195,6 @@ const CafeDesignSettings = () => {
               numberOfLines={3}
             />
           </View>
-
           <View style={styles.inputGroup}>
             <ThemedText style={styles.label}>Reward Description</ThemedText>
             <TextInput
@@ -216,7 +205,6 @@ const CafeDesignSettings = () => {
               placeholderTextColor="#999"
             />
           </View>
-
           <View style={styles.inputGroup}>
             <ThemedText style={styles.label}>
               Stamps Required for Reward
@@ -239,7 +227,6 @@ const CafeDesignSettings = () => {
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Colors
           </ThemedText>
-
           <View style={styles.inputGroup}>
             <ThemedText style={styles.label}>Primary Color</ThemedText>
             <View style={styles.colorSelector}>
@@ -261,7 +248,6 @@ const CafeDesignSettings = () => {
               </View>
             </View>
           </View>
-
           <View style={styles.inputGroup}>
             <ThemedText style={styles.label}>Secondary Color</ThemedText>
             <View style={styles.colorSelector}>
@@ -286,7 +272,6 @@ const CafeDesignSettings = () => {
               </View>
             </View>
           </View>
-
           <View style={styles.inputGroup}>
             <ThemedText style={styles.label}>Background Color</ThemedText>
             <View style={styles.colorSelector}>
@@ -305,7 +290,6 @@ const CafeDesignSettings = () => {
               />
             </View>
           </View>
-
           <View style={styles.inputGroup}>
             <ThemedText style={styles.label}>Text Color</ThemedText>
             <View style={styles.colorSelector}>
@@ -330,7 +314,6 @@ const CafeDesignSettings = () => {
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Stamp Icon
           </ThemedText>
-
           <View style={styles.inputGroup}>
             <ThemedText style={styles.label}>Choose Stamp Icon</ThemedText>
             <View style={styles.iconSelector}>
@@ -348,7 +331,6 @@ const CafeDesignSettings = () => {
               ))}
             </View>
           </View>
-
           <View style={styles.inputGroup}>
             <ThemedText style={styles.label}>Stamp Icon Color</ThemedText>
             <View style={styles.colorSelector}>
@@ -382,7 +364,6 @@ const CafeDesignSettings = () => {
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Card Style
           </ThemedText>
-
           <View style={styles.inputGroup}>
             <ThemedText style={styles.label}>Border Radius</ThemedText>
             <TextInput
@@ -394,7 +375,6 @@ const CafeDesignSettings = () => {
               keyboardType="numeric"
             />
           </View>
-
           <View style={styles.settingRow}>
             <View style={styles.settingInfo}>
               <ThemedText style={styles.settingTitle}>Shadow Effect</ThemedText>
@@ -429,13 +409,10 @@ const CafeDesignSettings = () => {
   );
 };
 
+// --- Styles ---
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
+  container: { flex: 1 },
+  scrollView: { flex: 1 },
   title: {
     fontSize: 28,
     fontWeight: "bold",

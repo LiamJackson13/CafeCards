@@ -1,13 +1,11 @@
 /**
- * Name Modal Component
+ * NameModal
  *
- * A modal dialog for updating the user's display name.
- * Features:
+ * Modal dialog for updating the user's display name.
  * - Input validation (required, length limits)
- * - Loading states during API calls
- * - Error handling and display
+ * - Loading and error states
  * - Success feedback
- * - Themed styling with safe area support
+ * - Themed styling
  */
 import { useState } from "react";
 import {
@@ -35,34 +33,25 @@ const NameModal = ({ visible, onClose, currentName, onNameUpdated }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Handle submit: validate and update name
   const handleSubmit = async () => {
     setError("");
-
-    // Validation
     if (!name.trim()) {
       setError("Name is required");
       return;
     }
-
     if (name.trim().length < 2) {
       setError("Name must be at least 2 characters long");
       return;
     }
-
     if (name.trim().length > 128) {
       setError("Name cannot be longer than 128 characters");
       return;
     }
-
     try {
       setLoading(true);
       const updatedUser = await updateUserName(name.trim());
-
-      // Call the callback to update the user state
-      if (onNameUpdated) {
-        onNameUpdated(updatedUser);
-      }
-
+      if (onNameUpdated) onNameUpdated(updatedUser);
       Alert.alert("Success", "Your name has been updated successfully", [
         { text: "OK", onPress: onClose },
       ]);
@@ -73,6 +62,7 @@ const NameModal = ({ visible, onClose, currentName, onNameUpdated }) => {
     }
   };
 
+  // Reset state and close modal
   const handleClose = () => {
     if (!loading) {
       setName(currentName || "");

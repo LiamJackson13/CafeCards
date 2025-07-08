@@ -1,16 +1,15 @@
 /**
- * Loyalty Cards Screen (Refactored)
+ * Loyalty Cards Screen
  *
- * This screen displays loyalty cards differently based on user type:
- * - For customers: Shows their own loyalty cards from different cafes
- * - For cafe users: Shows all customer loyalty cards they manage
- * Features include:
- * - Grid/list view of loyalty cards
- * - Beautiful card designs with progress indicators
- * - Individual card details and progress tracking
- * - Empty state handling for users with no cards
- * - Modern UI with themed styling
- * - Real-time updates from Appwrite database
+ * Displays loyalty cards for customers or cafe users.
+ * - Customers: See their own cards from different cafes
+ * - Cafe users: See all customer cards they manage
+ * Features:
+ * - Grid/list view of cards
+ * - Card progress, details, and redemption
+ * - Empty/loading states
+ * - Real-time updates
+ * - Themed, modern UI
  */
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -40,23 +39,22 @@ const CardsScreen = () => {
 
   const theme = Colors[actualTheme] ?? Colors.light;
 
+  // Handle card press: open details or redeem modal
   const handleCardPress = (cardId, options = {}) => {
     if (options.redeem) {
-      // Find the card and show redeem modal
       const card = displayCards.find((c) => c.id === cardId);
       if (card && card.isReady) {
         setSelectedCard(card);
         setShowRedeemModal(true);
       }
     } else {
-      // Navigate to card details
       router.push(`/cards/${cardId}`);
     }
   };
 
+  // Generate QR data for redemption modal
   const generateRedemptionQRData = () => {
     if (!selectedCard || !user) return "";
-
     return JSON.stringify({
       type: "reward_redemption",
       app: "cafe-cards",
@@ -71,6 +69,7 @@ const CardsScreen = () => {
     });
   };
 
+  // Show loading state if cards are loading and none are present
   if (loading && displayCards.length === 0) {
     return (
       <ThemedView style={styles.container} safe>
@@ -128,6 +127,7 @@ const CardsScreen = () => {
   );
 };
 
+// --- Styles ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,

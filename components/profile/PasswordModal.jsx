@@ -1,7 +1,7 @@
 /**
  * PasswordModal Component
  *
- * A modal component for changing user passwords with validation and Appwrite integration.
+ * Modal for changing user passwords with validation and Appwrite integration.
  * Includes error handling and loading states.
  */
 import { useState } from "react";
@@ -18,25 +18,22 @@ const PasswordModal = ({ visible, onClose }) => {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
 
+  // Handle password change with validation and error handling
   const handlePasswordSubmit = async () => {
     setPasswordError("");
 
-    // Validation
     if (!currentPassword.trim()) {
       setPasswordError("Please enter your current password");
       return;
     }
-
     if (!newPassword.trim()) {
       setPasswordError("Please enter a new password");
       return;
     }
-
     if (newPassword.length < 8) {
       setPasswordError("New password must be at least 8 characters long");
       return;
     }
-
     if (newPassword !== confirmPassword) {
       setPasswordError("New passwords do not match");
       return;
@@ -63,6 +60,7 @@ const PasswordModal = ({ visible, onClose }) => {
     }
   };
 
+  // Reset state and close modal
   const handleClose = () => {
     setPasswordError("");
     setCurrentPassword("");

@@ -1,14 +1,13 @@
 /**
  * Reward Success/Celebration Screen
  *
- * This screen is displayed after a customer successfully redeems a reward.
- * Features include:
+ * Shown after a customer redeems a reward.
+ * Features:
  * - Celebration animation and visuals
  * - Confirmation message
- * - Navigation back to cards or continue shopping
- * - Themed design matching the app's aesthetic
+ * - Navigation back to cards or profile
+ * - Themed, responsive design
  */
-
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Animated, Dimensions, StyleSheet, View } from "react-native";
@@ -25,7 +24,6 @@ const RewardSuccessScreen = () => {
   const router = useRouter();
   const { actualTheme } = useTheme();
   const { cafeName, rewardType } = useLocalSearchParams();
-
   const theme = Colors[actualTheme] ?? Colors.light;
 
   // Default values if params are not provided
@@ -39,15 +37,13 @@ const RewardSuccessScreen = () => {
 
   useEffect(() => {
     // Start the celebration animation sequence
-    const animationSequence = Animated.sequence([
-      // Scale in the main celebration
+    Animated.sequence([
       Animated.spring(scaleAnim, {
         toValue: 1,
         tension: 100,
         friction: 8,
         useNativeDriver: true,
       }),
-      // Fade in the content
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 1,
@@ -60,18 +56,11 @@ const RewardSuccessScreen = () => {
           useNativeDriver: true,
         }),
       ]),
-    ]);
-
-    animationSequence.start();
+    ]).start();
   }, [scaleAnim, fadeAnim, slideAnim]);
 
-  const handleBackToCards = () => {
-    router.push("/cards");
-  };
-
-  const handleViewProfile = () => {
-    router.push("/profile");
-  };
+  const handleBackToCards = () => router.push("/cards");
+  const handleViewProfile = () => router.push("/profile");
 
   return (
     <ThemedView
@@ -83,9 +72,7 @@ const RewardSuccessScreen = () => {
         <Animated.View
           style={[
             styles.celebrationContainer,
-            {
-              transform: [{ scale: scaleAnim }],
-            },
+            { transform: [{ scale: scaleAnim }] },
           ]}
         >
           <View
@@ -113,9 +100,7 @@ const RewardSuccessScreen = () => {
           <ThemedText style={[styles.successTitle, { color: theme.text }]}>
             Reward Redeemed!
           </ThemedText>
-
           <Spacer height={16} />
-
           <ThemedText style={[styles.successSubtitle, { color: theme.text }]}>
             Your {displayRewardType} has been successfully redeemed
             {displayCafeName !== "your favorite cafe"
@@ -123,9 +108,7 @@ const RewardSuccessScreen = () => {
               : ""}
             . Enjoy! ☕
           </ThemedText>
-
           <Spacer height={12} />
-
           <ThemedText
             style={[styles.thankYouText, { color: theme.text, opacity: 0.7 }]}
           >
@@ -153,9 +136,7 @@ const RewardSuccessScreen = () => {
               View My Cards
             </ThemedText>
           </ThemedButton>
-
           <Spacer height={16} />
-
           <ThemedButton
             onPress={handleViewProfile}
             style={[styles.secondaryButton, { borderColor: theme.border }]}
@@ -168,7 +149,7 @@ const RewardSuccessScreen = () => {
           </ThemedButton>
         </Animated.View>
 
-        {/* Coffee Animation Background */}
+        {/* Background Celebration Emojis */}
         <View style={styles.backgroundDecoration}>
           <ThemedText style={[styles.backgroundEmoji, { opacity: 0.1 }]}>
             ☕
@@ -189,6 +170,7 @@ const RewardSuccessScreen = () => {
   );
 };
 
+// --- Styles ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,

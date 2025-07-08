@@ -29,12 +29,6 @@ const CustomerSettings = ({ onChangePassword }) => (
 
 const CafeSettings = ({ onChangePassword }) => (
   <>
-    {/* <ProfileOption
-      title="Customer Analytics"
-      subtitle="View detailed customer insights"
-      icon="📊"
-    /> */}
-
     <ProfileOption
       title="Change Password"
       subtitle="Update your account password"

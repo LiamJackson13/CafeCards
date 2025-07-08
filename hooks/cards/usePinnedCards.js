@@ -3,23 +3,25 @@ import { Alert } from "react-native";
 import { updateCardPinnedStatus } from "../../lib/appwrite/loyalty-cards";
 
 /**
- * Hook for managing pinned cards functionality
+ * usePinnedCards
+ *
+ * Custom hook for managing pinned cards functionality.
+ * Provides methods to pin, unpin, and toggle the pinned status of a card.
+ * Handles updating the backend and parent state, and provides feedback on errors.
  */
 export const usePinnedCards = () => {
   const [updatingPinStatus, setUpdatingPinStatus] = useState(false);
 
   /**
-   * Toggles the pinned status of a card
-   * @param {Object} card - The card to toggle
-   * @param {Function} onUpdate - Callback to update the card in the parent component
-   * @returns {Promise<void>}
+   * Toggles the pinned status of a card.
+   * @param {Object} card - The card to toggle.
+   * @param {Function} onUpdate - Callback to update the card in the parent component.
    */
   const toggleCardPin = async (card, onUpdate) => {
     if (updatingPinStatus) return;
 
     try {
       setUpdatingPinStatus(true);
-
       const newPinnedStatus = !card.isPinned;
 
       // Update the card in the database
@@ -33,13 +35,12 @@ export const usePinnedCards = () => {
         onUpdate(updatedCard);
       }
 
-      // Show feedback to user
-      const action = newPinnedStatus ? "pinned" : "unpinned";
-      // Note: We could add a toast notification here instead of Alert
-      console.log(`Card ${action} successfully`);
+      // Feedback (could use a toast instead)
+      console.log(
+        `Card ${newPinnedStatus ? "pinned" : "unpinned"} successfully`
+      );
     } catch (error) {
       console.error("Error toggling card pin status:", error);
-
       Alert.alert(
         "Error",
         error.message || "Failed to update card pin status. Please try again."
@@ -50,17 +51,15 @@ export const usePinnedCards = () => {
   };
 
   /**
-   * Pins a card
-   * @param {Object} card - The card to pin
-   * @param {Function} onUpdate - Callback to update the card in the parent component
-   * @returns {Promise<void>}
+   * Pins a card.
+   * @param {Object} card - The card to pin.
+   * @param {Function} onUpdate - Callback to update the card in the parent component.
    */
   const pinCard = async (card, onUpdate) => {
     if (card.isPinned) return;
 
     try {
       setUpdatingPinStatus(true);
-
       const updatedCard = await updateCardPinnedStatus(card.$id, true);
 
       if (onUpdate) {
@@ -70,7 +69,6 @@ export const usePinnedCards = () => {
       console.log("Card pinned successfully");
     } catch (error) {
       console.error("Error pinning card:", error);
-
       Alert.alert(
         "Error",
         error.message || "Failed to pin card. Please try again."
@@ -81,17 +79,15 @@ export const usePinnedCards = () => {
   };
 
   /**
-   * Unpins a card
-   * @param {Object} card - The card to unpin
-   * @param {Function} onUpdate - Callback to update the card in the parent component
-   * @returns {Promise<void>}
+   * Unpins a card.
+   * @param {Object} card - The card to unpin.
+   * @param {Function} onUpdate - Callback to update the card in the parent component.
    */
   const unpinCard = async (card, onUpdate) => {
     if (!card.isPinned) return;
 
     try {
       setUpdatingPinStatus(true);
-
       const updatedCard = await updateCardPinnedStatus(card.$id, false);
 
       if (onUpdate) {
@@ -101,7 +97,6 @@ export const usePinnedCards = () => {
       console.log("Card unpinned successfully");
     } catch (error) {
       console.error("Error unpinning card:", error);
-
       Alert.alert(
         "Error",
         error.message || "Failed to unpin card. Please try again."
@@ -112,9 +107,9 @@ export const usePinnedCards = () => {
   };
 
   return {
-    updatingPinStatus,
-    toggleCardPin,
-    pinCard,
-    unpinCard,
+    updatingPinStatus, // Boolean: true if a pin/unpin operation is in progress
+    toggleCardPin, // Function to toggle pin status
+    pinCard, // Function to pin a card
+    unpinCard, // Function to unpin a card
   };
 };

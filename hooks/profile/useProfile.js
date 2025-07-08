@@ -2,9 +2,16 @@ import { useState } from "react";
 import { useCafeUser, useUser } from "../useUser";
 import { useProfileStats } from "./useProfileStats";
 
+/**
+ * useProfile
+ *
+ * Custom hook for managing profile state, modals, and actions.
+ * Handles user info, modal visibility, stats, and name editing logic.
+ * Integrates with user context and profile stats hook.
+ */
 export const useProfile = () => {
   const { logout, user, refreshUser } = useUser();
-  const isCafeUser = useCafeUser(); // This now includes debug override
+  const isCafeUser = useCafeUser(); // Includes debug override if present
   const {
     stats,
     loading: statsLoading,
@@ -12,30 +19,31 @@ export const useProfile = () => {
     refetch: refetchStats,
   } = useProfileStats();
 
-  // Modal state
+  // Modal state for password and name editing
   const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
   const [isNameModalVisible, setIsNameModalVisible] = useState(false);
 
+  // Show password change modal
   const handleChangePassword = () => {
     setIsPasswordModalVisible(true);
   };
 
+  // Show name edit modal
   const handleEditName = () => {
     setIsNameModalVisible(true);
   };
 
+  // After name update, refresh user and stats
   const handleNameUpdated = async (updatedUser) => {
-    // Refresh user data from the context
     try {
       await refreshUser();
-      // Also refresh stats since user data changed
       await refetchStats();
     } catch (error) {
       console.error("Failed to refresh user data:", error);
     }
   };
 
-  // Get display name - use user's name if available, otherwise derive from email
+  // Get display name: prefer user's name, fallback to email prefix or "User"
   const getDisplayName = () => {
     if (user?.name && user.name.trim() !== "") {
       return user.name;

@@ -2,6 +2,12 @@ import { StyleSheet, View } from "react-native";
 import ThemedText from "../ThemedText";
 import StatCard from "./StatCard";
 
+/**
+ * StatsSection
+ *
+ * Displays a row of StatCard components for user or business analytics.
+ * Handles loading, error, and empty states gracefully.
+ */
 const StatsSection = ({ isCafeUser, stats, loading, error }) => {
   return (
     <>
@@ -38,7 +44,7 @@ const StatsSection = ({ isCafeUser, stats, loading, error }) => {
                 color={stat.color}
               />
             ))
-          : // Fallback stats
+          : // Fallback stats if none available
             Array.from({ length: 4 }).map((_, index) => (
               <StatCard
                 key={index}

@@ -1,10 +1,7 @@
 /**
- * Themed Loader Component
+ * ThemedLoader
  *
- * A reusable loading indicator component that displays a centered activity spinner.
- * Automatically applies theme-based color to the loading spinner and provides
- * a full-screen centered layout. Used throughout the app to indicate loading states
- * during data fetching, authentication, and other asynchronous operations.
+ * Shows a centered loading spinner with theme-based color.
  */
 import { ActivityIndicator, useColorScheme } from "react-native";
 import { Colors } from "../constants/Colors";

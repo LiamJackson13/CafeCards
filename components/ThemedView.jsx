@@ -1,10 +1,8 @@
 /**
- * Themed View Component
+ * ThemedView
  *
- * A reusable container component that automatically applies theme-based background styling.
- * Provides optional safe area handling for proper display on devices with notches/status bars.
- * Automatically adapts background color based on the current theme (light/dark mode).
- * Essential building block for consistent theming throughout the app.
+ * Container that applies theme-based background color.
+ * Optionally adds safe area padding for devices with notches/status bars.
  */
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -15,6 +13,7 @@ const ThemedView = ({ style, safe = false, ...props }) => {
   const insets = useSafeAreaInsets();
   const { actualTheme } = useTheme();
   const theme = Colors[actualTheme] ?? Colors.light;
+
   if (!safe)
     return (
       <View style={[{ backgroundColor: theme.background }, style]} {...props} />

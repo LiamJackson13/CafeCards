@@ -1,10 +1,14 @@
 /**
  * Root App Layout Component
  *
- * This is the main layout component that wraps the entire application with essential providers.
- * It sets up the context providers for Theme, User authentication, and Books data management.
- * Contains the root Stack navigator configuration with theming support and defines the main
- * navigation structure including auth routes, dashboard routes, and the home screen.
+ * Wraps the entire application with essential providers:
+ * - ThemeProvider: app-wide theming (light/dark)
+ * - UserProvider: authentication and user context
+ * - CardsProvider: loyalty card data management
+ * Sets up the root Stack navigator with theming and navigation structure:
+ * - Home screen
+ * - Auth screens
+ * - Dashboard screens
  */
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -13,6 +17,7 @@ import { CardsProvider } from "../contexts/CardsContext";
 import { ThemeProvider, useTheme } from "../contexts/ThemeContext";
 import { UserProvider } from "../contexts/UserContext";
 
+// Stack navigator with themed headers and hidden by default
 const StackNavigator = () => {
   const { actualTheme } = useTheme();
   const theme = Colors[actualTheme] ?? Colors.light;
@@ -39,16 +44,15 @@ const StackNavigator = () => {
   );
 };
 
-const RootLayout = () => {
-  return (
-    <ThemeProvider>
-      <UserProvider>
-        <CardsProvider>
-          <StackNavigator />
-        </CardsProvider>
-      </UserProvider>
-    </ThemeProvider>
-  );
-};
+// Root layout wraps all providers and the stack navigator
+const RootLayout = () => (
+  <ThemeProvider>
+    <UserProvider>
+      <CardsProvider>
+        <StackNavigator />
+      </CardsProvider>
+    </UserProvider>
+  </ThemeProvider>
+);
 
 export default RootLayout;

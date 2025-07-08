@@ -2,89 +2,97 @@ import { StyleSheet, View } from "react-native";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
-const ProgressRing = ({ current, max, size = 120 }) => {
-  return (
-    <View style={[styles.progressRing, { width: size, height: size }]}>
-      <View style={styles.progressContent}>
-        <ThemedText style={styles.progressNumber}>{current}</ThemedText>
-        <ThemedText style={styles.progressMax}>/ {max}</ThemedText>
-        <ThemedText style={styles.progressLabel}>stamps</ThemedText>
-      </View>
+/**
+ * ProgressRing
+ *
+ * Displays a simple ring with the current/max stamps.
+ */
+const ProgressRing = ({ current, max, size = 120 }) => (
+  <View style={[styles.progressRing, { width: size, height: size }]}>
+    <View style={styles.progressContent}>
+      <ThemedText style={styles.progressNumber}>{current}</ThemedText>
+      <ThemedText style={styles.progressMax}>/ {max}</ThemedText>
+      <ThemedText style={styles.progressLabel}>stamps</ThemedText>
     </View>
-  );
-};
+  </View>
+);
 
-const StampGrid = ({ current, max, theme }) => {
-  return (
-    <View style={styles.stampGrid}>
-      {Array.from({ length: max }, (_, index) => (
-        <View
-          key={index}
-          style={[
-            styles.stampItem,
-            {
-              backgroundColor: index < current ? "#4CAF50" : "transparent",
-              borderColor: index < current ? "#4CAF50" : theme.border,
-            },
-          ]}
-        >
-          {index < current && (
-            <ThemedText style={styles.stampIcon}>⭐</ThemedText>
-          )}
-        </View>
-      ))}
+/**
+ * StampGrid
+ *
+ * Shows a row of stamp icons, filled for each earned stamp.
+ */
+const StampGrid = ({ current, max, theme }) => (
+  <View style={styles.stampGrid}>
+    {Array.from({ length: max }, (_, index) => (
+      <View
+        key={index}
+        style={[
+          styles.stampItem,
+          {
+            backgroundColor: index < current ? "#4CAF50" : "transparent",
+            borderColor: index < current ? "#4CAF50" : theme.border,
+          },
+        ]}
+      >
+        {index < current && (
+          <ThemedText style={styles.stampIcon}>⭐</ThemedText>
+        )}
+      </View>
+    ))}
+  </View>
+);
+
+/**
+ * ProgressStats
+ *
+ * Shows total stamps, available rewards, and total redeemed.
+ */
+const ProgressStats = ({ formattedCard }) => (
+  <View style={styles.progressStats}>
+    <View style={styles.statItem}>
+      <ThemedText style={styles.statNumber}>
+        {formattedCard.totalStamps}
+      </ThemedText>
+      <ThemedText style={styles.statLabel}>Total Stamps</ThemedText>
     </View>
-  );
-};
-
-const ProgressStats = ({ formattedCard }) => {
-  return (
-    <View style={styles.progressStats}>
-      <View style={styles.statItem}>
-        <ThemedText style={styles.statNumber}>
-          {formattedCard.totalStamps}
-        </ThemedText>
-        <ThemedText style={styles.statLabel}>Total Stamps</ThemedText>
-      </View>
-      <View style={styles.statItem}>
-        <ThemedText style={styles.statNumber}>
-          {formattedCard.availableRewards}
-        </ThemedText>
-        <ThemedText style={styles.statLabel}>Available Rewards</ThemedText>
-      </View>
-      <View style={styles.statItem}>
-        <ThemedText style={styles.statNumber}>
-          {formattedCard.totalRedeemed}
-        </ThemedText>
-        <ThemedText style={styles.statLabel}>Total Redeemed</ThemedText>
-      </View>
+    <View style={styles.statItem}>
+      <ThemedText style={styles.statNumber}>
+        {formattedCard.availableRewards}
+      </ThemedText>
+      <ThemedText style={styles.statLabel}>Available Rewards</ThemedText>
     </View>
-  );
-};
+    <View style={styles.statItem}>
+      <ThemedText style={styles.statNumber}>
+        {formattedCard.totalRedeemed}
+      </ThemedText>
+      <ThemedText style={styles.statLabel}>Total Redeemed</ThemedText>
+    </View>
+  </View>
+);
 
-const StampProgress = ({ formattedCard, theme }) => {
-  return (
-    <ThemedCard style={styles.progressCard}>
-      <ThemedText style={styles.sectionTitle}>Current Progress</ThemedText>
+/**
+ * StampProgress
+ *
+ * Card showing current progress, stats, and stamp grid for a loyalty card.
+ */
+const StampProgress = ({ formattedCard, theme }) => (
+  <ThemedCard style={styles.progressCard}>
+    <ThemedText style={styles.sectionTitle}>Current Progress</ThemedText>
 
-      <View style={styles.progressSection}>
-        <ProgressRing current={formattedCard.currentStamps} max={10} />
-        <ProgressStats formattedCard={formattedCard} />
-      </View>
+    <View style={styles.progressSection}>
+      <ProgressRing current={formattedCard.currentStamps} max={10} />
+      <ProgressStats formattedCard={formattedCard} />
+    </View>
 
-      <View style={styles.stampGridSection}>
-        <ThemedText style={styles.sectionSubtitle}>
-          Stamp Collection ({formattedCard.currentStamps}/10)
-        </ThemedText>
-        <StampGrid
-          current={formattedCard.currentStamps}
-          max={10}
-          theme={theme}
-        />
-      </View>
-    </ThemedCard>
-  );
-};
+    <View style={styles.stampGridSection}>
+      <ThemedText style={styles.sectionSubtitle}>
+        Stamp Collection ({formattedCard.currentStamps}/10)
+      </ThemedText>
+      <StampGrid current={formattedCard.currentStamps} max={10} theme={theme} />
+    </View>
+  </ThemedCard>
+);
 
 const styles = StyleSheet.create({
   progressCard: {

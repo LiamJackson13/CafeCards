@@ -1,8 +1,11 @@
 /**
- * Card Details Hook
+ * useCardDetails
  *
- * Manages card data loading, formatting, and actions for individual card details.
+ * Custom React hook for managing individual loyalty card details.
+ * Handles loading, formatting, polling, and actions (like adding stamps and redemption).
+ * Integrates with CardsContext and Appwrite backend.
  */
+
 import { useContext, useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { CardsContext } from "../../contexts/CardsContext";
@@ -23,14 +26,12 @@ export const useCardDetails = (
 
   const { fetchCardById } = useContext(CardsContext);
 
-  // Load card data
+  // Load card data on mount or when cardId changes
   useEffect(() => {
     async function loadCard() {
       try {
-        console.log("Loading card with ID:", cardId);
         setLoading(true);
         const cardData = await fetchCardById(cardId);
-        console.log("Received card data:", cardData);
         setCard(cardData);
       } catch (error) {
         console.error("Error loading card:", error);
@@ -51,27 +52,18 @@ export const useCardDetails = (
 
     const currentAvailableRewards = card.availableRewards || 0;
 
-    console.log("Monitoring rewards:", {
-      previous: previousAvailableRewards,
-      current: currentAvailableRewards,
-      modalOpen: showRedeemModal,
-    });
-
-    // If we have a previous value and the current rewards decreased, a redemption occurred
+    // If rewards decreased while modal is open, close modal and show success
     if (
       previousAvailableRewards !== null &&
       currentAvailableRewards < previousAvailableRewards &&
       showRedeemModal
     ) {
-      console.log("Redemption detected! Closing modal...");
-
-      // Close the modal immediately
       setShowRedeemModal(false);
 
       // Call the success callback with a slight delay for better UX
       setTimeout(() => {
         if (onRedemptionSuccess) {
-          // Get cafe info from the current card data
+          // Pass reward info to callback
           const rewardInfo = {
             cafeName: card.cafeName || "your favorite cafe",
             rewardType: "free coffee",
@@ -96,40 +88,28 @@ export const useCardDetails = (
   useEffect(() => {
     if (!showRedeemModal || !cardId) return;
 
-    console.log("Starting polling for card updates...");
-
     const pollInterval = setInterval(async () => {
       try {
-        console.log("Polling for card updates...");
         const updatedCard = await fetchCardById(cardId);
-        console.log("Updated card data:", {
-          cardId,
-          availableRewards: updatedCard?.availableRewards,
-          timestamp: new Date().toISOString(),
-        });
         setCard(updatedCard);
       } catch (error) {
         console.error("Error polling for card updates:", error);
       }
-    }, 1500); // Poll every 1.5 seconds for faster response
+    }, 1500); // Poll every 1.5 seconds
 
     return () => {
-      console.log("Stopping polling for card updates");
       clearInterval(pollInterval);
     };
   }, [showRedeemModal, cardId, fetchCardById]);
 
-  // Format card data for display
+  // Format card data for display (handles old and new reward systems)
   const formatCardData = (cardData) => {
     if (!cardData) return null;
 
     const scanHistory = parseScanHistory(cardData.scanHistory);
 
-    // Check if this card uses new reward system
-    const supportsNewRewards = "availableRewards" in cardData;
-
-    if (supportsNewRewards) {
-      // New system: use availableRewards field
+    // New reward system
+    if ("availableRewards" in cardData) {
       return {
         ...cardData,
         availableRewards: cardData.availableRewards || 0,
@@ -147,7 +127,7 @@ export const useCardDetails = (
         ...cardData,
         availableRewards: rewardsEarned,
         totalRedeemed: 0, // Unknown in old system
-        currentStamps: currentProgress, // Override to show progress only
+        currentStamps: currentProgress,
         scanHistory,
         hasAvailableRewards: rewardsEarned > 0,
         supportsNewRewards: false,
@@ -155,7 +135,7 @@ export const useCardDetails = (
     }
   };
 
-  // Generate QR code data for redemption
+  // Generate QR code data for reward redemption
   const generateRedemptionQRData = () => {
     if (!card || !user) return "";
 
@@ -172,7 +152,7 @@ export const useCardDetails = (
     });
   };
 
-  // Handle adding stamp
+  // Handle adding a stamp (cafe users only)
   const handleAddStamp = async () => {
     if (!isCafeUser || !user) {
       Alert.alert("Error", "Only cafe staff can add stamps");

@@ -2,12 +2,19 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
-const ScanHistory = ({ scanHistory, theme }) => {
+/**
+ * ScanHistory
+ *
+ * Displays a scrollable list of recent scans.
+ * - Shows customer info, scan type, and time.
+ * - Displays a message if there are no recent scans.
+ */
+const ScanHistory = ({ scanHistory }) => {
   if (scanHistory.length === 0) {
     return <ThemedText style={styles.noHistory}>No recent scans</ThemedText>;
   }
 
-  // Helper function to get display name similar to useProfile
+  // Helper to get a display name for the customer
   const getDisplayName = (customer) => {
     if (customer?.name && customer.name.trim() !== "") {
       return customer.name;

@@ -1,6 +1,11 @@
 import { StyleSheet, View } from "react-native";
 import ThemedText from "../ThemedText";
 
+/**
+ * ProgressBar
+ *
+ * Shows a horizontal progress bar with current/max value.
+ */
 const ProgressBar = ({ current, max, color }) => {
   const percentage = Math.min((current / max) * 100, 100);
 
@@ -24,28 +29,29 @@ const ProgressBar = ({ current, max, color }) => {
   );
 };
 
-const StampsIndicator = ({ current, max, color }) => {
-  return (
-    <View style={styles.stampsContainer}>
-      {Array.from({ length: max }, (_, index) => (
-        <View
-          key={index}
-          style={[
-            styles.stampCircle,
-            {
-              backgroundColor: index < current ? color : "transparent",
-              borderColor: color,
-            },
-          ]}
-        >
-          {index < current && (
-            <ThemedText style={styles.stampText}>✓</ThemedText>
-          )}
-        </View>
-      ))}
-    </View>
-  );
-};
+/**
+ * StampsIndicator
+ *
+ * Shows a row of circles, filled for each earned stamp.
+ */
+const StampsIndicator = ({ current, max, color }) => (
+  <View style={styles.stampsContainer}>
+    {Array.from({ length: max }, (_, index) => (
+      <View
+        key={index}
+        style={[
+          styles.stampCircle,
+          {
+            backgroundColor: index < current ? color : "transparent",
+            borderColor: color,
+          },
+        ]}
+      >
+        {index < current && <ThemedText style={styles.stampText}>✓</ThemedText>}
+      </View>
+    ))}
+  </View>
+);
 
 const styles = StyleSheet.create({
   progressBarContainer: {

@@ -4,6 +4,11 @@ import ThemedButton from "../ThemedButton";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
+/**
+ * CustomerRedeemActions
+ *
+ * Shows available rewards and redeem button for customers.
+ */
 const CustomerRedeemActions = ({ formattedCard, onRedeem, theme }) => {
   if (!formattedCard.hasAvailableRewards) return null;
 
@@ -51,34 +56,42 @@ const CustomerRedeemActions = ({ formattedCard, onRedeem, theme }) => {
   );
 };
 
-const CafeActions = ({ onAddStamp, addingStamp, theme }) => {
-  return (
-    <ThemedCard
-      style={[
-        styles.actionsCard,
-        {
-          backgroundColor: theme.card,
-          borderColor: theme.border,
-        },
-      ]}
+/**
+ * CafeActions
+ *
+ * Shows "Add Stamp" button for cafe users.
+ */
+const CafeActions = ({ onAddStamp, addingStamp, theme }) => (
+  <ThemedCard
+    style={[
+      styles.actionsCard,
+      {
+        backgroundColor: theme.card,
+        borderColor: theme.border,
+      },
+    ]}
+  >
+    <ThemedText style={[styles.sectionTitle, { color: theme.text }]}>
+      Actions
+    </ThemedText>
+    <Spacer height={15} />
+    <ThemedButton
+      onPress={onAddStamp}
+      disabled={addingStamp}
+      style={[styles.addStampButton, { backgroundColor: theme.primary }]}
     >
-      <ThemedText style={[styles.sectionTitle, { color: theme.text }]}>
-        Actions
+      <ThemedText style={styles.addStampText}>
+        {addingStamp ? "Adding..." : "Add Stamp"}
       </ThemedText>
-      <Spacer height={15} />
-      <ThemedButton
-        onPress={onAddStamp}
-        disabled={addingStamp}
-        style={[styles.addStampButton, { backgroundColor: theme.primary }]}
-      >
-        <ThemedText style={styles.addStampText}>
-          {addingStamp ? "Adding..." : "Add Stamp"}
-        </ThemedText>
-      </ThemedButton>
-    </ThemedCard>
-  );
-};
+    </ThemedButton>
+  </ThemedCard>
+);
 
+/**
+ * CardActions
+ *
+ * Decides which actions to show based on user type.
+ */
 const CardActions = ({
   formattedCard,
   isCafeUser,

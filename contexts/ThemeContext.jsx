@@ -3,15 +3,19 @@
  *
  * Provides theme state and management throughout the app.
  * Handles switching between light and dark themes with persistent storage.
- * Automatically loads saved theme preferences from AsyncStorage on app startup
- * and provides methods for changing themes. Integrates with the Colors constant
- * to provide theme-specific color schemes to all themed components throughout the app.
+ * Loads saved theme preferences from AsyncStorage on app startup.
+ * Exposes theme state and changeTheme method to all components via context.
  */
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useContext, useEffect, useState } from "react";
 
 const ThemeContext = createContext();
 
+/**
+ * ThemeProvider
+ *
+ * Wraps children and provides theme state and actions.
+ */
 export const ThemeProvider = ({ children }) => {
   const [themeMode, setThemeMode] = useState("light"); // "light" or "dark"
   const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +31,6 @@ export const ThemeProvider = ({ children }) => {
         if (savedTheme && (savedTheme === "light" || savedTheme === "dark")) {
           setThemeMode(savedTheme);
         } else {
-          // Default to light theme if no valid saved theme
           setThemeMode("light");
         }
       } catch (error) {
@@ -61,6 +64,12 @@ export const ThemeProvider = ({ children }) => {
   );
 };
 
+/**
+ * useTheme
+ *
+ * Custom hook to access theme context.
+ * Throws if used outside of ThemeProvider.
+ */
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {

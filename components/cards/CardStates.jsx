@@ -1,6 +1,12 @@
 import { StyleSheet, View } from "react-native";
 import ThemedText from "../ThemedText";
 
+/**
+ * EmptyState
+ *
+ * Shown when there are no cards to display.
+ * - Shows different icons and messages for cafe users vs. customers.
+ */
 const EmptyState = ({ isCafeUser }) => (
   <View style={styles.emptyContainer}>
     <ThemedText style={styles.emptyIcon}>{isCafeUser ? "📋" : "💳"}</ThemedText>
@@ -15,6 +21,11 @@ const EmptyState = ({ isCafeUser }) => (
   </View>
 );
 
+/**
+ * LoadingState
+ *
+ * Shown while cards are loading.
+ */
 const LoadingState = () => (
   <View style={styles.loadingContainer}>
     <ThemedText style={styles.loadingText}>Loading cards...</ThemedText>
