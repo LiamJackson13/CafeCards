@@ -182,7 +182,7 @@ export const useScanner = (user, isCafeUser) => {
     if (!pendingCustomer) return;
     try {
       for (let i = 0; i < stampsToAdd; i++) {
-        await addStampToCard(pendingCustomer.id, user.$id);
+        await addStampToCard(pendingCustomer, user.$id);
       }
       const stampText = stampsToAdd === 1 ? "stamp" : "stamps";
       addToScanHistory(
@@ -236,7 +236,7 @@ export const useScanner = (user, isCafeUser) => {
         });
         setManualCardId("");
         setIsManualEntryVisible(false);
-      } catch (error) {
+      } catch (_error) {
         // Error already handled in handleBarCodeScanned
       } finally {
         setIsProcessing(false);

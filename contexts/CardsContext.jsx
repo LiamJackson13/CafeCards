@@ -19,6 +19,7 @@ import {
   createLoyaltyCard,
   DATABASE_ID,
   findLoyaltyCardByCustomerId,
+  findLoyaltyCardByCustomerIdAndCafeUserId,
   getLoyaltyCardById,
   getLoyaltyCardsByCafeUser,
   getLoyaltyCardsByCustomerId,
@@ -87,6 +88,19 @@ export function CardsProvider({ children }) {
       return await findLoyaltyCardByCustomerId(userId);
     } catch (error) {
       console.error("Error fetching card by user ID:", error);
+      return null;
+    }
+  };
+
+  /**
+   * Fetch a card by customer user ID and cafe user ID.
+   */
+  const fetchCardByUserIdAndCafeUserId = async (userId, cafeUserId) => {
+    if (!userId || !cafeUserId) return null;
+    try {
+      return await findLoyaltyCardByCustomerIdAndCafeUserId(userId, cafeUserId);
+    } catch (error) {
+      console.error("Error fetching card by user ID and cafe user ID:", error);
       return null;
     }
   };
@@ -290,6 +304,7 @@ export function CardsProvider({ children }) {
         fetchCardById,
         fetchCards,
         fetchCardByUserId,
+        fetchCardByUserIdAndCafeUserId,
         createCard,
         updateCard,
         deleteCard,

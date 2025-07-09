@@ -6,6 +6,7 @@
 - [ ] Fix recent activity on card [id] page (test this by adding 5 new stamps)
 - [ ] Fix appwrite IDs to be in .env file
 - [ ] Shorten loyalty_cards.js file
+- [ ] there are currently two places to change the cafes name, the profile screen and design screen. They both show different names. figure out which one is actually changing the name in the db and fix it.
 
 ### Random Tasks
 - [x] Swap around layout file so that Profile tab is on the left and settings tab is on the right
