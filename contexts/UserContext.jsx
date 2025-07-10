@@ -52,9 +52,20 @@ export function UserProvider({ children }) {
   /**
    * Register a new user and log them in.
    */
-  async function register(email, password) {
+  async function register(email, password, isCafeUserFlag = false) {
     try {
-      await account.create(ID.unique(), email, password);
+      // Create new user account
+      const createdUser = await account.create(ID.unique(), email, password);
+      // If registering as a cafe, add entry to cafe IDs collection
+      if (isCafeUserFlag) {
+        await databases.createDocument(
+          DATABASE_ID,
+          CAFE_IDS_COLLECTION_ID,
+          ID.unique(),
+          { userId: createdUser.$id }
+        );
+      }
+      // Log the user in, with cafe status determined during login
       await login(email, password);
     } catch (error) {
       throw Error(error.message);

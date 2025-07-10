@@ -13,7 +13,13 @@
  * - Themed, safe-area layout
  */
 import { useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
+import {
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import LogoutButton from "../../components/profile/LogoutButton";
 import ProfileHeader from "../../components/profile/ProfileHeader";
 import ProfileModals from "../../components/profile/ProfileModals";
@@ -115,13 +121,13 @@ const ProfileScreen = () => {
               title="Export Data"
               style={[styles.dataButton, styles.exportButton]}
             >
-              <ThemedText>Export Data</ThemedText>
+              <Text>Export Data</Text>
             </ThemedButton>
             <ThemedButton
               title="Clear All Data"
               style={[styles.dataButton, styles.clearButton]}
             >
-              <ThemedText>Clear All Data</ThemedText>
+              <Text>Clear All Data</Text>
             </ThemedButton>
           </View>
         </ThemedCard>

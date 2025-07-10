@@ -15,8 +15,10 @@ import {
   Keyboard,
   Platform,
   StyleSheet,
+  Switch,
   Text,
   TouchableWithoutFeedback,
+  View,
 } from "react-native";
 import Spacer from "../../components/Spacer";
 import ThemedButton from "../../components/ThemedButton";
@@ -30,13 +32,15 @@ const RegisterScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  // Toggle for registering as cafe or customer
+  const [isCafeUserFlag, setIsCafeUserFlag] = useState(false);
   const { register } = useUser();
 
   // Handles registration and error state
   const handleSubmit = async () => {
     setError(null);
     try {
-      await register(email, password);
+      await register(email, password, isCafeUserFlag);
     } catch (error) {
       setError(error?.message || "Registration failed.");
     }
@@ -67,12 +71,25 @@ const RegisterScreen = () => {
           value={password}
           style={styles.input}
         />
+        {/* Toggle to choose cafe or customer registration */}
+        <View style={styles.switchContainer}>
+          <ThemedText style={styles.switchLabel}>Register as Cafe</ThemedText>
+          <Switch
+            trackColor={{ false: Colors.light.border, true: Colors.primary }}
+            thumbColor={isCafeUserFlag ? Colors.primary : Colors.light.card}
+            ios_backgroundColor={Colors.light.border}
+            onValueChange={setIsCafeUserFlag}
+            value={isCafeUserFlag}
+            style={styles.switch}
+          />
+        </View>
         <ThemedButton onPress={handleSubmit}>
           <Text style={{ color: "#f2f2f2" }}>Register</Text>
         </ThemedButton>
         <Spacer />
         {error && <Text style={styles.error}>{error}</Text>}
         <Spacer height={100} />
+
         <Link href="/login">
           <ThemedText style={styles.link}>
             Already have an account? Login Instead
@@ -124,5 +141,24 @@ const styles = StyleSheet.create({
       boxSizing: "border-box",
       alignSelf: "center",
     }),
+  },
+  switchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "50%",
+    marginBottom: 20,
+    ...(Platform.OS === "web" && {
+      maxWidth: 400,
+      width: "calc(100% - 80px)",
+      alignSelf: "center",
+    }),
+  },
+  switchLabel: {
+    fontSize: 16,
+  },
+  switch: {
+    marginLeft: 10,
+    transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }],
   },
 });
