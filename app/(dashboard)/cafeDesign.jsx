@@ -46,7 +46,7 @@ const colorOptions = [
 const stampIcons = ["⭐", "☕", "💫", "🎯", "💎", "🏆", "❤️", "🎁", "🌟", "✨"];
 
 const CafeDesignSettings = () => {
-  const { user } = useUser();
+  const { user, updateName } = useUser();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [profile, setProfile] = useState(null);
@@ -126,6 +126,10 @@ const CafeDesignSettings = () => {
       } else {
         result = await createCafeProfile(profileData, user.$id);
         setProfile(result);
+      }
+      // Also update auth profile name to match cafe name
+      if (updateName && cafeName) {
+        await updateName(cafeName);
       }
       Alert.alert("Success", "Cafe design settings saved successfully!");
     } catch (error) {

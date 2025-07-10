@@ -53,6 +53,7 @@ const ProfileScreen = () => {
     handleChangePassword,
     handleEditName,
     handleNameUpdated,
+    cafeProfile,
     getDisplayName,
     refetchStats,
   } = useProfile();
@@ -86,6 +87,7 @@ const ProfileScreen = () => {
         {/* Profile Header */}
         <ProfileHeader
           isCafeUser={isCafeUser}
+          cafeProfile={cafeProfile}
           getDisplayName={getDisplayName}
           user={user}
           onEditName={handleEditName}
@@ -167,8 +169,12 @@ const ProfileScreen = () => {
         setIsPasswordModalVisible={setIsPasswordModalVisible}
         isNameModalVisible={isNameModalVisible}
         setIsNameModalVisible={setIsNameModalVisible}
-        currentName={user?.name || ""}
+        currentName={
+          isCafeUser ? cafeProfile?.cafeName || "" : user?.name || ""
+        }
         onNameUpdated={handleNameUpdated}
+        isCafeUser={isCafeUser}
+        cafeProfileId={cafeProfile?._id || cafeProfile?.$id}
       />
     </ThemedView>
   );

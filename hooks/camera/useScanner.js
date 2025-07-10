@@ -217,13 +217,6 @@ export const useScanner = (user, isCafeUser) => {
     setScanned(false);
   }, []);
 
-  // Manual scanner reset
-  const resetScanner = useCallback(() => {
-    setScanned(false);
-    setIsProcessing(false);
-    lastScannedRef.current = { data: null, timestamp: 0 };
-  }, []);
-
   // Manual entry processing
   const processManualEntry = useCallback(
     async (cardId) => {
@@ -273,7 +266,6 @@ export const useScanner = (user, isCafeUser) => {
     handleBarCodeScanned,
     confirmStampAddition,
     cancelStampAddition,
-    resetScanner,
     processManualEntry,
     handleManualEntry,
     dismissRedemptionSuccess,

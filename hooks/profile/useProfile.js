@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { getCafeProfile } from "../../lib/appwrite/cafe-profiles";
 import { useCafeUser, useUser } from "../useUser";
 import { useProfileStats } from "./useProfileStats";
 
@@ -12,12 +13,29 @@ import { useProfileStats } from "./useProfileStats";
 export const useProfile = () => {
   const { logout, user, refreshUser } = useUser();
   const isCafeUser = useCafeUser(); // Includes debug override if present
+  const [cafeProfile, setCafeProfile] = useState(null);
+
   const {
     stats,
     loading: statsLoading,
     error: statsError,
     refetch: refetchStats,
   } = useProfileStats();
+
+  const fetchCafeProfile = useCallback(async () => {
+    if (isCafeUser && user?.$id) {
+      try {
+        const profile = await getCafeProfile(user.$id);
+        setCafeProfile(profile);
+      } catch (error) {
+        console.error("Error fetching cafe profile:", error);
+      }
+    }
+  }, [isCafeUser, user]);
+
+  useEffect(() => {
+    fetchCafeProfile();
+  }, [fetchCafeProfile]);
 
   // Modal state for password and name editing
   const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
@@ -34,12 +52,17 @@ export const useProfile = () => {
   };
 
   // After name update, refresh user and stats
-  const handleNameUpdated = async (updatedUser) => {
+  const handleNameUpdated = async (updated) => {
     try {
-      await refreshUser();
+      if (isCafeUser) {
+        // Refresh cafe profile
+        await fetchCafeProfile();
+      } else {
+        await refreshUser();
+      }
       await refetchStats();
     } catch (error) {
-      console.error("Failed to refresh user data:", error);
+      console.error("Failed to refresh data after name update:", error);
     }
   };
 
@@ -58,6 +81,7 @@ export const useProfile = () => {
     stats,
     statsLoading,
     statsError,
+    cafeProfile,
 
     // Modal state
     isPasswordModalVisible,

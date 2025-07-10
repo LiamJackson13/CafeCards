@@ -63,7 +63,6 @@ const CafeScannerScreen = () => {
     setStampsToAdd,
     setIsManualEntryVisible,
     setManualCardId,
-    resetScanner,
   } = useScanner(user, isCafeUser);
 
   // Refresh camera when screen comes into focus
@@ -119,20 +118,6 @@ const CafeScannerScreen = () => {
         disabled={isProcessing}
       >
         <ThemedText style={styles.manualButtonText}>Manual Entry</ThemedText>
-      </ThemedButton>
-
-      <Spacer height={10} />
-
-      <ThemedButton
-        title="Reset Scanner"
-        onPress={() => {
-          resetScanner();
-          refreshCamera();
-        }}
-        style={[styles.manualButton, styles.resetButton]}
-        disabled={isProcessing}
-      >
-        <ThemedText style={styles.manualButtonText}>Reset Scanner</ThemedText>
       </ThemedButton>
 
       <Spacer height={20} />

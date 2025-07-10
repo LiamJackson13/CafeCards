@@ -23,6 +23,7 @@ import {
 } from "react-native";
 import Spacer from "../../components/Spacer";
 import ThemedLoader from "../../components/ThemedLoader";
+import ThemedText from "../../components/ThemedText";
 import ThemedView from "../../components/ThemedView";
 import { EmptyState, LoadingState } from "../../components/cards/CardStates";
 import CardsListHeader from "../../components/cards/CardsListHeader";
@@ -111,6 +112,19 @@ const CardsScreen = () => {
       timestamp: new Date().toISOString(),
     });
   };
+
+  if (isCafeUser) {
+    return (
+      <ThemedView style={styles.container} safe>
+        <ThemedText type="title" style={styles.title}>
+          Access Denied
+        </ThemedText>
+        <ThemedText style={styles.subtitle}>
+          Only customers can access this page
+        </ThemedText>
+      </ThemedView>
+    );
+  }
 
   // Show loading state if cards are loading and none are present
   if (loading && displayCards.length === 0) {

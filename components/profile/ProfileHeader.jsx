@@ -12,9 +12,21 @@ import DebugToggle from "./DebugToggle";
  * - Shows debug toggle in development.
  * - Cafe users see business badges.
  */
-const ProfileHeader = ({ user, isCafeUser, onEditName, getDisplayName }) => {
+const ProfileHeader = ({
+  user,
+  isCafeUser,
+  cafeProfile,
+  onEditName,
+  getDisplayName,
+}) => {
   const { actualTheme } = useTheme();
   const theme = Colors[actualTheme] ?? Colors.light;
+
+  // Determine display name: cafe profile name for cafe users, else user name
+  const displayName =
+    isCafeUser && cafeProfile?.cafeName
+      ? cafeProfile.cafeName
+      : getDisplayName();
 
   return (
     <>
@@ -43,7 +55,7 @@ const ProfileHeader = ({ user, isCafeUser, onEditName, getDisplayName }) => {
             ]}
           >
             <ThemedText style={styles.avatarText}>
-              {getDisplayName().charAt(0).toUpperCase()}
+              {displayName.charAt(0).toUpperCase()}
             </ThemedText>
           </View>
           <View style={[styles.statusDot, { backgroundColor: "#4CAF50" }]} />
@@ -52,7 +64,7 @@ const ProfileHeader = ({ user, isCafeUser, onEditName, getDisplayName }) => {
         {/* Name and Edit Button */}
         <View style={styles.nameContainer}>
           <ThemedText type="title" style={styles.userName}>
-            {getDisplayName()}
+            {displayName}
           </ThemedText>
           <ThemedButton
             onPress={onEditName}

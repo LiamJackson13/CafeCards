@@ -3,340 +3,59 @@
 ## 🚀 High Priority Features
 
 ### Do first
-- [ ] Fix recent activity on card [id] page (test this by adding 5 new stamps)
 - [ ] Fix appwrite IDs to be in .env file
-- [ ] Shorten loyalty_cards.js file
-- [ ] there are currently two places to change the cafes name, the profile screen and design screen. They both show different names. figure out which one is actually changing the name in the db and fix it.
 
-### Random Tasks
-- [x] Swap around layout file so that Profile tab is on the left and settings tab is on the right
-- [ ] Make profile screen show real data
-- [ ] Make custom card design
-- [ ] Make it so the user can choose the stamp emoji for each cafe
-- [ ] Add pinning cards
+### Authentication
+- [ ] Implement forgot password functionality.
+- [ ] Add email verification after registration.
+- [ ] Improve error handling for login and registration forms.
 
-### Authentication & User Management
-- [ ] Implement user registration validation
-- [ ] Add email verification flow
-- [ ] Implement forgot password functionality
-- [ ] Add user profile picture upload
-- [ ] Implement account deletion feature
+### Profile Management
+- [ ] Allow users to upload profile pictures.
+- [ ] Add support for updating email and password.
+- [ ] Display a confirmation dialog before deleting an account.
 
-### Core Functionality
-- [x] Implement actual QR code scanning (COMPLETED)
-- [x] Add QR code generation for customers (COMPLETED)
-- [x] Implement QR code display with theming (COMPLETED)
-- [x] Add customer loyalty card QR with proper data format (COMPLETED)
-- [x] Update scanner to handle new QR format (COMPLETED)
-- [x] Implement Appwrite database integration for scanned cards (COMPLETED)
-- [x] Create loyalty card data model and storage (COMPLETED)
-- [x] Implement points/rewards system logic (COMPLETED)
-- [x] Add stamp confirmation modal with custom stamp count (COMPLETED)
-- [x] Fix rewards system to handle stamps beyond 10 properly (COMPLETED)
-- [x] Implement proper reward accumulation and tracking (COMPLETED)
-- [x] Add availableRewards and totalRedeemed fields to database (COMPLETED)
-- [x] Refactor large lib/appwrite.js file (COMPLETED - Split into modular structure)
-- [x] Clean up unused files (BooksContext, useCafeUser) (COMPLETED)
-- [x] Phase 3 Refactoring: cafeCamera.jsx extraction (COMPLETED)
-  - [x] Extract camera state management (useCamera hook)
-  - [x] Extract scanner logic (useScanner hook)
-  - [x] Extract QR parsing/validation (lib/scanner/qr-parser.js)
-  - [x] Extract camera UI components (CameraView, ScanHistory, ManualEntryModal, StampModal)
-  - [x] Refactor main camera screen to use new hooks and components
-- [x] Phase 3 Refactoring: cards/[id].jsx extraction (COMPLETED)
-  - [x] Extract CardHeader component
-  - [x] Extract StampProgress component
-  - [x] Extract QRCodeModal component
-  - [x] Extract CardActions component
-  - [x] Extract ActivityHistory component
-  - [x] Create useCardDetails hook
-  - [x] Refactor main card details screen (751 → 126 lines, 83% reduction)
-- [x] Phase 3 Refactoring: cards.jsx extraction (COMPLETED)
-  - [x] Extract CardItem component
-  - [x] Extract CardsListHeader component
-  - [x] Extract ProgressIndicators components
-  - [x] Extract CardStates components (EmptyState, LoadingState)
-  - [x] Create useCardsList hook
-  - [x] Refactor main cards list screen (516 → 75 lines, 85% reduction)
-- [x] Phase 3 Refactoring: profile.jsx extraction (COMPLETED)
-  - [x] Extract ProfileHeader component (with debug toggle)
-  - [x] Extract AboutSection component
-  - [x] Extract LogoutButton component
-  - [x] Extract ProfileModals component
-  - [x] Create useProfile hook
-  - [x] Refactor main profile screen (425 → 106 lines, 75% reduction)
+### Cafe Design
+- [ ] Add preview functionality for loyalty card designs.
+- [ ] Allow users to upload custom images for card backgrounds.
+- [ ] Add more customization options (e.g., fonts, gradients).
 
-### ✅ Phase 3 Refactoring COMPLETED!
-**All large component files have been successfully modularized:**
-- **cafeCamera.jsx**: 1091 → 126 lines (88% reduction)
-- **cards/[id].jsx**: 751 → 126 lines (83% reduction)
-- **cards.jsx**: 516 → 75 lines (85% reduction)
-- **profile.jsx**: 425 → 106 lines (75% reduction)
+### Dashboard
+- [ ] Create analytics dashboard for cafe owners (e.g., customer activity, card usage).
+- [ ] Add support for exporting customer data.
+- [ ] Implement a notification system for important updates.
 
-**Total lines reduced**: 2,783 → 433 lines (84% overall reduction)
-**Components extracted**: 25+ reusable components
-**Hooks created**: 7 specialized hooks
+### QR Code Scanning
+- [ ] Improve QR code scanning accuracy and speed.
+- [ ] Add support for manual entry of QR codes.
+- [ ] Display error messages for invalid QR codes.
 
+### Rewards System
+- [ ] Allow cafe owners to set custom rewards for loyalty cards.
+- [ ] Add support for tiered rewards (e.g., bronze, silver, gold levels).
+- [ ] Notify customers when they are close to earning a reward.
 
-- [ ] Add card expiration handling
+### Theming
+- [ ] Add more themes (e.g., seasonal themes).
+- [ ] Allow users to create and save custom themes.
+- [ ] Improve accessibility for dark mode.
 
-### Database & Backend
-- [x] Set up Appwrite collections for loyalty cards (COMPLETED)
-- [x] Implement real-time card updates (COMPLETED)
-- [x] Add Appwrite integration for card scanning and storage (COMPLETED)
-- [x] Create database migration script for rewards system update (COMPLETED)
-- [ ] Set up Appwrite collections for:
-  - [ ] User profiles
-  - [ ] Cafes/businesses
-  - [ ] Transactions/scans
-- [ ] Add data synchronization between devices
+### Testing and Debugging
+- [ ] Write unit tests for all components.
+- [ ] Add end-to-end tests for critical user flows.
+- [ ] Set up automated testing in CI/CD pipeline.
 
-## 🎨 UI/UX Improvements
-
-### Profile Screen
-- [x] Password change modal (COMPLETED)
-- [x] Theme support (COMPLETED)
-- [x] Role-based UI (COMPLETED)
-- [x] Global debug toggle for cafe/customer switching (COMPLETED)
-- [x] Auto-set debug toggle based on real user type (COMPLETED)
-- [x] Extract reusable components (StatCard, ProfileOption, DebugToggle, PasswordModal) (COMPLETED)
-- [ ] Add profile picture upload
-- [ ] Implement settings persistence
-- [ ] Add success/error toast notifications
-
-### Cards Screen
-- [x] Modern card layout (COMPLETED)
-- [x] Implement real loyalty card display from Appwrite database (COMPLETED)
-- [x] Add pull-to-refresh functionality (COMPLETED)
-- [x] Role-based card display (customers vs cafe owners) (COMPLETED)
-- [x] Customer card visibility - customers can now see their own loyalty cards (COMPLETED)
-- [x] Card details page with progress tracking, scan history, and actions (COMPLETED)
-- [ ] Add card search/filter functionality
-- [ ] Implement card sorting options
-- [ ] Create add new card flow
-
-### Camera/Scanner Screen
-- [x] Implement actual camera functionality (COMPLETED)
-- [x] Add QR code detection and processing (COMPLETED)
-- [x] Create scan history (COMPLETED)
-- [x] Add camera refresh functionality (COMPLETED)
-- [x] Implement automatic camera refresh on page load (COMPLETED)
-- [x] Update scanner to parse new QR code format (COMPLETED)
-
-### QR Code Screen
-- [x] Transform from card creation to QR display (COMPLETED)
-- [x] Generate customer loyalty card QR codes (COMPLETED)
-- [x] Implement theme-aware QR codes (black/white) (COMPLETED)
-- [x] Add card ID copy functionality (COMPLETED)
-- [x] Include comprehensive card data in QR (COMPLETED)
-- [x] Add refresh QR functionality (COMPLETED)
-- [x] Add manual card entry option (COMPLETED)
-- [x] Implement scan feedback (success/error states) (COMPLETED)
-
-### Settings Screen
-- [ ] Make settings functional (currently UI-only)
-- [ ] Add notification preferences
-- [ ] Implement data export/import
-- [ ] Add privacy controls
-
-## 🏪 Cafe Owner Features
-
-### Business Management
-- [ ] Cafe profile setup and editing
-- [ ] Loyalty program configuration
-- [ ] Reward tier management
-- [ ] Customer analytics dashboard
-
-### Card Management
-- [ ] Bulk card generation
-- [ ] Custom card designs
-- [ ] Expiration date management
-- [ ] Card activation/deactivation
-
-### Analytics
-- [ ] Customer engagement metrics
-- [ ] Popular rewards tracking
-- [ ] Revenue analytics
-- [ ] Customer retention stats
-
-## 📱 Technical Improvements
-
-### Performance
-- [ ] Implement image caching for card logos
-- [ ] Add loading states for all async operations
-- [ ] Optimize bundle size
-- [ ] Add error boundaries
-
-### Code Quality
-- [ ] Add comprehensive error handling
-- [ ] Implement logging system
-- [ ] Add unit tests
-- [ ] Add integration tests
-- [ ] Improve TypeScript coverage
-
-### Accessibility
-- [ ] Add accessibility labels
-- [ ] Implement screen reader support
-- [ ] Add high contrast mode
-- [ ] Test with accessibility tools
-
-## 🔧 Infrastructure
-
-### Security
-- [ ] Implement API rate limiting
-- [ ] Add request validation
-- [ ] Secure storage for sensitive data
-- [ ] Implement proper session management
+### Documentation
+- [ ] Write detailed documentation for developers.
+- [ ] Add user guides for cafe owners and customers.
+- [ ] Create a FAQ section in the app.
 
 ### Deployment
-- [ ] Set up CI/CD pipeline
-- [ ] Configure app store builds
-- [ ] Add crash reporting (Sentry)
-- [ ] Set up analytics (Amplitude/Mixpanel)
+- [ ] Set up staging and production environments.
+- [ ] Optimize app performance for mobile devices.
+- [ ] Monitor app usage and errors using analytics tools.
 
-## 🎯 Nice-to-Have Features
-
-### Social Features
-- [ ] Share favorite cafes
-- [ ] Review system for cafes
-- [ ] Social login options
-- [ ] Friend referral system
-
-### Advanced Features
-- [ ] Offline support
-- [ ] Push notifications for offers
-- [ ] Location-based cafe discovery
-- [ ] Apple/Google Wallet integration
-
-### Gamification
-- [ ] Achievement system
-- [ ] Leaderboards
-- [ ] Special badges
-- [ ] Streak tracking
-
-## 🐛 Known Issues to Fix
-
-### Current Bugs
-- [ ] Verify theme persistence across app restarts
-- [ ] Test password change on different devices
-- [ ] Ensure proper navigation after logout
-- [ ] Fix any memory leaks in camera preview
-- [x] Fix clipboard native module error (COMPLETED - switched to expo-clipboard)
-- [x] Fix random "Document with the requested ID could not be found" errors (COMPLETED - added comprehensive error handling)
-
-### Error Handling Improvements (COMPLETED)
-- [x] Added defensive programming to prevent crashes on missing/invalid documents
-- [x] Improved real-time subscription error handling with automatic retries
-- [x] Added document validation and cleanup utilities
-- [x] Enhanced Appwrite function error handling with specific error messages
-- [x] Added card state validation to prevent corrupted data from causing crashes
-- [x] Implemented graceful fallbacks for permission and network errors
-
-### Edge Cases
-- [ ] Handle network connectivity issues
-- [ ] Manage app state during interruptions
-- [ ] Test with empty states
-- [ ] Handle large datasets gracefully
-
-## 🧩 Code Architecture & Refactoring
-
-### Component Extraction (COMPLETED)
-- [x] StatCard component for displaying profile statistics
-- [x] ProfileOption component for settings menu items
-- [x] DebugToggle component for development mode switching
-- [x] PasswordModal component for password change functionality
-- [x] Improved modularity and reusability of profile screen components
-
-### Pending Code Improvements
-- [ ] Extract common form components (TextInput, Button variations)
-- [ ] Create a centralized navigation helper
-- [ ] Implement error boundary components
-- [ ] Add proper TypeScript types throughout the app
-- [ ] Optimize performance with React.memo and useMemo where needed
-
-## 📋 Testing Checklist
-
-### Manual Testing
-- [ ] Test all navigation flows
-- [ ] Verify theme switching works correctly
-- [ ] Test on different screen sizes
-- [ ] Test on both iOS and Android
-
-### Automated Testing
-- [ ] Set up Jest testing environment
-- [ ] Write component tests for ThemedComponents
-- [ ] Add integration tests for user flows
-- [ ] Set up E2E testing with Detox
-
-## 📝 Documentation
-
-- [ ] Create API documentation
-- [ ] Write user guide/help section
-- [ ] Document component library
-- [ ] Create developer setup guide
-
----
-
-## Priority Order
-1. **Phase 1**: Core functionality (QR scanning, data storage)
-2. **Phase 2**: Business features (cafe owner tools)
-3. **Phase 3**: Polish and advanced features
-4. **Phase 4**: Social and gamification features
-
-Last updated: July 5, 2025
-
-## ✅ Recent Completion - Appwrite Database Integration
-
-### What was implemented:
-- **Scanner-Database Integration**: When cafe users scan customer QR codes, loyalty cards are now automatically saved to Appwrite database
-- **Card Management Functions**: Created comprehensive Appwrite functions for creating, updating, and querying loyalty cards
-- **Real-time Card Display**: Cards screen now displays actual loyalty cards from the database with real-time updates
-- **Role-based Views**: Different card displays for cafe users (showing customer cards they manage) vs regular customers
-- **Error Handling**: Proper error handling for database operations with fallback to local storage
-- **Data Structure**: Complete loyalty card data model with stamps, rewards, customer info, and scan history
-
-### Files modified:
-- `lib/appwrite.js` - Added loyalty card management functions
-- `app/(dashboard)/cafeCamera.jsx` - Added database integration to scanner
-- `app/(dashboard)/cards.jsx` - Updated to display real loyalty cards from database
-- `contexts/CardsContext.jsx` - Created context for loyalty card management
-- `hooks/useCards.js` - Added hook for accessing cards context
-- `APPWRITE_SETUP.md` - Created setup instructions for Appwrite collection
-
-### Next steps needed:
-1. Create the loyalty_cards collection in Appwrite console using the instructions in APPWRITE_SETUP.md
-2. Update the LOYALTY_CARDS_COLLECTION_ID in lib/appwrite.js with the actual collection ID
-3. Test the scanner and cards functionality end-to-end
-
-## ✅ Recent Completion - Code Refactoring & Cleanup
-
-### Phase 1: Cleanup Completed ✅
-- **Removed unused files**: Deleted `BooksContext.jsx`, `useBooks.js`, and temporary migration helper
-- **Merged small hooks**: Combined `useCafeUser.js` into `useUser.js` to reduce fragmentation
-- **Updated imports**: Fixed all import statements throughout the app
-- **Cleaned directory structure**: Removed debug and temporary files
-
-### Phase 2: Appwrite Modularization Completed ✅
-- **Split large file**: Broke down 793-line `lib/appwrite.js` into focused modules
-- **New structure created**:
-  - `lib/appwrite/client.js` - Client configuration and services (35 lines)
-  - `lib/appwrite/auth.js` - Authentication functions (30 lines)
-  - `lib/appwrite/loyalty-cards.js` - Loyalty card operations (430 lines)
-  - `lib/appwrite/utils.js` - Helper utilities (150 lines)
-  - `lib/appwrite/migration.js` - Migration functions (70 lines)
-  - `lib/appwrite/index.js` - Main exports (10 lines)
-- **Maintained compatibility**: All existing imports continue to work seamlessly
-- **Improved maintainability**: Each module has a single responsibility
-
-### Benefits Achieved
-- **Better organization**: Related functions grouped logically
-- **Easier testing**: Smaller, focused modules are easier to test
-- **Improved performance**: Better tree-shaking potential
-- **Reduced complexity**: No more 1000+ line files
-- **Cleaner imports**: Clear separation of concerns
-
-### Files to Refactor Next (Phase 3)
-1. `cafeCamera.jsx` (1091 lines) - Scanner and camera logic
-2. `cards/[id].jsx` (751 lines) - Individual card details
-3. `cards.jsx` (515 lines) - Cards list
-4. `profile.jsx` (425 lines) - Profile screen
+## 🛠️ Maintenance
+- [ ] Regularly update dependencies.
+- [ ] Perform security audits.
+- [ ] Gather user feedback and iterate on features.

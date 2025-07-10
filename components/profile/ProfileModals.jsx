@@ -13,6 +13,8 @@ const ProfileModals = ({
   setIsNameModalVisible,
   currentName,
   onNameUpdated,
+  isCafeUser,
+  cafeProfileId,
 }) => {
   return (
     <>
@@ -28,6 +30,8 @@ const ProfileModals = ({
         onClose={() => setIsNameModalVisible(false)}
         currentName={currentName}
         onNameUpdated={onNameUpdated}
+        isCafeUser={isCafeUser}
+        cafeProfileId={cafeProfileId}
       />
     </>
   );

@@ -19,13 +19,22 @@ import {
 } from "react-native";
 import { Colors } from "../../constants/Colors";
 import { useTheme } from "../../contexts/ThemeContext";
-import { updateUserName } from "../../lib/appwrite";
+import { useUser } from "../../hooks/useUser";
+import { updateCafeProfile } from "../../lib/appwrite/cafe-profiles";
 import ThemedButton from "../ThemedButton";
 import ThemedText from "../ThemedText";
 import ThemedTextInput from "../ThemedTextInput";
 import ThemedView from "../ThemedView";
 
-const NameModal = ({ visible, onClose, currentName, onNameUpdated }) => {
+const NameModal = ({
+  visible,
+  onClose,
+  currentName,
+  onNameUpdated,
+  isCafeUser = false,
+  cafeProfileId,
+}) => {
+  const { updateName } = useUser();
   const { actualTheme } = useTheme();
   const theme = Colors[actualTheme] ?? Colors.light;
 
@@ -50,8 +59,16 @@ const NameModal = ({ visible, onClose, currentName, onNameUpdated }) => {
     }
     try {
       setLoading(true);
-      const updatedUser = await updateUserName(name.trim());
-      if (onNameUpdated) onNameUpdated(updatedUser);
+      if (isCafeUser) {
+        // Update cafe profile name
+        await updateCafeProfile(cafeProfileId, { cafeName: name.trim() });
+        // Also update auth user name via context
+        await updateName(name.trim());
+        if (onNameUpdated) onNameUpdated(name.trim());
+      } else {
+        const updatedUser = await updateName(name.trim());
+        if (onNameUpdated) onNameUpdated(updatedUser);
+      }
       Alert.alert("Success", "Your name has been updated successfully", [
         { text: "OK", onPress: onClose },
       ]);

@@ -23,8 +23,6 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useCafeUser } from "../../hooks/useUser";
 
 const TAB_ICON_SIZE = 24;
-const TAB_BAR_HEIGHT = 90;
-const TAB_BAR_PADDING_TOP = 10;
 
 const DashboardLayout = () => {
   const { actualTheme } = useTheme();
@@ -40,8 +38,8 @@ const DashboardLayout = () => {
             headerShown: false,
             tabBarStyle: {
               backgroundColor: theme.navBackground,
-              paddingTop: TAB_BAR_PADDING_TOP,
-              height: TAB_BAR_HEIGHT,
+              paddingTop: 10,
+              height: 90,
             },
             tabBarActiveTintColor: theme.iconColorFocused,
             tabBarInactiveTintColor: theme.iconColor,
