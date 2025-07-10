@@ -50,7 +50,7 @@ const CardDetails = () => {
   const router = useRouter();
 
   const [cafeDesign, setCafeDesign] = useState(null);
-  const [designLoading, setDesignLoading] = useState(true);
+  const [designLoading, setDesignLoading] = useState(true); // This state tracks whether the cafe design is still loading, ensuring the UI reflects the loading state appropriately.
 
   const theme = Colors[actualTheme] ?? Colors.light;
 
@@ -66,7 +66,7 @@ const CardDetails = () => {
       });
     },
     [router]
-  );
+  ); // useCallback is used here to memoize the function, ensuring it is not recreated on every render. This prevents unnecessary re-renders or re-executions of hooks that depend on this function.
 
   const {
     formattedCard,
@@ -88,7 +88,7 @@ const CardDetails = () => {
       try {
         const design = await getCafeDesign(formattedCard.cafeUserId);
         setCafeDesign(design);
-      } catch (error) {
+      } catch (_error) {
         // Fallback to default design
         setCafeDesign({
           primaryColor: "#AA7C48",

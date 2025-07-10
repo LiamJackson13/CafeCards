@@ -44,7 +44,7 @@ const QRCodeModal = ({ visible, onClose, qrData, availableRewards, theme }) => {
           </ThemedText>
 
           <ThemedText style={styles.modalSubtitle}>
-            Show this QR code to the cafe staff to redeem one of your{" "}
+            Show this QR code to the cafe staff to redeem one of your
             {availableRewards || 1} available reward
             {(availableRewards || 1) > 1 ? "s" : ""}
           </ThemedText>

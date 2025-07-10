@@ -37,8 +37,8 @@ const RegisterScreen = () => {
     setError(null);
     try {
       await register(email, password);
-    } catch (e) {
-      setError(e?.message || "Registration failed.");
+    } catch (error) {
+      setError(error?.message || "Registration failed.");
     }
   };
 
@@ -58,14 +58,14 @@ const RegisterScreen = () => {
           autoCapitalize="none"
           onChangeText={setEmail}
           value={email}
-          style={styles.INPUT_STYLE}
+          style={styles.input}
         />
         <ThemedTextInput
           placeholder="Password"
           secureTextEntry
           onChangeText={setPassword}
           value={password}
-          style={styles.INPUT_STYLE}
+          style={styles.input}
         />
         <ThemedButton onPress={handleSubmit}>
           <Text style={{ color: "#f2f2f2" }}>Register</Text>
@@ -115,8 +115,7 @@ const styles = StyleSheet.create({
   link: {
     textAlign: "center",
   },
-  // Shared input style for consistency
-  INPUT_STYLE: {
+  input: {
     width: "80%",
     marginBottom: 20,
     ...(Platform.OS === "web" && {

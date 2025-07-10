@@ -9,7 +9,7 @@
  */
 
 import { Link } from "expo-router";
-import { useCallback, useMemo, useState } from "react";
+import { useState } from "react";
 import {
   Keyboard,
   Platform,
@@ -25,10 +25,6 @@ import ThemedView from "../../components/ThemedView";
 import { Colors } from "../../constants/Colors";
 import { useUser } from "../../hooks/useUser";
 
-// Shared constants for layout
-const INPUT_WIDTH = "80%";
-const INPUT_MARGIN_BOTTOM = 20;
-
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,27 +32,14 @@ const LoginScreen = () => {
 
   const { login } = useUser();
 
-  // Memoized submit handler
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = async () => {
     setError(null);
     try {
       await login(email, password);
     } catch (error) {
-      setError(error.message);
+      setError(error?.message || "Login failed.");
     }
-  }, [email, password, login]);
-
-  // Memoized styles for performance
-  const inputStyle = useMemo(
-    () => [
-      {
-        width: INPUT_WIDTH,
-        marginBottom: INPUT_MARGIN_BOTTOM,
-      },
-      styles.input,
-    ],
-    []
-  );
+  };
 
   return (
     <TouchableWithoutFeedback
@@ -72,7 +55,7 @@ const LoginScreen = () => {
         {/* Email Input */}
         <ThemedTextInput
           placeholder="Email"
-          style={inputStyle}
+          style={styles.input}
           keyboardType="email-address"
           autoCapitalize="none"
           onChangeText={setEmail}
@@ -83,7 +66,7 @@ const LoginScreen = () => {
         <ThemedTextInput
           placeholder="Password"
           secureTextEntry
-          style={inputStyle}
+          style={styles.input}
           onChangeText={setPassword}
           value={password}
         />
@@ -140,6 +123,8 @@ const styles = StyleSheet.create({
 
   // Inputs
   input: {
+    width: "80%",
+    marginBottom: 20,
     padding: 20,
     borderRadius: 6,
     alignSelf: "stretch",

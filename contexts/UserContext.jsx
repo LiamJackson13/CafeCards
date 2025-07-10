@@ -8,53 +8,45 @@
 
 import { createContext, useCallback, useEffect, useState } from "react";
 import { ID } from "react-native-appwrite";
-import { account } from "../lib/appwrite";
+import {
+  account,
+  CAFE_IDS_COLLECTION_ID,
+  DATABASE_ID,
+  databases,
+} from "../lib/appwrite"; // Import the databases object
 
 // Create the UserContext to be used by the app
 export const UserContext = createContext();
-
-// Hardcoded cafe user IDs for special access/roles
-const CAFE_USER_IDS = [
-  "68678aaa002cdc721bfa",
-  "6868da4c003d62b85e20",
-  "686df1e7000d522586c4",
-  // Add more cafe user IDs as needed
-];
 
 /**
  * UserProvider wraps the app and provides authentication state and actions.
  */
 export function UserProvider({ children }) {
-  const [user, setUser] = useState(null); // Current user object
-  const [authChecked, setAuthChecked] = useState(false); // True when auth check is complete
-  const [isCafeUser, setIsCafeUser] = useState(false); // Cafe user status
-  const [debugCafeMode, setDebugCafeMode] = useState(false); // Debug toggle for cafe user mode (dev only)
+  const [authChecked, setAuthChecked] = useState(false);
+  // User and role state
+  const [user, setUser] = useState(null);
+  const [isCafeUser, setIsCafeUser] = useState(false);
+  const [debugCafeMode, setDebugCafeMode] = useState(false);
 
-  // Helper: Check if a user ID is a cafe user
-  function checkIfCafeUser(userId) {
-    return CAFE_USER_IDS.includes(userId);
-  }
+  // Helper to fetch cafe user IDs
+  const fetchCafeUserIds = useCallback(async () => {
+    const res = await databases.listDocuments(
+      DATABASE_ID,
+      CAFE_IDS_COLLECTION_ID
+    );
+    return res.documents.map((d) => d.userId);
+  }, []);
 
-  // Use debugCafeMode in development, otherwise use real isCafeUser
-  const actualIsCafeUser = __DEV__ ? debugCafeMode : isCafeUser;
-
-  /**
-   * Log in a user with email and password.
-   * Sets user state and cafe user status.
-   */
+  // Login: establish session then fetch role without re-running mount initialization
   async function login(email, password) {
-    try {
-      await account.createEmailPasswordSession(email, password);
-      const response = await account.get();
-      const cafeUserStatus = checkIfCafeUser(response.$id);
-      setUser(response);
-      setIsCafeUser(cafeUserStatus);
-
-      // Sync debug mode in development
-      if (__DEV__) setDebugCafeMode(cafeUserStatus);
-    } catch (error) {
-      throw Error(error.message);
-    }
+    await account.createEmailPasswordSession(email, password);
+    const u = await account.get();
+    setUser(u);
+    // Determine cafe user status for logged-in user
+    const ids = await fetchCafeUserIds();
+    const status = ids.includes(u.$id);
+    setIsCafeUser(status);
+    if (__DEV__) setDebugCafeMode(status);
   }
 
   /**
@@ -76,9 +68,6 @@ export function UserProvider({ children }) {
     await account.deleteSession("current");
     setUser(null);
     setIsCafeUser(false);
-
-    // Reset debug toggle on logout (development only)
-    if (__DEV__) setDebugCafeMode(false);
   }
 
   /**
@@ -108,33 +97,41 @@ export function UserProvider({ children }) {
     }
   }
 
-  /**
-   * On mount, check if a user is already logged in and set state.
-   */
-  const getInitialUserValue = useCallback(async () => {
+  // Initialization: check auth and café user role
+  const initialize = useCallback(async () => {
+    // Auth check
+    let u = null;
     try {
-      const response = await account.get();
-      const cafeUserStatus = checkIfCafeUser(response.$id);
-      setUser(response);
-      setIsCafeUser(cafeUserStatus);
-
-      // Sync debug mode in development
-      if (__DEV__) setDebugCafeMode(cafeUserStatus);
-    } catch (_error) {
+      u = await account.get();
+      setUser(u);
+    } catch {
       setUser(null);
-      setIsCafeUser(false);
-
-      // Reset debug toggle when no user (development only)
-      if (__DEV__) setDebugCafeMode(false);
     } finally {
       setAuthChecked(true);
     }
-  }, []);
 
-  // Run initial user check on mount
+    // Role check if authed
+    if (u) {
+      try {
+        const ids = await fetchCafeUserIds();
+        const status = ids.includes(u.$id);
+        setIsCafeUser(status);
+        if (__DEV__) setDebugCafeMode(status);
+      } catch {
+        setIsCafeUser(false);
+      }
+    } else {
+      setIsCafeUser(false);
+    }
+  }, [fetchCafeUserIds]);
+
+  // On mount: run initialization
   useEffect(() => {
-    getInitialUserValue();
-  }, [getInitialUserValue]);
+    initialize();
+  }, [initialize]);
+
+  // Determine effective cafe-user status (with debug override)
+  const actualIsCafeUser = __DEV__ ? debugCafeMode : isCafeUser;
 
   return (
     <UserContext.Provider
@@ -145,7 +142,7 @@ export function UserProvider({ children }) {
         logout, // Logout function
         updateName, // Update user name
         refreshUser, // Refresh user data
-        authChecked, // True if auth check is complete
+        authChecked, // True when initial auth check is complete
         isCafeUser: actualIsCafeUser, // Cafe user status (with debug override)
         realIsCafeUser: isCafeUser, // Actual cafe user status (no debug override)
         debugCafeMode, // Debug cafe mode toggle (development only)

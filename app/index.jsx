@@ -19,6 +19,7 @@ import { useTheme } from "../contexts/ThemeContext";
 import { useCafeUser, useUser } from "../hooks/useUser";
 
 export default function Index() {
+  const { authChecked } = useUser();
   const router = useRouter();
   const isCafeUser = useCafeUser();
   const { user } = useUser();
@@ -26,14 +27,10 @@ export default function Index() {
   const theme = Colors[actualTheme] ?? Colors.light;
   const [isLoading, setIsLoading] = useState(true);
 
+  // Wait for auth context to finish loading
   useEffect(() => {
-    // Simulate authentication check
-    const checkAuthentication = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setIsLoading(false);
-    };
-    checkAuthentication();
-  }, []);
+    if (authChecked) setIsLoading(false);
+  }, [authChecked]);
 
   // Navigate to dashboard or login based on user type
   const handleDashboardNavigation = () => {
