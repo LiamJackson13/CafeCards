@@ -61,7 +61,13 @@ const CardsScreen = () => {
     const sortFn = (arr) => {
       switch (sortType) {
         case "stamps":
-          return arr.sort((a, b) => (b.stamps || 0) - (a.stamps || 0));
+          return arr.sort((a, b) => {
+            // Rewards-ready cards first
+            if (a.isReady && !b.isReady) return -1;
+            if (!a.isReady && b.isReady) return 1;
+            // Then sort by stamp count descending
+            return (b.stamps || 0) - (a.stamps || 0);
+          });
         case "lastUsed":
           return arr.sort(
             (a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0)
