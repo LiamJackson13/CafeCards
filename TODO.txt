@@ -3,7 +3,7 @@
 ## 🚀 High Priority Features
 
 ### Do first
-- [ ] Fix appwrite IDs to be in .env file
+- [x] Fix appwrite IDs to be in .env file
 
 ### Authentication
 - [ ] Implement forgot password functionality.

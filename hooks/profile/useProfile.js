@@ -28,8 +28,6 @@ export const useProfile = () => {
       return;
     }
 
-    console.log("Fetching cafe profile with user ID:", user.$id);
-
     if (isCafeUser) {
       try {
         const profile = await getCafeProfile(user.$id);
