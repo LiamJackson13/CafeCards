@@ -20,7 +20,10 @@ import {
 import { Colors } from "../../constants/Colors";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useUser } from "../../hooks/useUser";
-import { updateCafeProfile } from "../../lib/appwrite/cafe-profiles";
+import {
+  createCafeProfile,
+  updateCafeProfile,
+} from "../../lib/appwrite/cafe-profiles";
 import ThemedButton from "../ThemedButton";
 import ThemedText from "../ThemedText";
 import ThemedTextInput from "../ThemedTextInput";
@@ -34,7 +37,7 @@ const NameModal = ({
   isCafeUser = false,
   cafeProfileId,
 }) => {
-  const { updateName } = useUser();
+  const { user, updateName } = useUser();
   const { actualTheme } = useTheme();
   const theme = Colors[actualTheme] ?? Colors.light;
 
@@ -60,11 +63,20 @@ const NameModal = ({
     try {
       setLoading(true);
       if (isCafeUser) {
-        // Update cafe profile name
-        await updateCafeProfile(cafeProfileId, { cafeName: name.trim() });
+        if (cafeProfileId) {
+          // Update existing profile
+          await updateCafeProfile(cafeProfileId, { cafeName: name.trim() });
+        } else {
+          // Create new profile if none exists
+          const result = await createCafeProfile(
+            { cafeName: name.trim() },
+            user.$id
+          );
+          if (onNameUpdated) onNameUpdated(name.trim());
+        }
         // Also update auth user name via context
         await updateName(name.trim());
-        if (onNameUpdated) onNameUpdated(name.trim());
+        if (onNameUpdated && cafeProfileId) onNameUpdated(name.trim());
       } else {
         const updatedUser = await updateName(name.trim());
         if (onNameUpdated) onNameUpdated(updatedUser);

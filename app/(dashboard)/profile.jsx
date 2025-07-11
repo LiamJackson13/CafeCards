@@ -174,7 +174,7 @@ const ProfileScreen = () => {
         }
         onNameUpdated={handleNameUpdated}
         isCafeUser={isCafeUser}
-        cafeProfileId={cafeProfile?._id || cafeProfile?.$id}
+        cafeProfileId={cafeProfile?.$id}
       />
     </ThemedView>
   );

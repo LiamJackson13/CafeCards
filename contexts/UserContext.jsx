@@ -67,6 +67,12 @@ export function UserProvider({ children }) {
       }
       // Log the user in, with cafe status determined during login
       await login(email, password);
+
+      // If cafe user, set default name from email prefix
+      if (isCafeUserFlag) {
+        const defaultName = email.split("@")[0];
+        await updateName(defaultName);
+      }
     } catch (error) {
       throw Error(error.message);
     }

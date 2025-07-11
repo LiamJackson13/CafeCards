@@ -52,7 +52,10 @@ const CafeDesignSettings = () => {
   const [profile, setProfile] = useState(null);
 
   // Design settings state
-  const [cafeName, setCafeName] = useState("");
+  const [cafeName, setCafeName] = useState(
+    // Default to auth user's name or email prefix
+    user?.name || user?.email?.split("@")[0] || ""
+  );
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [primaryColor, setPrimaryColor] = useState("#AA7C48");
@@ -87,6 +90,10 @@ const CafeDesignSettings = () => {
         setMaxStampsPerCard(cafeProfile.maxStampsPerCard || 10);
         setBorderRadius(cafeProfile.borderRadius || 15);
         setShadowEnabled(cafeProfile.shadowEnabled !== false);
+      } else {
+        // No profile yet: default cafeName to auth user's name or email prefix
+        setProfile(null);
+        setCafeName(user.name || user.email.split("@")[0] || "");
       }
     } catch (error) {
       console.error("Error loading cafe profile:", error);

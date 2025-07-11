@@ -272,8 +272,15 @@ export function CardsProvider({ children }) {
       try {
         unsubscribe = client.subscribe(channel, handleRealtimeUpdate);
       } catch (error) {
-        console.error("Failed to set up real-time subscription:", error);
-        // Retry after 5 seconds if failed
+        // Ignore INVALID_STATE_ERR and retry after delay
+        if (
+          !(
+            error.name === "InvalidStateError" ||
+            error.message?.includes("INVALID_STATE_ERR")
+          )
+        ) {
+          console.error("Failed to set up real-time subscription:", error);
+        }
         setTimeout(() => {
           if (user) setupSubscription();
         }, 5000);

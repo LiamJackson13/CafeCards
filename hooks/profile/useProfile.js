@@ -23,7 +23,14 @@ export const useProfile = () => {
   } = useProfileStats();
 
   const fetchCafeProfile = useCallback(async () => {
-    if (isCafeUser && user?.$id) {
+    if (!user?.$id) {
+      console.error("User ID is missing. Cannot fetch cafe profile.");
+      return;
+    }
+
+    console.log("Fetching cafe profile with user ID:", user.$id);
+
+    if (isCafeUser) {
       try {
         const profile = await getCafeProfile(user.$id);
         setCafeProfile(profile);
@@ -56,6 +63,9 @@ export const useProfile = () => {
     try {
       if (isCafeUser) {
         // Refresh cafe profile
+        if (cafeProfile) {
+          setCafeProfile({ ...cafeProfile, cafeName: updated.name });
+        }
         await fetchCafeProfile();
       } else {
         await refreshUser();
