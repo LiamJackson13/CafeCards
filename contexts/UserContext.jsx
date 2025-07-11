@@ -13,7 +13,10 @@ import {
   CAFE_IDS_COLLECTION_ID,
   DATABASE_ID,
   databases,
-} from "../lib/appwrite"; // Import the databases object
+  deleteProfilePicture,
+  getProfilePicturePreview,
+  uploadProfilePicture,
+} from "../lib/appwrite"; // Import the databases object and storage functions
 
 // Create the UserContext to be used by the app
 export const UserContext = createContext();
@@ -101,6 +104,97 @@ export function UserProvider({ children }) {
   }
 
   /**
+   * Update the user's profile picture
+   * @param {string} imageUri - Local URI of the selected image
+   * @returns {Promise<string>} - URL of the uploaded profile picture
+   */
+  async function updateProfilePicture(imageUri) {
+    try {
+      const fileName = `profile_${user?.$id}_${Date.now()}.jpg`;
+
+      // Upload new profile picture
+      const fileId = await uploadProfilePicture(imageUri, fileName);
+
+      // Get the old profile picture file ID from preferences (if exists)
+      const currentPrefs = user?.prefs || {};
+      const oldFileId = currentPrefs.profilePictureFileId;
+
+      // Update user preferences with new profile picture info
+      const profilePictureUrl = getProfilePicturePreview(fileId, 200, 200);
+      console.log("Generated profile picture URL:", profilePictureUrl);
+      console.log("URL type:", typeof profilePictureUrl);
+
+      const updatedPrefs = {
+        ...currentPrefs,
+        profilePictureFileId: fileId,
+        profilePictureUrl: profilePictureUrl,
+      };
+
+      console.log("Updated preferences:", updatedPrefs);
+
+      const updatedUser = await account.updatePrefs(updatedPrefs);
+      setUser(updatedUser);
+
+      // Delete old profile picture if it exists
+      if (oldFileId) {
+        try {
+          await deleteProfilePicture(oldFileId);
+        } catch (error) {
+          console.warn("Failed to delete old profile picture:", error);
+        }
+      }
+
+      return updatedPrefs.profilePictureUrl;
+    } catch (error) {
+      console.error("Error updating profile picture:", error);
+      throw new Error("Failed to update profile picture");
+    }
+  }
+
+  /**
+   * Remove the user's profile picture
+   */
+  async function removeProfilePicture() {
+    try {
+      const currentPrefs = user?.prefs || {};
+      const fileId = currentPrefs.profilePictureFileId;
+
+      // Update user preferences to remove profile picture info
+      const updatedPrefs = {
+        ...currentPrefs,
+        profilePictureFileId: null,
+        profilePictureUrl: null,
+      };
+
+      const updatedUser = await account.updatePrefs(updatedPrefs);
+      setUser(updatedUser);
+
+      // Delete the profile picture from storage
+      if (fileId) {
+        try {
+          await deleteProfilePicture(fileId);
+        } catch (error) {
+          console.warn("Failed to delete profile picture from storage:", error);
+        }
+      }
+    } catch (error) {
+      console.error("Error removing profile picture:", error);
+      throw new Error("Failed to remove profile picture");
+    }
+  }
+
+  /**
+   * Get the user's profile picture URL
+   * @returns {string|null} - Profile picture URL or null if not set
+   */
+  function getProfilePictureUrl() {
+    const url = user?.prefs?.profilePictureUrl || null;
+    console.log("Getting profile picture URL:", url);
+    console.log("URL type:", typeof url);
+    return url;
+  }
+
+  /**
    * Refresh user data from the backend.
    */
   async function refreshUser() {
@@ -158,6 +252,9 @@ export function UserProvider({ children }) {
         register, // Register function
         logout, // Logout function
         updateName, // Update user name
+        updateProfilePicture, // Update profile picture
+        removeProfilePicture, // Remove profile picture
+        getProfilePictureUrl, // Get profile picture URL
         refreshUser, // Refresh user data
         authChecked, // True when initial auth check is complete
         isCafeUser: actualIsCafeUser, // Cafe user status (with debug override)

@@ -1,9 +1,12 @@
-import { StyleSheet, View } from "react-native";
+import { Image, Pressable, StyleSheet, View } from "react-native";
 import { Colors } from "../../constants/Colors";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useProfilePicture } from "../../hooks/profile/useProfilePicture";
 import ThemedButton from "../ThemedButton";
+import ThemedLoader from "../ThemedLoader";
 import ThemedText from "../ThemedText";
 import DebugToggle from "./DebugToggle";
+import ProfilePictureModal from "./ProfilePictureModal";
 
 /**
  * ProfileHeader
@@ -21,6 +24,18 @@ const ProfileHeader = ({
 }) => {
   const { actualTheme } = useTheme();
   const theme = Colors[actualTheme] ?? Colors.light;
+
+  // Profile picture hook
+  const {
+    profilePictureUrl,
+    uploading,
+    isModalVisible,
+    setIsModalVisible,
+    showImagePicker,
+    takePhoto,
+    pickImage,
+    confirmRemovePhoto,
+  } = useProfilePicture();
 
   // Determine display name: cafe profile name for cafe users, else user name
   const displayName =
@@ -45,7 +60,9 @@ const ProfileHeader = ({
 
         {/* Avatar */}
         <View style={styles.avatarWrapper}>
-          <View
+          <Pressable
+            onPress={showImagePicker}
+            disabled={uploading}
             style={[
               styles.avatarContainer,
               {
@@ -54,10 +71,29 @@ const ProfileHeader = ({
               },
             ]}
           >
-            <ThemedText style={styles.avatarText}>
-              {displayName.charAt(0).toUpperCase()}
-            </ThemedText>
-          </View>
+            {uploading ? (
+              <ThemedLoader size="small" />
+            ) : profilePictureUrl && typeof profilePictureUrl === "string" ? (
+              <Image
+                source={{ uri: profilePictureUrl }}
+                style={styles.avatarImage}
+                onError={(error) => {
+                  console.error("Image load error:", error);
+                }}
+              />
+            ) : (
+              <ThemedText style={styles.avatarText}>
+                {displayName.charAt(0).toUpperCase()}
+              </ThemedText>
+            )}
+
+            {/* Camera icon overlay */}
+            <View
+              style={[styles.cameraOverlay, { backgroundColor: theme.primary }]}
+            >
+              <ThemedText style={styles.cameraIcon}>📷</ThemedText>
+            </View>
+          </Pressable>
           <View style={[styles.statusDot, { backgroundColor: "#4CAF50" }]} />
         </View>
 
@@ -95,6 +131,17 @@ const ProfileHeader = ({
           </View>
         )}
       </View>
+
+      {/* Profile Picture Modal */}
+      <ProfilePictureModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onTakePhoto={takePhoto}
+        onPickImage={pickImage}
+        onRemovePhoto={confirmRemovePhoto}
+        hasProfilePicture={!!profilePictureUrl}
+        uploading={uploading}
+      />
     </>
   );
 };
@@ -109,9 +156,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   avatarContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 4,
@@ -120,6 +167,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 5,
+    position: "relative",
   },
   statusDot: {
     position: "absolute",
@@ -132,9 +180,29 @@ const styles = StyleSheet.create({
     borderColor: "#fff",
   },
   avatarText: {
-    fontSize: 36,
+    fontSize: 48,
     fontWeight: "bold",
     color: "#fff",
+  },
+  avatarImage: {
+    width: 112,
+    height: 112,
+    borderRadius: 56,
+  },
+  cameraOverlay: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#fff",
+  },
+  cameraIcon: {
+    fontSize: 14,
   },
   nameContainer: {
     alignItems: "center",
