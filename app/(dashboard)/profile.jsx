@@ -112,18 +112,21 @@ const ProfileScreen = () => {
         />
 
         {isCafeUser && (
-          <ThemedButton
-            title="View Analytics"
-            onPress={() => router.push("analytics")}
-            style={[
-              styles.viewAnalyticsButton,
-              { backgroundColor: theme.primary, alignSelf: "center" },
-            ]}
-          >
-            <Text style={{ color: theme.text, fontWeight: "600" }}>
-              View Analytics
-            </Text>
-          </ThemedButton>
+          <View>
+            <Spacer />
+            <ThemedButton
+              title="View Analytics"
+              onPress={() => router.push("analytics")}
+              style={[
+                styles.viewAnalyticsButton,
+                { backgroundColor: theme.primary, alignSelf: "center" },
+              ]}
+            >
+              <Text style={{ color: theme.text, fontWeight: "600" }}>
+                View Analytics
+              </Text>
+            </ThemedButton>
+          </View>
         )}
 
         <Spacer size={20} />
