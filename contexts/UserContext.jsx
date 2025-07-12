@@ -200,7 +200,7 @@ export function UserProvider({ children }) {
         const bucket = process.env.EXPO_PUBLIC_BUCKET_PROFILE_PICTURES;
         // Build preview URL
         url = `${endpoint}/storage/buckets/${bucket}/files/${fileId}/preview?project=${project}`;
-        console.log("Constructed URL:", url);
+
         // Persist back into user prefs
         const updatedPrefs = { ...user.prefs, profilePictureUrl: url };
         const updatedUser = await account.updatePrefs(updatedPrefs);
@@ -209,7 +209,6 @@ export function UserProvider({ children }) {
         console.error("Error constructing profile picture URL:", error);
       }
     }
-    console.log("Returning profile picture URL:", url);
     return url || null;
   }
 

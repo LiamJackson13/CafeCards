@@ -12,6 +12,7 @@
  * - Pull-to-refresh for stats
  * - Themed, safe-area layout
  */
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   RefreshControl,
@@ -57,6 +58,13 @@ const ProfileScreen = () => {
     getDisplayName,
     refetchStats,
   } = useProfile();
+  const router = useRouter();
+  // Determine summary stats: for cafe users use Total Customers and Rewards Redeemed, otherwise first two stats
+  const summaryStats = isCafeUser
+    ? stats
+      ? [stats[0], stats[stats.length - 1]]
+      : []
+    : stats?.slice(0, 2);
 
   // Pull-to-refresh handler
   const onRefresh = async () => {
@@ -93,17 +101,32 @@ const ProfileScreen = () => {
           onEditName={handleEditName}
         />
 
-        <Spacer size={30} />
+        <Spacer size={20} />
 
-        {/* Stats Section */}
+        {/* Stats Section (Summary) */}
         <StatsSection
           isCafeUser={isCafeUser}
-          stats={stats}
+          stats={summaryStats}
           loading={statsLoading}
           error={statsError}
         />
 
-        <Spacer size={30} />
+        {isCafeUser && (
+          <ThemedButton
+            title="View Analytics"
+            onPress={() => router.push("analytics")}
+            style={[
+              styles.viewAnalyticsButton,
+              { backgroundColor: theme.primary, alignSelf: "center" },
+            ]}
+          >
+            <Text style={{ color: theme.text, fontWeight: "600" }}>
+              View Analytics
+            </Text>
+          </ThemedButton>
+        )}
+
+        <Spacer size={20} />
 
         {/* Settings Section */}
         <SettingsSection
@@ -111,7 +134,7 @@ const ProfileScreen = () => {
           onChangePassword={handleChangePassword}
         />
 
-        <Spacer size={30} />
+        <Spacer size={20} />
 
         {/* Data Management */}
         <ThemedCard style={styles.section}>
@@ -133,8 +156,6 @@ const ProfileScreen = () => {
             </ThemedButton>
           </View>
         </ThemedCard>
-
-        <Spacer size={15} />
 
         {/* App Information */}
         <ThemedCard style={styles.section}>
@@ -227,6 +248,12 @@ const styles = StyleSheet.create({
   },
   infoValue: {
     fontWeight: "400",
+  },
+  viewAnalyticsButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginTop: 8,
   },
 });
 

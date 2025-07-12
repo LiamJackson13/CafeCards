@@ -34,9 +34,9 @@ import { useEnhancedCardsList } from "../../hooks/cards/useEnhancedCardsList";
 import { useCafeUser, useUser } from "../../hooks/useUser";
 
 const SORT_OPTIONS = [
-  { label: "A-Z", value: "alpha" },
-  { label: "Most Stamps", value: "stamps" },
   { label: "Last Used", value: "lastUsed" },
+  { label: "Most Stamps", value: "stamps" },
+  { label: "A-Z", value: "alpha" },
 ];
 
 const CardsScreen = () => {
@@ -52,7 +52,7 @@ const CardsScreen = () => {
   // Modal state for redeem functionality
   const [showRedeemModal, setShowRedeemModal] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
-  const [sortType, setSortType] = useState("alpha");
+  const [sortType, setSortType] = useState("lastUsed");
 
   const sortedCards = useMemo(() => {
     const cards = [...displayCards];
