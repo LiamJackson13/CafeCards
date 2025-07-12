@@ -29,6 +29,7 @@ const ProfileHeader = ({
   const {
     profilePictureUrl,
     uploading,
+    loading,
     isModalVisible,
     setIsModalVisible,
     showImagePicker,
@@ -67,19 +68,22 @@ const ProfileHeader = ({
               styles.avatarContainer,
               {
                 backgroundColor: isCafeUser ? theme.primary : theme.secondary,
-                borderColor: theme.primary + "30",
+                borderColor: actualTheme === "dark" ? "#fff" : "#000",
               },
             ]}
           >
-            {uploading ? (
+            {uploading || loading ? (
               <ThemedLoader size="small" />
             ) : profilePictureUrl && typeof profilePictureUrl === "string" ? (
               <Image
                 source={{ uri: profilePictureUrl }}
                 style={styles.avatarImage}
-                onError={(error) => {
-                  console.error("Image load error:", error);
-                }}
+                onError={({ nativeEvent }) =>
+                  console.error(
+                    "Image load error:",
+                    nativeEvent.error || JSON.stringify(nativeEvent)
+                  )
+                }
               />
             ) : (
               <ThemedText style={styles.avatarText}>
@@ -89,12 +93,18 @@ const ProfileHeader = ({
 
             {/* Camera icon overlay */}
             <View
-              style={[styles.cameraOverlay, { backgroundColor: theme.primary }]}
+              style={[
+                styles.cameraOverlay,
+                {
+                  backgroundColor:
+                    actualTheme === "light" ? Colors.light.background : "#fff",
+                  borderColor: actualTheme === "dark" ? "#fff" : "#000",
+                },
+              ]}
             >
               <ThemedText style={styles.cameraIcon}>📷</ThemedText>
             </View>
           </Pressable>
-          <View style={[styles.statusDot, { backgroundColor: "#4CAF50" }]} />
         </View>
 
         {/* Name and Edit Button */}
@@ -161,7 +171,7 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 4,
+    borderWidth: 3,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
@@ -169,24 +179,15 @@ const styles = StyleSheet.create({
     elevation: 5,
     position: "relative",
   },
-  statusDot: {
-    position: "absolute",
-    bottom: 5,
-    right: 5,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 3,
-    borderColor: "#fff",
-  },
+
   avatarText: {
     fontSize: 48,
     fontWeight: "bold",
     color: "#fff",
   },
   avatarImage: {
-    width: 112,
-    height: 112,
+    width: 115,
+    height: 115,
     borderRadius: 56,
   },
   cameraOverlay: {
@@ -199,7 +200,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2,
-    borderColor: "#fff",
   },
   cameraIcon: {
     fontSize: 14,

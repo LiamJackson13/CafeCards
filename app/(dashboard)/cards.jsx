@@ -17,7 +17,6 @@ import {
   FlatList,
   RefreshControl,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -126,7 +125,6 @@ const CardsScreen = () => {
     );
   }
 
-  // Show loading state if cards are loading and none are present
   if (loading && displayCards.length === 0) {
     return (
       <ThemedView style={styles.container} safe>
@@ -137,7 +135,6 @@ const CardsScreen = () => {
       </ThemedView>
     );
   }
-
   return (
     <ThemedView style={styles.container} safe>
       <FlatList
@@ -167,18 +164,27 @@ const CardsScreen = () => {
                   key={opt.value}
                   style={[
                     styles.sortButton,
-                    sortType === opt.value && styles.sortButtonActive,
+                    {
+                      borderColor: theme.border,
+                      backgroundColor: theme.uiBackground,
+                    },
+                    sortType === opt.value && {
+                      backgroundColor: theme.primary,
+                      borderColor: theme.primary,
+                    },
                   ]}
                   onPress={() => setSortType(opt.value)}
                 >
-                  <Text
-                    style={[
-                      styles.sortButtonText,
-                      sortType === opt.value && styles.sortButtonTextActive,
-                    ]}
+                  <ThemedText
+                    style={{
+                      color:
+                        sortType === opt.value ? Colors.light.card : theme.text,
+                      fontSize: 14,
+                      fontWeight: sortType === opt.value ? "600" : "500",
+                    }}
                   >
                     {opt.label}
-                  </Text>
+                  </ThemedText>
                 </TouchableOpacity>
               ))}
             </View>
@@ -237,19 +243,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: Colors.light.border,
-    backgroundColor: Colors.light.card,
-  },
-  sortButtonActive: {
-    backgroundColor: Colors.light.tint,
-    borderColor: Colors.light.tint,
-  },
-  sortButtonText: {
-    color: Colors.light.text,
-    fontSize: 14,
-  },
-  sortButtonTextActive: {
-    color: "#fff",
   },
 });
 

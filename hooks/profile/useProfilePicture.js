@@ -5,21 +5,56 @@
  * image selection, upload, and removal.
  */
 
+import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Platform } from "react-native";
-import { testStorageAccess } from "../../lib/appwrite";
 import { useUser } from "../useUser.js";
 
 export function useProfilePicture() {
+  const [loading, setLoading] = useState(true); // loading initial image
   const { updateProfilePicture, removeProfilePicture, getProfilePictureUrl } =
     useUser();
 
   const [uploading, setUploading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  // Local file URI for profile picture
+  const [profilePictureUrl, setProfilePictureUrl] = useState(null);
 
-  // Get current profile picture URL
-  const profilePictureUrl = getProfilePictureUrl();
+  // On mount: fetch remote URL and cache locally for Image
+  useEffect(() => {
+    let isMounted = true;
+    getProfilePictureUrl()
+      .then(async (remoteUrl) => {
+        if (!isMounted || !remoteUrl) return;
+        try {
+          const cachePath =
+            FileSystem.cacheDirectory + `profile_${Date.now()}.jpg`;
+          const { uri: localUri } = await FileSystem.downloadAsync(
+            remoteUrl,
+            cachePath,
+            {
+              headers: {
+                "X-Appwrite-Project":
+                  process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID,
+              },
+            }
+          );
+          if (isMounted) setProfilePictureUrl(localUri);
+        } catch (err) {
+          console.error("Error downloading profile picture:", err);
+        }
+      })
+      .catch((err) =>
+        console.error("Error fetching profile picture URL in hook:", err)
+      )
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, [getProfilePictureUrl]);
 
   /**
    * Request camera and media library permissions
@@ -61,15 +96,6 @@ export function useProfilePicture() {
       setIsModalVisible(false);
       setUploading(true);
 
-      // Test storage access first
-      console.log("Testing storage access before upload...");
-      const storageAccessible = await testStorageAccess();
-      if (!storageAccessible) {
-        throw new Error(
-          "Storage access failed. Please check your connection and try again."
-        );
-      }
-
       const result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
@@ -86,7 +112,25 @@ export function useProfilePicture() {
         console.log("Image details:", asset);
         console.log("MIME type:", mimeType);
 
-        await updateProfilePicture(imageUri);
+        const remoteUrl = await updateProfilePicture(imageUri);
+        // Cache new image locally
+        if (remoteUrl) {
+          try {
+            const cachePath =
+              FileSystem.cacheDirectory + `profile_${Date.now()}.jpg`;
+            const { uri: localUri } = await FileSystem.downloadAsync(
+              remoteUrl,
+              cachePath
+            );
+            setProfilePictureUrl(localUri);
+          } catch (err) {
+            console.error("Error caching new profile picture:", err);
+            setProfilePictureUrl(remoteUrl);
+          }
+        } else {
+          console.warn("No profile URL returned, skipping cache");
+          setProfilePictureUrl(remoteUrl);
+        }
         Alert.alert("Success", "Profile picture updated successfully!");
       }
     } catch (error) {
@@ -108,15 +152,6 @@ export function useProfilePicture() {
       setIsModalVisible(false);
       setUploading(true);
 
-      // Test storage access first
-      console.log("Testing storage access before upload...");
-      const storageAccessible = await testStorageAccess();
-      if (!storageAccessible) {
-        throw new Error(
-          "Storage access failed. Please check your connection and try again."
-        );
-      }
-
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
@@ -133,7 +168,24 @@ export function useProfilePicture() {
         console.log("Image details:", asset);
         console.log("MIME type:", mimeType);
 
-        await updateProfilePicture(imageUri);
+        const remoteUrl = await updateProfilePicture(imageUri);
+        if (remoteUrl) {
+          try {
+            const cachePath =
+              FileSystem.cacheDirectory + `profile_${Date.now()}.jpg`;
+            const { uri: localUri } = await FileSystem.downloadAsync(
+              remoteUrl,
+              cachePath
+            );
+            setProfilePictureUrl(localUri);
+          } catch (err) {
+            console.error("Error caching new profile picture:", err);
+            setProfilePictureUrl(remoteUrl);
+          }
+        } else {
+          console.warn("No profile URL returned, skipping cache");
+          setProfilePictureUrl(remoteUrl);
+        }
         Alert.alert("Success", "Profile picture updated successfully!");
       }
     } catch (error) {
@@ -156,6 +208,7 @@ export function useProfilePicture() {
       setUploading(true);
 
       await removeProfilePicture();
+      setProfilePictureUrl(null);
       Alert.alert("Success", "Profile picture removed successfully!");
     } catch (error) {
       console.error("Error removing profile picture:", error);
@@ -184,6 +237,7 @@ export function useProfilePicture() {
 
   return {
     profilePictureUrl,
+    loading,
     uploading,
     isModalVisible,
     setIsModalVisible,

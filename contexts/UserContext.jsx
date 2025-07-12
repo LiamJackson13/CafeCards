@@ -14,7 +14,7 @@ import {
   DATABASE_ID,
   databases,
   deleteProfilePicture,
-  getProfilePicturePreview,
+  getProfilePictureUrl as getAppwriteProfilePictureUrl,
   uploadProfilePicture,
 } from "../lib/appwrite"; // Import the databases object and storage functions
 
@@ -120,7 +120,7 @@ export function UserProvider({ children }) {
       const oldFileId = currentPrefs.profilePictureFileId;
 
       // Update user preferences with new profile picture info
-      const profilePictureUrl = getProfilePicturePreview(fileId, 200, 200);
+      const profilePictureUrl = await getAppwriteProfilePictureUrl(fileId);
       console.log("Generated profile picture URL:", profilePictureUrl);
       console.log("URL type:", typeof profilePictureUrl);
 
@@ -184,14 +184,33 @@ export function UserProvider({ children }) {
   }
 
   /**
-   * Get the user's profile picture URL
-   * @returns {string|null} - Profile picture URL or null if not set
+   * Get the user's profile picture URL, fetching from storage if not in prefs
+   * @returns {Promise<string|null>} - Profile picture URL or null if not set
    */
-  function getProfilePictureUrl() {
-    const url = user?.prefs?.profilePictureUrl || null;
-    console.log("Getting profile picture URL:", url);
-    console.log("URL type:", typeof url);
-    return url;
+  async function getProfilePictureUrl() {
+    // Try stored URL first
+    let url = user?.prefs?.profilePictureUrl;
+    // If missing, fetch from storage using fileId
+    const fileId = user?.prefs?.profilePictureFileId;
+    if (!url && fileId) {
+      try {
+        console.log("Constructing Appwrite storage URL for file ID:", fileId);
+        const endpoint = process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT;
+        const project = process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID;
+        const bucket = process.env.EXPO_PUBLIC_BUCKET_PROFILE_PICTURES;
+        // Build preview URL
+        url = `${endpoint}/storage/buckets/${bucket}/files/${fileId}/preview?project=${project}`;
+        console.log("Constructed URL:", url);
+        // Persist back into user prefs
+        const updatedPrefs = { ...user.prefs, profilePictureUrl: url };
+        const updatedUser = await account.updatePrefs(updatedPrefs);
+        setUser(updatedUser);
+      } catch (error) {
+        console.error("Error constructing profile picture URL:", error);
+      }
+    }
+    console.log("Returning profile picture URL:", url);
+    return url || null;
   }
 
   /**

@@ -140,7 +140,9 @@ const QRDisplayScreen = () => {
           onPress={refreshQR}
           style={[styles.actionButton, { backgroundColor: theme.iconColor }]}
         >
-          <ThemedText style={styles.buttonText}>🔄 Refresh QR</ThemedText>
+          <ThemedText style={[styles.buttonText, { color: "#fff" }]}>
+            🔄 Refresh QR
+          </ThemedText>
         </ThemedButton>
 
         <ThemedButton

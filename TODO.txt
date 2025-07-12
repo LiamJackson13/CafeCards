@@ -11,8 +11,8 @@
 - [ ] Improve error handling for login and registration forms.
 
 ### Profile Management
-- [ ] Allow users to upload profile pictures.
-- [ ] Add support for updating email and password.
+- [x] Allow users to upload profile pictures.
+- [ ] Add support for updating email
 - [ ] Display a confirmation dialog before deleting an account.
 
 ### Cafe Design
