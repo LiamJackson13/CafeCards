@@ -8,7 +8,7 @@
  */
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { StatusBar, StyleSheet, View } from "react-native";
+import { Image, StatusBar, StyleSheet, View } from "react-native";
 import Spacer from "../components/Spacer";
 import ThemedButton from "../components/ThemedButton";
 import ThemedLoader from "../components/ThemedLoader";
@@ -17,6 +17,7 @@ import ThemedView from "../components/ThemedView";
 import { Colors } from "../constants/Colors";
 import { useTheme } from "../contexts/ThemeContext";
 import { useCafeUser, useUser } from "../hooks/useUser";
+import { getCafeProfile } from "../lib/appwrite/cafe-profiles";
 
 export default function Index() {
   const { authChecked } = useUser();
@@ -58,6 +59,7 @@ export default function Index() {
 
   return (
     <ThemedView style={styles.container} safe>
+
       <StatusBar
         barStyle={actualTheme === "dark" ? "light-content" : "dark-content"}
         backgroundColor={theme.background}
@@ -91,10 +93,6 @@ export default function Index() {
         <View style={styles.featureItem}>
           <ThemedText style={styles.featureIcon}>🎁</ThemedText>
           <ThemedText style={styles.featureText}>Earn Rewards</ThemedText>
-        </View>
-        <View style={styles.featureItem}>
-          <ThemedText style={styles.featureIcon}>📍</ThemedText>
-          <ThemedText style={styles.featureText}>Find Cafes</ThemedText>
         </View>
       </View>
 
@@ -249,5 +247,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     opacity: 0.6,
     textAlign: "center",
-  },
+  }
 });

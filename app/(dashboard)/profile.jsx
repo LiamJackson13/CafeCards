@@ -12,7 +12,6 @@
  * - Pull-to-refresh for stats
  * - Themed, safe-area layout
  */
-import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   RefreshControl,
@@ -58,7 +57,6 @@ const ProfileScreen = () => {
     getDisplayName,
     refetchStats,
   } = useProfile();
-  const router = useRouter();
   // Determine summary stats: for cafe users use Total Customers and Rewards Redeemed, otherwise first two stats
   const summaryStats = isCafeUser
     ? stats
@@ -112,21 +110,13 @@ const ProfileScreen = () => {
         />
 
         {isCafeUser && (
-          <View>
-            <Spacer />
-            <ThemedButton
-              title="View Analytics"
-              onPress={() => router.push("analytics")}
-              style={[
-                styles.viewAnalyticsButton,
-                { backgroundColor: theme.primary, alignSelf: "center" },
-              ]}
-            >
-              <Text style={{ color: theme.text, fontWeight: "600" }}>
-                View Analytics
-              </Text>
-            </ThemedButton>
-          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          ></View>
         )}
 
         <Spacer size={20} />

@@ -1,4 +1,6 @@
-import { StyleSheet, View } from "react-native";
+import { useRouter } from "expo-router";
+import { StyleSheet, Text, View } from "react-native";
+import { useTheme } from "../../contexts/ThemeContext";
 import ThemedText from "../ThemedText";
 import StatCard from "./StatCard";
 
@@ -9,11 +11,44 @@ import StatCard from "./StatCard";
  * Handles loading, error, and empty states gracefully.
  */
 const StatsSection = ({ isCafeUser, stats, loading, error }) => {
+  const router = useRouter();
+  const { actualTheme } = useTheme();
+  const theme =
+    actualTheme === "dark" ? { text: "#FFFFFF" } : { text: "#000000" };
+
   return (
     <>
-      <ThemedText type="subtitle" style={styles.sectionTitle}>
-        {isCafeUser ? "Business Analytics" : "Your Stats"}
-      </ThemedText>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <ThemedText
+            type="subtitle"
+            style={styles.sectionTitle}
+            onPress={() => isCafeUser && router.push("analytics")}
+          >
+            {isCafeUser ? "Business Analytics" : "Your Stats"}
+          </ThemedText>
+          {isCafeUser && (
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "600",
+                color: theme.text,
+                marginLeft: 15,
+                marginBottom: 10, // Moves the arrow up to align with the text
+              }}
+              onPress={() => router.push("analytics")}
+            >
+              ➔
+            </Text>
+          )}
+        </View>
+      </View>
 
       {error && (
         <ThemedText style={styles.errorText}>

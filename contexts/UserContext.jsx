@@ -40,7 +40,17 @@ export function UserProvider({ children }) {
     return res.documents.map((d) => d.userId);
   }, []);
 
-  // Login: establish session then fetch role without re-running mount initialization
+  /**
+   * Logs in a user with email and password, then updates user and cafe status state.
+   *
+   * @async
+   * @function login
+   * @param {string} email - The user's email address.
+   * @param {string} password - The user's password.
+   *
+   * After successful login, fetches the user data and checks if the user
+   * belongs to a cafe user group, updating relevant state flags accordingly.
+   */
   async function login(email, password) {
     await account.createEmailPasswordSession(email, password);
     const u = await account.get();
