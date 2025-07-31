@@ -1,11 +1,14 @@
+// Core React Native components for layout and styling
 import { StyleSheet, View } from "react-native";
+// ThemedText: custom text component that adapts to app theme
 import ThemedText from "../ThemedText";
 
 /**
- * EmptyState
+ * EmptyState Component
  *
- * Shown when there are no cards to display.
- * - Shows different icons and messages for cafe users vs. customers.
+ * Renders a placeholder UI when the card list is empty.
+ * Props:
+ * - isCafeUser (boolean): if true, shows cafe user messaging and icon
  */
 const EmptyState = ({ isCafeUser }) => (
   <View style={styles.emptyContainer}>
@@ -22,9 +25,9 @@ const EmptyState = ({ isCafeUser }) => (
 );
 
 /**
- * LoadingState
+ * LoadingState Component
  *
- * Shown while cards are loading.
+ * Renders a placeholder text while the loyalty cards are being fetched.
  */
 const LoadingState = () => (
   <View style={styles.loadingContainer}>
@@ -34,6 +37,7 @@ const LoadingState = () => (
 
 const styles = StyleSheet.create({
   emptyContainer: {
+    // Wrapper for the empty-state placeholder: centers content
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -41,28 +45,33 @@ const styles = StyleSheet.create({
     paddingVertical: 60,
   },
   emptyIcon: {
+    // Large icon displayed in empty state
     fontSize: 64,
     marginBottom: 16,
   },
   emptyTitle: {
+    // Title text under the icon in empty state
     fontSize: 20,
     fontWeight: "600",
     marginBottom: 8,
     textAlign: "center",
   },
   emptyMessage: {
+    // Supporting message text in empty state
     fontSize: 16,
     opacity: 0.7,
     textAlign: "center",
     lineHeight: 24,
   },
   loadingContainer: {
+    // Wrapper for the loading text: centers content
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     gap: 16,
   },
   loadingText: {
+    // Style for loading message text
     fontSize: 16,
     opacity: 0.7,
   },

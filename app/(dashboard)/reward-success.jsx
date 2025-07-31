@@ -21,22 +21,26 @@ import { useTheme } from "../../contexts/ThemeContext";
 const { width } = Dimensions.get("window");
 
 const RewardSuccessScreen = () => {
+  // Navigation hook: for redirecting users after actions
   const router = useRouter();
+  // Theme context: determine current theme mode and colors
   const { actualTheme } = useTheme();
+  // Route params: cafe name and reward type to display
   const { cafeName, rewardType } = useLocalSearchParams();
+  // Resolve theme color palette
   const theme = Colors[actualTheme] ?? Colors.light;
 
-  // Default values if params are not provided
+  // Determine display values with fallback defaults
   const displayCafeName = cafeName || "your favorite cafe";
   const displayRewardType = rewardType || "free coffee";
 
-  // Animation values
+  // Animation values for scaling, fading, and sliding effects
   const [scaleAnim] = useState(new Animated.Value(0));
   const [fadeAnim] = useState(new Animated.Value(0));
   const [slideAnim] = useState(new Animated.Value(50));
 
+  // Start celebration animation on component mount
   useEffect(() => {
-    // Start the celebration animation sequence
     Animated.sequence([
       Animated.spring(scaleAnim, {
         toValue: 1,
@@ -59,7 +63,9 @@ const RewardSuccessScreen = () => {
     ]).start();
   }, [scaleAnim, fadeAnim, slideAnim]);
 
+  // Handler: navigate back to cards list
   const handleBackToCards = () => router.push("/cards");
+  // Handler: navigate to user profile and stats
   const handleViewProfile = () => router.push("/profile");
 
   return (
@@ -67,8 +73,9 @@ const RewardSuccessScreen = () => {
       style={[styles.container, { backgroundColor: theme.background }]}
       safe
     >
+      {/* Centered content wrapper */}
       <View style={styles.content}>
-        {/* Main Celebration Icon */}
+        {/* Animated celebration icon */}
         <Animated.View
           style={[
             styles.celebrationContainer,
@@ -87,7 +94,7 @@ const RewardSuccessScreen = () => {
 
         <Spacer height={40} />
 
-        {/* Success Message */}
+        {/* Animated success message section */}
         <Animated.View
           style={[
             styles.messageContainer,
@@ -118,7 +125,7 @@ const RewardSuccessScreen = () => {
 
         <Spacer height={60} />
 
-        {/* Action Buttons */}
+        {/* Action buttons: primary and secondary */}
         <Animated.View
           style={[
             styles.buttonsContainer,
@@ -149,7 +156,7 @@ const RewardSuccessScreen = () => {
           </ThemedButton>
         </Animated.View>
 
-        {/* Background Celebration Emojis */}
+        {/* Decorative background emojis for celebration effect */}
         <View style={styles.backgroundDecoration}>
           <ThemedText style={[styles.backgroundEmoji, { opacity: 0.1 }]}>
             ☕
@@ -172,9 +179,11 @@ const RewardSuccessScreen = () => {
 
 // --- Styles ---
 const styles = StyleSheet.create({
+  // Full screen container for reward success presentation
   container: {
     flex: 1,
   },
+  // Inner content wrapper: centering and padding
   content: {
     flex: 1,
     justifyContent: "center",
@@ -182,10 +191,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     position: "relative",
   },
+  // Wrapper for celebration icon animation
   celebrationContainer: {
     alignItems: "center",
     justifyContent: "center",
   },
+  // Circle styling behind celebration icon
   celebrationCircle: {
     width: 140,
     height: 140,
@@ -198,33 +209,40 @@ const styles = StyleSheet.create({
     shadowRadius: 16,
     elevation: 8,
   },
+  // Celebration icon styling (emoji size)
   celebrationIcon: {
     fontSize: 60,
   },
+  // Container for animated message text
   messageContainer: {
     alignItems: "center",
     maxWidth: width * 0.85,
   },
+  // Title text style for success message
   successTitle: {
     fontSize: 28,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 8,
   },
+  // Subtitle style for detailed success message
   successSubtitle: {
     fontSize: 18,
     textAlign: "center",
     lineHeight: 26,
   },
+  // Thank you text style for gratitude note
   thankYouText: {
     fontSize: 16,
     textAlign: "center",
     fontStyle: "italic",
   },
+  // Container for action buttons stack
   buttonsContainer: {
     width: "100%",
     maxWidth: 280,
   },
+  // Primary button styling for 'View My Cards'
   primaryButton: {
     paddingVertical: 16,
     paddingHorizontal: 32,
@@ -235,12 +253,14 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 6,
   },
+  // Text style inside primary button
   primaryButtonText: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "600",
     textAlign: "center",
   },
+  // Secondary button styling for 'View Stats & Profile'
   secondaryButton: {
     paddingVertical: 14,
     paddingHorizontal: 32,
@@ -248,11 +268,13 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     backgroundColor: "transparent",
   },
+  // Text style inside secondary button
   secondaryButtonText: {
     fontSize: 16,
     fontWeight: "500",
     textAlign: "center",
   },
+  // Full window overlay for background celebration emojis
   backgroundDecoration: {
     position: "absolute",
     top: 0,
@@ -263,15 +285,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     zIndex: -1,
   },
+  // Base style for large background emojis
   backgroundEmoji: {
     fontSize: 120,
     position: "absolute",
   },
+  // Position and size variation for second emoji
   emoji2: {
     top: -100,
     right: -40,
     fontSize: 80,
   },
+  // Position and size variation for third emoji
   emoji3: {
     bottom: -80,
     left: -20,

@@ -13,17 +13,19 @@ import { Colors } from "../constants/Colors";
 /**
  * ThemedButton
  *
- * @param {object} props
- * @param {object} [props.style] - Additional styles for the button
- * @param {React.ReactNode} [props.children] - Button content
- * @param {...any} props - Other Pressable props
+ * Reusable button that applies base styling and handles press feedback.
+ * - style: additional custom styles merged after base/pressed styles
+ * - children: content to render inside button (text, icons)
+ * - ...props: other Pressable props (e.g., onPress, disabled)
  */
 function ThemedButton({ style, children, ...props }) {
   return (
     <Pressable
+      // style: combine base button, pressed feedback, and custom styles
       style={({ pressed }) => [styles.button, pressed && styles.pressed, style]}
-      {...props}
+      {...props} // spread remaining Pressable props
     >
+      {/* Render button content (text, icons, etc.) */}
       {children}
     </Pressable>
   );
@@ -31,6 +33,7 @@ function ThemedButton({ style, children, ...props }) {
 
 const styles = StyleSheet.create({
   button: {
+    // Base button: uses primary brand color, padding, and rounded corners
     backgroundColor: Colors.primary,
     padding: 18,
     borderRadius: 6,
@@ -39,6 +42,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   pressed: {
+    // Pressed state: reduce opacity for visual feedback
     opacity: 0.5,
   },
 });

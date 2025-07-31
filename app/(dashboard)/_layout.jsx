@@ -25,26 +25,34 @@ import { useCafeUser } from "../../hooks/useUser";
 const TAB_ICON_SIZE = 24;
 
 const DashboardLayout = () => {
+  // Theme context: provides current theme mode (light/dark)
   const { actualTheme } = useTheme();
+  // Resolve theme colors based on current mode
   const theme = Colors[actualTheme] ?? Colors.light;
+  // Role check hook: determines if logged-in user is a cafe owner
   const isCafeUser = useCafeUser();
+  // Cards context: recent redemption event and dismiss handler for notifications
   const { recentRedemption, dismissRedemption } = useCards();
 
   return (
+    // Only allow authenticated users to access dashboard
     <UserOnly>
       <View style={{ flex: 1 }}>
         <Tabs
           screenOptions={{
+            // Hide headers and style tab bar dynamically
             headerShown: false,
             tabBarStyle: {
               backgroundColor: theme.navBackground,
               paddingTop: 10,
               height: 90,
             },
+            // Tab icon colors based on focus
             tabBarActiveTintColor: theme.iconColorFocused,
             tabBarInactiveTintColor: theme.iconColor,
           }}
         >
+          {/* Define tabs for customers and cafe users, with icons */}
           {/* Customer: Cards tab */}
           <Tabs.Screen
             name="cards"

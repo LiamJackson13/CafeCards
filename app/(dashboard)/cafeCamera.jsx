@@ -7,7 +7,7 @@
  * - Stamp confirmation and redemption modals
  * - Recent scan history
  * - Access control (cafe users only)
- * - Themed, responsive layout
+ * - Themed layout
  */
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
@@ -28,12 +28,13 @@ import { useScanner } from "../../hooks/camera/useScanner";
 import { useCafeUser, useUser } from "../../hooks/useUser";
 
 const CafeScannerScreen = () => {
+  // Theme/User Context: determine current theme and authenticated user
   const { actualTheme } = useTheme();
   const { user } = useUser();
   const isCafeUser = useCafeUser();
   const theme = Colors[actualTheme] ?? Colors.light;
 
-  // Camera logic
+  // Camera Hook: handles permissions, readiness, and camera key
   const {
     hasPermission,
     cameraReady,
@@ -43,7 +44,7 @@ const CafeScannerScreen = () => {
     handleCameraReady,
   } = useCamera();
 
-  // Scanner logic
+  // Scanner Hook: scanning logic, history, processing flags, and control handlers
   const {
     scanned,
     scanHistory,
@@ -65,14 +66,14 @@ const CafeScannerScreen = () => {
     setManualCardId,
   } = useScanner(user, isCafeUser);
 
-  // Refresh camera when screen comes into focus
+  // Effect: refresh camera whenever this screen is focused
   useFocusEffect(
     useCallback(() => {
       refreshCamera();
     }, [refreshCamera])
   );
 
-  // Restrict access to cafe users only
+  // Access Control: only allow cafe users to view scanner screen
   if (!isCafeUser) {
     return (
       <ThemedView style={styles.container} safe>
@@ -86,17 +87,22 @@ const CafeScannerScreen = () => {
     );
   }
 
+  // Main UI rendering
   return (
     <ThemedView style={styles.container} safe>
+      {/* Page Title */}
       <ThemedText type="title" style={styles.title}>
         Loyalty Card Scanner
       </ThemedText>
+      {/* Instruction Subtitle */}
       <ThemedText style={styles.subtitle}>
         Scan customer QR codes to add stamps or redeem rewards
       </ThemedText>
 
+      {/* Spacer before camera view */}
       <Spacer height={20} />
 
+      {/* Camera Preview and Scanner Component */}
       <CameraView
         hasPermission={hasPermission}
         cameraReady={cameraReady}
@@ -109,8 +115,10 @@ const CafeScannerScreen = () => {
         refreshCamera={refreshCamera}
       />
 
+      {/* Spacer before manual entry button */}
       <Spacer height={20} />
 
+      {/* Manual Entry Fallback Button */}
       <ThemedButton
         title="Manual Entry"
         onPress={() => setIsManualEntryVisible(true)}
@@ -120,8 +128,10 @@ const CafeScannerScreen = () => {
         <ThemedText style={styles.manualButtonText}>Manual Entry</ThemedText>
       </ThemedButton>
 
+      {/* Spacer before scan history list */}
       <Spacer height={20} />
 
+      {/* Recent Scans List */}
       {scanHistory.length > 0 && (
         <>
           <ThemedText type="subtitle" style={styles.historyTitle}>
@@ -132,7 +142,7 @@ const CafeScannerScreen = () => {
         </>
       )}
 
-      {/* Manual Entry Modal */}
+      {/* Manual Entry Modal: allows entering card ID manually */}
       <ManualEntryModal
         visible={isManualEntryVisible}
         onClose={() => setIsManualEntryVisible(false)}
@@ -142,7 +152,7 @@ const CafeScannerScreen = () => {
         isProcessing={isProcessing}
       />
 
-      {/* Stamp Confirmation Modal */}
+      {/* Stamp Confirmation Modal: confirm adding stamps to a customer */}
       <StampModal
         visible={showStampModal}
         onClose={cancelStampAddition}
@@ -153,7 +163,7 @@ const CafeScannerScreen = () => {
         isProcessing={isProcessing}
       />
 
-      {/* Redemption Success Modal */}
+      {/* Redemption Success Modal: show QR code for redeemed reward */}
       <RedemptionSuccessModal
         visible={showRedemptionSuccess}
         customer={redeemedCustomer}
@@ -166,31 +176,38 @@ const CafeScannerScreen = () => {
 
 // --- Styles ---
 const styles = StyleSheet.create({
+  // Screen container: full flex layout with padding
   container: {
     flex: 1,
     padding: 20,
   },
+  // Title text: centered heading at top of screen
   title: {
     textAlign: "center",
     marginBottom: 10,
   },
+  // Subtitle text: descriptive subtitle under title
   subtitle: {
     textAlign: "center",
     opacity: 0.7,
     fontSize: 16,
   },
+  // Manual entry button: fallback action button styling
   manualButton: {
     backgroundColor: "#666",
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
   },
+  // Manual entry button text: white text color
   manualButtonText: {
     color: "#fff",
   },
+  // Reset button: styling for manual reset action
   resetButton: {
     backgroundColor: "#ff6b6b",
   },
+  // History title: header text for recent scans list
   historyTitle: {
     fontSize: 18,
     fontWeight: "600",

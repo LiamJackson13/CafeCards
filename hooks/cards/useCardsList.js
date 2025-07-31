@@ -1,78 +1,160 @@
 /**
  * useCardsList
  *
- * Custom React hook for managing the list of loyalty cards.
- * Handles refresh logic, card updates, and formatting for display.
- * Integrates with CardsContext for global card state and actions.
+ * Custom React hook for managing the list of loyalty cards with cafe design integration.
+ * Loads and caches cafe design data for each unique cafe, merges it with card data,
+ * and provides formatted cards for display. Handles refresh logic and error fallback.
  */
 
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CardsContext } from "../../contexts/CardsContext";
+import { getCafeDesign } from "../../lib/appwrite/cafe-profiles";
 
 export const useCardsList = () => {
-  const { cards, loading, fetchCards, updateCard } = useContext(CardsContext);
+  const { cards, loading, fetchCards } = useContext(CardsContext);
+  // Indicates if pull-to-refresh is active (controls spinner)
   const [refreshing, setRefreshing] = useState(false);
+  // Stores fetched design configurations keyed by cafeUserId
+  const [cafeDesigns, setCafeDesigns] = useState({});
 
-  // Pull-to-refresh handler for card list
+  // Effect: load design metadata for each unique cafe from card list
+  useEffect(() => {
+    const loadCafeDesigns = async () => {
+      // Skip if no cards available
+      if (!cards || cards.length === 0) return;
+
+      // Build a set of unique cafeUserIds to minimize API calls
+      const uniqueCafeUserIds = [
+        ...new Set(
+          cards.filter((card) => card.cafeUserId).map((card) => card.cafeUserId)
+        ),
+      ];
+
+      const designs = {}; // Temp map for fetched or default designs
+      for (const cafeUserId of uniqueCafeUserIds) {
+        try {
+          // Fetch the design configuration for this cafe user
+          const design = await getCafeDesign(cafeUserId);
+          designs[cafeUserId] = design;
+        } catch (error) {
+          console.error(`Error loading design for cafe ${cafeUserId}:`, error);
+          // Use fallback default theme if fetching fails
+          designs[cafeUserId] = {
+            primaryColor: "#AA7C48",
+            secondaryColor: "#7B6F63",
+            backgroundColor: "#FDF3E7",
+            textColor: "#3B2F2F",
+            stampIcon: "☕",
+            stampIconColor: "#FFD700",
+            borderRadius: 15,
+            shadowEnabled: true,
+            cafeName: "Local Cafe",
+            location: "Downtown",
+            rewardDescription: "Free Coffee",
+            maxStampsPerCard: 10,
+          };
+        }
+      }
+      // Update state with complete design map
+      setCafeDesigns(designs);
+    };
+
+    loadCafeDesigns();
+  }, [cards]); // Runs whenever card list changes
+
+  // Handler: pull-to-refresh action for card list
   const onRefresh = async () => {
-    setRefreshing(true);
     try {
-      await fetchCards();
+      setRefreshing(true); // Show refresh indicator
+      await fetchCards(); // Re-fetch card data
     } catch (error) {
       console.error("Error refreshing cards:", error);
     } finally {
-      setRefreshing(false);
+      setRefreshing(false); // Hide refresh indicator
     }
   };
 
-  // Update a specific card in the list (delegates to CardsContext)
-  const updateCardInList = (updatedCard) => {
-    if (updateCard) {
-      updateCard(updatedCard);
+  // Handler: update a single card in list by refetching all cards
+  const updateCardInList = async (updatedCard) => {
+    try {
+      await fetchCards(); // Refresh full list to apply updates
+    } catch (error) {
+      console.error("Error refreshing cards after pin update:", error);
     }
   };
 
-  // Format and process cards for display (adds defaults, sorts, etc.)
+  // Merge raw card data with design meta and compute display fields
   const processCardsData = (cardsData) => {
+    // Return empty array if no cards provided
     if (!cardsData || cardsData.length === 0) return [];
 
-    const processedCards = cardsData.map((card) => ({
-      id: card.$id || card.id,
-      customerName: card.customerName || "Unknown Customer",
-      customerEmail: card.customerEmail || "",
-      cafeName: "Local Cafe",
-      location: "Downtown",
-      stamps: card.currentStamps || 0,
-      maxStamps: 10,
-      totalStamps: card.totalStamps || card.currentStamps || 0,
-      rewardsEarned:
-        card.availableRewards || Math.floor((card.currentStamps || 0) / 10),
-      reward: "Free Coffee",
-      color: "#007AFF",
-      icon: "☕",
-      isReady: (card.availableRewards || 0) > 0,
-      isPinned: card.isPinned || false,
-      ...card,
-    }));
+    const processedCards = cardsData.map((card) => {
+      // Retrieve the design for this cafe or fallback to defaults
+      const cafeDesign = cafeDesigns[card.cafeUserId] || {
+        primaryColor: "#AA7C48",
+        secondaryColor: "#7B6F63",
+        backgroundColor: "#FDF3E7",
+        textColor: "#3B2F2F",
+        stampIcon: "☕",
+        stampIconColor: "#FFD700",
+        borderRadius: 15,
+        shadowEnabled: true,
+        cafeName: "Local Cafe",
+        location: "Downtown",
+        rewardDescription: "Free Coffee",
+        maxStampsPerCard: 10,
+      };
 
-    // Sort: pinned cards first, then by last stamp date (most recent first)
+      return {
+        // Core identifiers and raw values
+        id: card.$id || card.id,
+        customerName: card.customerName || "Unknown Customer",
+        customerEmail: card.customerEmail || "",
+        // Use design values for theming and display
+        cafeName: cafeDesign.cafeName,
+        location: cafeDesign.location,
+        stamps: card.currentStamps || 0,
+        maxStamps: cafeDesign.maxStampsPerCard,
+        totalStamps: card.totalStamps || card.currentStamps || 0,
+        // Calculate earned rewards count
+        rewardsEarned:
+          card.availableRewards ||
+          Math.floor(
+            (card.currentStamps || 0) / (cafeDesign.maxStampsPerCard || 10)
+          ),
+        reward: cafeDesign.rewardDescription,
+        // UI properties
+        color: cafeDesign.primaryColor,
+        icon: cafeDesign.stampIcon,
+        isReady: (card.availableRewards || 0) > 0,
+        isPinned: card.isPinned || false,
+        cafeDesign, // expose full design object
+        ...card, // include any extra backend fields
+      };
+    });
+
+    // Sort cards by pinned status and most recent stamping date
     return processedCards.sort((a, b) => {
       if (a.isPinned && !b.isPinned) return -1;
       if (!a.isPinned && b.isPinned) return 1;
       const dateA = new Date(a.lastStampDate || a.issueDate || 0);
       const dateB = new Date(b.lastStampDate || b.issueDate || 0);
+      // Newer dates first
       return dateB - dateA;
     });
   };
 
-  // Cards ready for display in UI
+  // Apply processing to raw context cards
   const displayCards = processCardsData(cards);
 
   return {
-    displayCards, // Array of formatted cards for UI
-    loading, // Loading state from CardsContext
-    refreshing, // Pull-to-refresh state
-    onRefresh, // Handler to refresh cards
-    updateCardInList, // Handler to update a card in the list
+    // State
+    displayCards,
+    loading,
+    refreshing,
+    // Actions
+    onRefresh,
+    updateCardInList,
+    cafeDesigns,
   };
 };

@@ -17,14 +17,18 @@ const ThemeContext = createContext();
  * Wraps children and provides theme state and actions.
  */
 export const ThemeProvider = ({ children }) => {
-  const [themeMode, setThemeMode] = useState("light"); // "light" or "dark"
+  // themeMode: current theme setting stored ('light' or 'dark')
+  // setThemeMode: updater to change the theme mode
+  const [themeMode, setThemeMode] = useState("light");
+  // isLoading: flag while loading saved theme from AsyncStorage
   const [isLoading, setIsLoading] = useState(true);
 
-  // The actual theme is the same as the theme mode now
+  // actualTheme: effective theme applied (currently mirrors themeMode)
   const actualTheme = themeMode;
 
   // Load saved theme preference on app start
   useEffect(() => {
+    // useEffect: fetch saved themeMode from AsyncStorage once on mount
     const loadTheme = async () => {
       try {
         const savedTheme = await AsyncStorage.getItem("themeMode");
@@ -42,7 +46,7 @@ export const ThemeProvider = ({ children }) => {
     loadTheme();
   }, []);
 
-  // Save theme preference when it changes
+  // changeTheme: update themeMode state and persist to AsyncStorage
   const changeTheme = async (newTheme) => {
     try {
       setThemeMode(newTheme);
@@ -52,13 +56,15 @@ export const ThemeProvider = ({ children }) => {
     }
   };
 
+  // context value exposed to users
   const value = {
-    themeMode,
-    actualTheme,
-    changeTheme,
-    isLoading,
+    themeMode, // current theme mode string
+    actualTheme, // effective theme applied
+    changeTheme, // function to switch themes
+    isLoading, // loading state for initial theme fetch
   };
 
+  // Provide theme context to app
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
@@ -71,6 +77,7 @@ export const ThemeProvider = ({ children }) => {
  * Throws if used outside of ThemeProvider.
  */
 export const useTheme = () => {
+  // useTheme: hook to access ThemeContext; ensures mounted within provider
   const context = useContext(ThemeContext);
   if (!context) {
     throw new Error("useTheme must be used within a ThemeProvider");

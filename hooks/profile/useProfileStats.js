@@ -13,72 +13,82 @@ import {
 import { useCafeUser, useUser } from "../useUser";
 
 export const useProfileStats = () => {
+  // Get current user from authentication context
   const { user } = useUser();
+  // Determine if the user is a cafe staff member
   const isCafeUser = useCafeUser();
+  // State to hold formatted statistics for display
   const [stats, setStats] = useState(null);
+  // Loading flag to indicate fetch in progress
   const [loading, setLoading] = useState(true);
+  // Error message state for fetch failures
   const [error, setError] = useState(null);
 
-  // Fetch stats on mount and when user/cafe role changes
+  // Effect: fetch profile statistics on mount and when user role changes
   useEffect(() => {
     const fetchStats = async () => {
+      // If user ID is not available, skip fetching and stop loading
       if (!user?.$id) {
         setLoading(false);
         return;
       }
 
       try {
-        setLoading(true);
+        setLoading(true); // Begin loading state
         let calculatedStats;
 
         if (isCafeUser) {
-          // Fetch cafe owner stats
+          // For cafe owners: fetch all loyalty cards they manage
           const cafeCards = await getLoyaltyCardsByCafeUser(user.$id);
+          // Calculate aggregated stats for cafe (customers, stamps issued, redemptions)
           calculatedStats = calculateCafeStats(cafeCards);
         } else {
-          // Fetch customer stats
+          // For customers: fetch cards belonging to this customer
           const customerCards = await getLoyaltyCardsByCustomerId(user.$id);
+          // Calculate personal stats (active cards, stamps, rewards)
           calculatedStats = calculateCustomerStats(customerCards);
         }
 
-        setStats(calculatedStats);
-        setError(null);
+        setStats(calculatedStats); // Store calculated stats
+        setError(null); // Clear any previous errors
       } catch (err) {
         console.error("Error fetching profile stats:", err);
+        // Capture error message and provide fallback stats
         setError(err.message);
-        // Set fallback stats
         setStats(getFallbackStats(isCafeUser));
       } finally {
-        setLoading(false);
+        setLoading(false); // Fetch complete
       }
     };
 
     fetchStats();
   }, [user?.$id, isCafeUser]);
 
-  // Manual refetch handler
+  // Manual refetch function to reload stats on demand
   const refetchStats = async () => {
-    if (!user?.$id) return;
+    if (!user?.$id) return; // No-op if user not authenticated
 
     try {
-      setLoading(true);
+      setLoading(true); // Show loading indicator
       let calculatedStats;
 
       if (isCafeUser) {
+        // Re-fetch and recalculate cafe stats
         const cafeCards = await getLoyaltyCardsByCafeUser(user.$id);
         calculatedStats = calculateCafeStats(cafeCards);
       } else {
+        // Re-fetch and recalculate customer stats
         const customerCards = await getLoyaltyCardsByCustomerId(user.$id);
         calculatedStats = calculateCustomerStats(customerCards);
       }
 
-      setStats(calculatedStats);
-      setError(null);
+      setStats(calculatedStats); // Update stats state
+      setError(null); // Clear error state
     } catch (err) {
       console.error("Error refetching profile stats:", err);
-      setError(err.message);
+      setError(err.message); // Preserve error message
     } finally {
-      setLoading(false);
+      setLoading(false); // Hide loading indicator
     }
   };
 
@@ -87,7 +97,9 @@ export const useProfileStats = () => {
 
 /**
  * Calculate stats for customer users.
- * Returns array of stat objects for StatCard display.
+ * - totalCards: number of active loyalty cards
+ * - totalStamps: sum of current stamps across all cards
+ * - totalRewards: sum of redeemed rewards count
  */
 const calculateCustomerStats = (cards) => {
   if (!Array.isArray(cards)) {
@@ -95,16 +107,20 @@ const calculateCustomerStats = (cards) => {
     cards = [];
   }
 
+  // Count active cards
   const totalCards = cards.length;
+  // Sum current stamps (parsed as integers)
   const totalStamps = cards.reduce(
     (sum, card) => sum + (parseInt(card.currentStamps) || 0),
     0
   );
+  // Sum total redeemed rewards
   const totalRewards = cards.reduce(
     (sum, card) => sum + (parseInt(card.totalRedeemed) || 0),
     0
   );
 
+  // Return array of stat objects for StatCard components
   return [
     {
       title: "Active Cards",
@@ -129,7 +145,10 @@ const calculateCustomerStats = (cards) => {
 
 /**
  * Calculate stats for cafe owner users.
- * Returns array of stat objects for StatCard display.
+ * - totalCustomers: unique customers count
+ * - totalCards: number of issued cards
+ * - totalStampsIssued: sum of stamps given
+ * - totalRewardsRedeemed: sum of redeemed rewards
  */
 const calculateCafeStats = (cards) => {
   if (!Array.isArray(cards)) {
@@ -137,12 +156,16 @@ const calculateCafeStats = (cards) => {
     cards = [];
   }
 
+  // Unique customer count
   const totalCustomers = new Set(cards.map((card) => card.customerId)).size;
+  // Total cards issued by cafe
   const totalCards = cards.length;
+  // Sum of stamps given across all cards
   const totalStampsIssued = cards.reduce(
     (sum, card) => sum + (parseInt(card.currentStamps) || 0),
     0
   );
+  // Sum of rewards redeemed by customers
   const totalRewardsRedeemed = cards.reduce(
     (sum, card) => sum + (parseInt(card.totalRedeemed) || 0),
     0
@@ -177,8 +200,7 @@ const calculateCafeStats = (cards) => {
 };
 
 /**
- * Get fallback stats in case of error or no data.
- * Returns array of stat objects with zero values.
+ * Provides fallback zeroed stats in case of errors or no data.
  */
 const getFallbackStats = (isCafeUser) => {
   if (isCafeUser) {

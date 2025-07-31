@@ -11,6 +11,10 @@ import StatCard from "./StatCard";
  * Handles loading, error, and empty states gracefully.
  */
 const StatsSection = ({ isCafeUser, stats, loading, error }) => {
+  // isCafeUser: determines if analytics view applies (business) or customer stats
+  // stats: array of statistic objects ({ title, value, icon, color }) to render
+  // loading: boolean flag to show loading placeholders when data is fetching
+  // error: truthy value triggers error message when stats fail to load
   const router = useRouter();
   const { actualTheme } = useTheme();
   const theme =
@@ -26,21 +30,23 @@ const StatsSection = ({ isCafeUser, stats, loading, error }) => {
         }}
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
+          {/* Section title with optional navigation for cafe users */}
           <ThemedText
             type="subtitle"
             style={styles.sectionTitle}
-            onPress={() => isCafeUser && router.push("analytics")}
+            onPress={() => isCafeUser && router.push("coming-soon")}
           >
             {isCafeUser ? "Business Analytics" : "Your Stats"}
           </ThemedText>
           {isCafeUser && (
+            // Arrow icon to navigate to full analytics view
             <Text
               style={{
                 fontSize: 16,
                 fontWeight: "600",
                 color: theme.text,
                 marginLeft: 15,
-                marginBottom: 10, // Moves the arrow up to align with the text
+                marginBottom: 10, // align arrow with text baseline
               }}
               onPress={() => router.push("analytics")}
             >
@@ -50,15 +56,17 @@ const StatsSection = ({ isCafeUser, stats, loading, error }) => {
         </View>
       </View>
 
+      {/* Error message when stats fail to load */}
       {error && (
         <ThemedText style={styles.errorText}>
           Failed to load stats. Please try again later.
         </ThemedText>
       )}
 
+      {/* Container for stat card components */}
       <View style={styles.statsContainer}>
         {loading
-          ? // Show loading skeleton
+          ? // Loading state: render placeholder StatCards
             Array.from({ length: 4 }).map((_, index) => (
               <StatCard
                 key={index}
@@ -70,7 +78,8 @@ const StatsSection = ({ isCafeUser, stats, loading, error }) => {
               />
             ))
           : stats && stats.length > 0
-          ? stats.map((stat, index) => (
+          ? // Render StatCards for each stat object
+            stats.map((stat, index) => (
               <StatCard
                 key={index}
                 title={stat.title}
@@ -79,7 +88,7 @@ const StatsSection = ({ isCafeUser, stats, loading, error }) => {
                 color={stat.color}
               />
             ))
-          : // Fallback stats if none available
+          : // Fallback: show 'No Data' placeholder cards when empty
             Array.from({ length: 4 }).map((_, index) => (
               <StatCard
                 key={index}
@@ -95,16 +104,19 @@ const StatsSection = ({ isCafeUser, stats, loading, error }) => {
 };
 
 const styles = StyleSheet.create({
+  // Section header text style
   sectionTitle: {
     fontSize: 20,
     fontWeight: "600",
     marginBottom: 15,
   },
+  // Layout for row of StatCard components
   statsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     gap: 10,
   },
+  // Text style for error notice above stats
   errorText: {
     textAlign: "center",
     opacity: 0.7,

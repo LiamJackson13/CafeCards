@@ -8,7 +8,7 @@
  */
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Image, StatusBar, StyleSheet, View } from "react-native";
+import { StatusBar, StyleSheet, View } from "react-native";
 import Spacer from "../components/Spacer";
 import ThemedButton from "../components/ThemedButton";
 import ThemedLoader from "../components/ThemedLoader";
@@ -17,23 +17,28 @@ import ThemedView from "../components/ThemedView";
 import { Colors } from "../constants/Colors";
 import { useTheme } from "../contexts/ThemeContext";
 import { useCafeUser, useUser } from "../hooks/useUser";
-import { getCafeProfile } from "../lib/appwrite/cafe-profiles";
 
 export default function Index() {
+  // Auth context: indicates when initial authentication check completes
   const { authChecked } = useUser();
+  // Navigation hook: for routing between screens
   const router = useRouter();
+  // Role check: determines if user is a cafe owner
   const isCafeUser = useCafeUser();
+  // Authenticated user object (null if not logged in)
   const { user } = useUser();
+  // Theme context: get current theme and resolve color palette
   const { actualTheme } = useTheme();
   const theme = Colors[actualTheme] ?? Colors.light;
+  // Loading state: controls display of initial loader while auth resolves
   const [isLoading, setIsLoading] = useState(true);
 
-  // Wait for auth context to finish loading
+  // Effect: hide loader once authentication check finishes
   useEffect(() => {
     if (authChecked) setIsLoading(false);
   }, [authChecked]);
 
-  // Navigate to dashboard or login based on user type
+  // Handler: navigate to appropriate dashboard or prompt login
   const handleDashboardNavigation = () => {
     if (!user) {
       router.push("/login");
@@ -46,12 +51,14 @@ export default function Index() {
     }
   };
 
+  // Handlers: quick navigation to login or registration screens
   const handleLogin = () => router.push("/login");
   const handleRegister = () => router.push("/register");
 
   if (isLoading) {
     return (
       <ThemedView style={styles.container} safe>
+        {/* Initial loader while checking auth status */}
         <ThemedLoader />
       </ThemedView>
     );
@@ -59,13 +66,13 @@ export default function Index() {
 
   return (
     <ThemedView style={styles.container} safe>
-
+      {/* StatusBar adapts to theme */}
       <StatusBar
         barStyle={actualTheme === "dark" ? "light-content" : "dark-content"}
         backgroundColor={theme.background}
       />
 
-      {/* Hero Section */}
+      {/* Hero Section: app title and description */}
       <View style={styles.heroSection}>
         <View style={styles.logoContainer}>
           <ThemedText style={styles.logoEmoji}>☕</ThemedText>
@@ -77,14 +84,13 @@ export default function Index() {
         </ThemedText>
         <Spacer size={8} />
         <ThemedText style={styles.description}>
-          Collect stamps, earn rewards, and discover your favorite cafes all in
-          one place.
+          Collect stamps and earn rewards at your favorite cafes.
         </ThemedText>
       </View>
 
       <Spacer size={40} />
 
-      {/* Features Section */}
+      {/* Features Section: highlights app capabilities */}
       <View style={styles.featuresContainer}>
         <View style={styles.featureItem}>
           <ThemedText style={styles.featureIcon}>📱</ThemedText>
@@ -98,7 +104,7 @@ export default function Index() {
 
       <Spacer size={60} />
 
-      {/* Action Buttons */}
+      {/* Action Buttons: dashboard, login or register based on auth */}
       <View style={styles.buttonsContainer}>
         {user ? (
           <ThemedButton
@@ -137,8 +143,9 @@ export default function Index() {
         )}
       </View>
 
-      {/* Footer */}
       <Spacer size={40} />
+
+      {/* Footer: welcome message or call to action */}
       <View style={styles.footer}>
         <ThemedText style={styles.footerText}>
           {user
@@ -152,35 +159,42 @@ export default function Index() {
 
 // --- Styles ---
 const styles = StyleSheet.create({
+  // Main container wrapping all content
   container: {
     flex: 1,
     paddingHorizontal: 24,
     paddingVertical: 20,
   },
+  // Hero section: centered title and description padding
   heroSection: {
     alignItems: "center",
     paddingTop: 40,
   },
+  // Logo wrapper for title emoji and text
   logoContainer: {
     alignItems: "center",
     marginBottom: 8,
   },
+  // Large emoji logo styling
   logoEmoji: {
     fontSize: 72,
     marginBottom: 12,
   },
+  // Main title text style
   title: {
     fontSize: 36,
     fontWeight: "bold",
     textAlign: "center",
     color: Colors.primary,
   },
+  // Subtitle text under the title
   subtitle: {
     fontSize: 18,
     fontWeight: "600",
     textAlign: "center",
     opacity: 0.8,
   },
+  // Description text styling
   description: {
     fontSize: 16,
     textAlign: "center",
@@ -188,27 +202,33 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     paddingHorizontal: 20,
   },
+  // Features row layout
   featuresContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
     paddingHorizontal: 20,
   },
+  // Individual feature item styling
   featureItem: {
     alignItems: "center",
     flex: 1,
   },
+  // Feature icon size and spacing
   featureIcon: {
     fontSize: 32,
     marginBottom: 8,
   },
+  // Feature label text
   featureText: {
     fontSize: 14,
     fontWeight: "500",
     textAlign: "center",
   },
+  // Buttons container padding
   buttonsContainer: {
     paddingHorizontal: 20,
   },
+  // Primary action button styling
   primaryButton: {
     backgroundColor: Colors.primary,
     paddingVertical: 16,
@@ -221,11 +241,13 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 6,
   },
+  // Text inside primary button
   primaryButtonText: {
     color: "#ffffff",
     fontSize: 16,
     fontWeight: "bold",
   },
+  // Secondary button (register) styling
   secondaryButton: {
     backgroundColor: "transparent",
     borderWidth: 2,
@@ -235,17 +257,20 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     alignItems: "center",
   },
+  // Text inside secondary button
   secondaryButtonText: {
     fontSize: 16,
     fontWeight: "600",
   },
+  // Footer container alignment and padding
   footer: {
     alignItems: "center",
     paddingBottom: 20,
   },
+  // Footer text styling
   footerText: {
     fontSize: 14,
     opacity: 0.6,
     textAlign: "center",
-  }
+  },
 });

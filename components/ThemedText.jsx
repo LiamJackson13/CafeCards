@@ -9,10 +9,14 @@ import { Colors } from "../constants/Colors";
 import { useTheme } from "../contexts/ThemeContext";
 
 const ThemedText = ({ style, title = false, ...props }) => {
+  // style: optional custom styles to merge with theme color
+  // title: if true, apply the theme's `title` color, otherwise use `text` color
+  // ...props: other Text props such as `children`, `numberOfLines`, etc.
   const { actualTheme } = useTheme();
   const theme = Colors[actualTheme] ?? Colors.light;
   const textColor = title ? theme.title : theme.text;
 
+  // Render a Text element with the resolved theme color and merged styles/props
   return <Text style={[{ color: textColor }, style]} {...props} />;
 };
 

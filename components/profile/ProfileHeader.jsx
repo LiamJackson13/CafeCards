@@ -22,10 +22,18 @@ const ProfileHeader = ({
   onEditName,
   getDisplayName,
 }) => {
+  // user: authenticated user object with profile data (email, etc.)
+  // isCafeUser: flag indicating cafe manager view
+  // cafeProfile: cafe profile details (e.g., cafeName) for cafe users
+  // onEditName: callback to trigger name editing
+  // getDisplayName: function returning the display name for non-cafe users
+
   const { actualTheme } = useTheme();
+  // actualTheme: current theme key ("light" or "dark") for styling
   const theme = Colors[actualTheme] ?? Colors.light;
 
   // Profile picture hook
+  // useProfilePicture hook provides picture URL, loading states, and modal controls
   const {
     profilePictureUrl,
     uploading,
@@ -38,7 +46,7 @@ const ProfileHeader = ({
     confirmRemovePhoto,
   } = useProfilePicture();
 
-  // Determine display name: cafe profile name for cafe users, else user name
+  // Determine displayName: cafeName if manager, else user name
   const displayName =
     isCafeUser && cafeProfile?.cafeName
       ? cafeProfile.cafeName
@@ -46,21 +54,23 @@ const ProfileHeader = ({
 
   return (
     <>
-      {/* Debug Toggle - Only visible in development */}
+      {/* Debug toggle for development environment */}
       <DebugToggle />
 
       <View style={styles.header}>
-        {/* Cafe Owner Badge */}
+        {/* Container for header elements: badge, avatar, name, email */}
         {isCafeUser && (
           <View
             style={[styles.cafeOwnerBadge, { backgroundColor: theme.primary }]}
           >
+            {/* Badge label for cafe owners */}
             <ThemedText style={styles.badgeText}>🏪 Cafe Owner</ThemedText>
           </View>
         )}
 
-        {/* Avatar */}
+        {/* Avatar Section */}
         <View style={styles.avatarWrapper}>
+          {/* Pressable avatar container opens image picker */}
           <Pressable
             onPress={showImagePicker}
             disabled={uploading}
@@ -72,6 +82,7 @@ const ProfileHeader = ({
               },
             ]}
           >
+            {/* Show loader while uploading or loading image */}
             {uploading || loading ? (
               <ThemedLoader size="small" />
             ) : profilePictureUrl && typeof profilePictureUrl === "string" ? (
@@ -91,7 +102,7 @@ const ProfileHeader = ({
               </ThemedText>
             )}
 
-            {/* Camera icon overlay */}
+            {/* Camera icon overlay for edit affordance */}
             <View
               style={[
                 styles.cameraOverlay,
@@ -107,8 +118,9 @@ const ProfileHeader = ({
           </Pressable>
         </View>
 
-        {/* Name and Edit Button */}
+        {/* Name and edit button */}
         <View style={styles.nameContainer}>
+          {/* Display user or cafe name */}
           <ThemedText type="title" style={styles.userName}>
             {displayName}
           </ThemedText>
@@ -116,18 +128,20 @@ const ProfileHeader = ({
             onPress={onEditName}
             style={[styles.editNameButton, { borderColor: theme.border }]}
           >
+            {/* Button to open name editing modal */}
             <ThemedText style={[styles.editNameText, { color: theme.text }]}>
               ✏️ Edit Name
             </ThemedText>
           </ThemedButton>
         </View>
 
-        {/* Email */}
+        {/* Email display */}
         <ThemedText style={[styles.userEmail, { color: theme.text }]}>
+          {/* Show user's email or placeholder */}
           {user?.email || "user@example.com"}
         </ThemedText>
 
-        {/* Cafe Role Badge */}
+        {/* Business account badge for cafe users */}
         {isCafeUser && (
           <View
             style={[
@@ -135,6 +149,7 @@ const ProfileHeader = ({
               { backgroundColor: theme.primary + "20" },
             ]}
           >
+            {/* Label indicating business account role */}
             <ThemedText style={[styles.cafeRole, { color: theme.primary }]}>
               Business Account
             </ThemedText>
@@ -142,7 +157,7 @@ const ProfileHeader = ({
         )}
       </View>
 
-      {/* Profile Picture Modal */}
+      {/* Profile picture selection modal */}
       <ProfilePictureModal
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
@@ -157,14 +172,17 @@ const ProfileHeader = ({
 };
 
 const styles = StyleSheet.create({
+  // Wrapper for the entire header section
   header: {
     alignItems: "center",
     paddingVertical: 30,
   },
+  // Container for the avatar and camera overlay
   avatarWrapper: {
     position: "relative",
     marginBottom: 20,
   },
+  // Touchable avatar circle styling
   avatarContainer: {
     width: 120,
     height: 120,
@@ -179,17 +197,19 @@ const styles = StyleSheet.create({
     elevation: 5,
     position: "relative",
   },
-
+  // Text styling for avatar initial fallback
   avatarText: {
     fontSize: 48,
     fontWeight: "bold",
     color: "#fff",
   },
+  // Profile image styling inside avatar container
   avatarImage: {
     width: 115,
     height: 115,
     borderRadius: 56,
   },
+  // Overlay circle for camera icon
   cameraOverlay: {
     position: "absolute",
     bottom: 0,
@@ -201,19 +221,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 2,
   },
+  // Camera icon styling
   cameraIcon: {
     fontSize: 14,
   },
+  // Container for user name and edit action
   nameContainer: {
     alignItems: "center",
     marginBottom: 15,
   },
+  // User or cafe name text style
   userName: {
     fontSize: 28,
     fontWeight: "600",
     marginBottom: 10,
     textAlign: "center",
   },
+  // Edit name button styling
   editNameButton: {
     backgroundColor: "transparent",
     paddingHorizontal: 16,
@@ -221,16 +245,19 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
   },
+  // Text style inside the edit name button
   editNameText: {
     fontSize: 14,
     fontWeight: "500",
   },
+  // Styling for user email text
   userEmail: {
     fontSize: 16,
     opacity: 0.7,
     textAlign: "center",
     marginBottom: 10,
   },
+  // Badge styling for cafe owner role
   cafeOwnerBadge: {
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -241,17 +268,20 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  // Text style for cafe owner badge label
   badgeText: {
     color: "#fff",
     fontSize: 14,
     fontWeight: "bold",
   },
+  // Container for business account role indicator
   roleContainer: {
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 15,
     marginTop: 5,
   },
+  // Text style for business account badge
   cafeRole: {
     fontSize: 14,
     fontWeight: "500",

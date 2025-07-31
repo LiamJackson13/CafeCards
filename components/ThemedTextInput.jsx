@@ -10,6 +10,8 @@ import { Colors } from "../constants/Colors";
 import { useTheme } from "../contexts/ThemeContext";
 
 const ThemedTextInput = ({ style, ...props }) => {
+  // style: custom styles to merge with the themed TextInput container
+  // ...props: additional TextInput props (e.g., value, onChangeText, placeholder)
   const { actualTheme } = useTheme();
   const theme = Colors[actualTheme] ?? Colors.light;
 
@@ -17,6 +19,7 @@ const ThemedTextInput = ({ style, ...props }) => {
   const webStyles =
     Platform.OS === "web"
       ? {
+          // Remove default focus outline and enable text selection on web
           outline: "none",
           cursor: "text",
           userSelect: "text",
@@ -29,19 +32,23 @@ const ThemedTextInput = ({ style, ...props }) => {
   return (
     <TextInput
       style={[
+        // Base input styles: themed background, text color, padding, and rounded corners
         {
           backgroundColor: theme.uiBackground,
           color: theme.text,
           padding: 20,
           borderRadius: 6,
-          ...webStyles,
+          ...webStyles, // apply web-specific overrides when on web
         },
         style,
       ]}
+      // Use theme icon color for placeholder text
       placeholderTextColor={theme.iconColor}
+      // Disable native text corrections and suggestions for consistency
       autoComplete="off"
       autoCorrect={false}
       spellCheck={false}
+      // Spread any additional TextInput props passed in
       {...props}
     />
   );

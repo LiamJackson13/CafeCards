@@ -11,74 +11,83 @@ import { useProfileStats } from "./useProfileStats";
  * Integrates with user context and profile stats hook.
  */
 export const useProfile = () => {
+  // Extract logout method, current user data, and refresh function from user context
   const { logout, user, refreshUser } = useUser();
-  const isCafeUser = useCafeUser(); // Includes debug override if present
+  // Determine if current user has cafe staff permissions
+  const isCafeUser = useCafeUser(); // May include debug override logic
+  // Store cafe-specific profile info (e.g., business name, image)
   const [cafeProfile, setCafeProfile] = useState(null);
 
+  // Retrieve user statistics (visits, redemptions) from custom hook
   const {
-    stats,
-    loading: statsLoading,
-    error: statsError,
-    refetch: refetchStats,
+    stats, // Aggregated stats object
+    loading: statsLoading, // Loading flag for stats fetch
+    error: statsError, // Any error during stats retrieval
+    refetch: refetchStats, // Method to manually refetch stats
   } = useProfileStats();
 
+  // Fetch cafe profile data when user or permissions change
   const fetchCafeProfile = useCallback(async () => {
+    // Ensure user ID is available
     if (!user?.$id) {
       console.error("User ID is missing. Cannot fetch cafe profile.");
       return;
     }
 
+    // Only fetch profile for cafe staff users
     if (isCafeUser) {
       try {
         const profile = await getCafeProfile(user.$id);
-        setCafeProfile(profile);
+        setCafeProfile(profile); // Store fetched profile
       } catch (error) {
         console.error("Error fetching cafe profile:", error);
       }
     }
   }, [isCafeUser, user]);
 
+  // Run fetchCafeProfile on mount and whenever dependencies update
   useEffect(() => {
     fetchCafeProfile();
   }, [fetchCafeProfile]);
 
-  // Modal state for password and name editing
-  const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
-  const [isNameModalVisible, setIsNameModalVisible] = useState(false);
+  // Local UI state for modal visibility
+  const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false); // Show/hide password change modal
+  const [isNameModalVisible, setIsNameModalVisible] = useState(false); // Show/hide name edit modal
 
-  // Show password change modal
+  // Opens the password modal when user wants to change password
   const handleChangePassword = () => {
     setIsPasswordModalVisible(true);
   };
 
-  // Show name edit modal
+  // Opens the name edit modal when user opts to edit their name
   const handleEditName = () => {
     setIsNameModalVisible(true);
   };
 
-  // After name update, refresh user and stats
+  // After user updates their name, refresh relevant data
   const handleNameUpdated = async (updated) => {
     try {
       if (isCafeUser) {
-        // Refresh cafe profile
+        // If staff, optimistically update local cafe name
         if (cafeProfile) {
           setCafeProfile({ ...cafeProfile, cafeName: updated.name });
         }
-        await fetchCafeProfile();
+        await fetchCafeProfile(); // Re-fetch full profile
       } else {
-        await refreshUser();
+        await refreshUser(); // Re-fetch user context for regular users
       }
-      await refetchStats();
+      await refetchStats(); // Update stats after name change
     } catch (error) {
       console.error("Failed to refresh data after name update:", error);
     }
   };
 
-  // Get display name: prefer user's name, fallback to email prefix or "User"
+  // Gets the display name: prefer provided name, else email prefix, else generic
   const getDisplayName = () => {
     if (user?.name && user.name.trim() !== "") {
       return user.name;
     }
+    // Fallback to part of email before '@'
     return user?.email?.split("@")[0] || "User";
   };
 

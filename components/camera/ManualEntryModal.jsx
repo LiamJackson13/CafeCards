@@ -4,12 +4,14 @@ import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
 /**
- * ManualEntryModal
- *
- * Modal for manually entering a card ID or QR code data.
- * - Allows user to input card ID.
- * - Disables submit button if input is empty or processing.
- * - Calls onSubmit when "Add Stamp" is pressed.
+ * ManualEntryModal Component:
+ * - Props:
+ *   visible: controls modal visibility
+ *   onClose: callback to close modal
+ *   cardId: current input value
+ *   setCardId: updates cardId state
+ *   onSubmit: handler for submit action
+ *   isProcessing: disables input during processing
  */
 const ManualEntryModal = ({
   visible,
@@ -19,29 +21,29 @@ const ManualEntryModal = ({
   onSubmit,
   isProcessing,
 }) => {
-  // Handle cancel: close modal and reset input
+  // Handle cancel: close modal and reset input value
   const handleCancel = () => {
     onClose();
     setCardId("");
   };
 
+  // Render modal with input and action buttons
   return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      transparent
-      onRequestClose={handleCancel}
-    >
+    <Modal visible={visible} transparent onRequestClose={handleCancel}>
       <View style={styles.modalOverlay}>
+        {/* Modal container card */}
         <ThemedCard style={styles.modalContent}>
+          {/* Title */}
           <ThemedText type="title" style={styles.modalTitle}>
             Manual Card Entry
           </ThemedText>
 
+          {/* Subtitle explaining input */}
           <ThemedText style={styles.modalSubtitle}>
             Enter the customer&apos;s card ID or QR code data
           </ThemedText>
 
+          {/* Text input for manual card ID entry */}
           <TextInput
             style={styles.textInput}
             value={cardId}
@@ -51,6 +53,7 @@ const ManualEntryModal = ({
             autoCapitalize="none"
           />
 
+          {/* Action buttons: Cancel and Add Stamp */}
           <View style={styles.modalButtons}>
             <ThemedButton
               onPress={handleCancel}
@@ -84,6 +87,7 @@ const ManualEntryModal = ({
 };
 
 const styles = StyleSheet.create({
+  // Overlay covering entire screen with semi-transparent background
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -91,21 +95,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
   },
+  // Card container for modal content
   modalContent: {
     width: "100%",
     maxWidth: 400,
     padding: 20,
     borderRadius: 15,
   },
+  // Title text at top of modal
   modalTitle: {
     textAlign: "center",
     marginBottom: 10,
   },
+  // Subtitle text under title
   modalSubtitle: {
     textAlign: "center",
     opacity: 0.7,
     marginBottom: 20,
   },
+  // Text input styling for ID entry
   textInput: {
     borderWidth: 1,
     borderColor: "#ddd",
@@ -115,19 +123,23 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: "#fff",
   },
+  // Container for modal action buttons
   modalButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
     gap: 10,
   },
+  // Base style for both Cancel and Submit buttons
   modalButton: {
     flex: 1,
     padding: 15,
     borderRadius: 8,
   },
+  // Cancel button styling
   cancelButton: {
     backgroundColor: "#666",
   },
+  // Submit button styling (Add Stamp)
   submitButton: {
     backgroundColor: "#007AFF",
   },

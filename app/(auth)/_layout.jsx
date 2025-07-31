@@ -9,7 +9,7 @@ export default function AuthLayout() {
       <StatusBar style="auto" />
       {/* Ensures the status bar on the phone matches the theme of the app */}
       <Stack screenOptions={{ headerShown: false, animation: "none" }} />
-      {/* Sets the nav options to be Stack and hides the header */}
+      {/* Sets the nav option to be Stack and hides the header */}
     </GuestOnly>
   );
 }

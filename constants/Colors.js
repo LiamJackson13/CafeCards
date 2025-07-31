@@ -1,11 +1,8 @@
 /**
  * Color Theme Constants
  *
- * Defines the color palette and theme schemes for the Cafe Cards app.
- * Contains brand colors (primary, warning) and separate color schemes for
- * light and dark themes. Each theme includes colors for text, titles, backgrounds,
- * navigation, icons, and UI elements. Uses cafe-inspired color palette with
- * warm browns, creams, and tans to match the coffee/cafe theme of the app.
+ * Defines the color palette and theme schemes for the app.
+ *
  */
 export const Colors = {
   // Brand colors
@@ -40,14 +37,3 @@ export const Colors = {
     card: "#FFFFFF", // Card background for light theme
   },
 };
-
-//   light: {
-//     text: "#000", // Body text (light brown-gray)
-//     title: "#000", // Titles / Headings (rich coffee brown)
-//     background: "#C9A9A6", // Light background (cream)
-//     navBackground: "#F8C8DC", // Nav bar (light tan)
-//     iconColor: "#FFC0CB", // Unfocused icons
-//     iconColorFocused: "#3B2F2F", // Focused icons
-//     uiBackground: "#FFB6C1", // Cards, buttons, inputs (latte beige)
-//   },
-// };

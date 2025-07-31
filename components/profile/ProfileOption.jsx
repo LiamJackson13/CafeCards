@@ -9,6 +9,10 @@ import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
 const ProfileOption = ({ title, subtitle, icon, action }) => (
+  // title: main label for the option
+  // subtitle: optional descriptive text under the title
+  // icon: emoji or symbol to display at the left
+  // action: optional component (e.g., switch or button) rendered on the right
   <ThemedCard style={styles.optionCard}>
     <View style={styles.optionContent}>
       <View style={styles.optionLeft}>
@@ -26,32 +30,39 @@ const ProfileOption = ({ title, subtitle, icon, action }) => (
 );
 
 const styles = StyleSheet.create({
+  // Card container for each profile option row
   optionCard: {
     marginBottom: 10,
     padding: 15,
   },
+  // Horizontal layout: icon/text on left, action on right
   optionContent: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
+  // Left section wrapping icon and text
   optionLeft: {
     flexDirection: "row",
     alignItems: "center",
     flex: 1,
   },
+  // Icon styling (size and spacing)
   optionIcon: {
     fontSize: 24,
     marginRight: 15,
   },
+  // Wrapper for title/subtitle texts
   optionText: {
     flex: 1,
   },
+  // Main title text style
   optionTitle: {
     fontSize: 16,
     fontWeight: "500",
     marginBottom: 2,
   },
+  // Subtitle text style (smaller, faded)
   optionSubtitle: {
     fontSize: 14,
     opacity: 0.7,

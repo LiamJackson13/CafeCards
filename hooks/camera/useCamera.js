@@ -23,7 +23,10 @@ export const useCamera = () => {
   const refreshCount = useRef(0); // Number of health check refreshes
   const MAX_REFRESHES = 3; // Max health check attempts
 
-  // Request camera permissions on mount
+  // Request camera permissions on component mount:
+  // - Uses Expo Camera API to request access
+  // - Updates hasPermission to true if granted, false if denied or on error
+  // - Sets isLoading to false once the permission request completes
   useEffect(() => {
     const getCameraPermissions = async () => {
       try {
@@ -40,21 +43,24 @@ export const useCamera = () => {
     getCameraPermissions();
   }, []);
 
-  // Debounced refresh to avoid excessive camera restarts
+  // Debounced camera refresh:
+  // - Ensures at least 1 second between refreshes to avoid rapid remounts
+  // - Clears any ongoing health check timers before forcing a new mount via cameraKey
   const debouncedRefresh = useCallback(() => {
     const now = Date.now();
     if (now - lastRefreshTime.current < 1000) {
-      return; // Don't refresh more than once per second
+      return; // Prevent refresh if called too soon
     }
     lastRefreshTime.current = now;
 
-    // Clear any existing health check
+    // Clear existing health check timer
     if (healthCheckTimer.current) {
       clearTimeout(healthCheckTimer.current);
       healthCheckTimer.current = null;
     }
     healthCheckActive.current = false;
 
+    // Reset camera readiness flags and bump the key to remount Camera component
     setCameraReady(false);
     cameraReadyRef.current = false;
     setCameraKey((prev) => prev + 1);
@@ -77,7 +83,8 @@ export const useCamera = () => {
     }, [hasPermission, debouncedRefresh])
   );
 
-  // Refresh camera when app returns to foreground
+  // Refresh camera when app returns to foreground:
+  // - Listens to AppState changes, triggers a refresh if app becomes active
   useEffect(() => {
     const handleAppStateChange = (nextAppState) => {
       if (nextAppState === "active" && hasPermission === true) {
@@ -92,7 +99,9 @@ export const useCamera = () => {
     return () => subscription?.remove();
   }, [hasPermission, debouncedRefresh]);
 
-  // Camera health check: auto-refresh if camera doesn't become ready
+  // Camera health check:
+  // - After each refresh or permission grant, waits up to 8 seconds for camera to become ready
+  // - Retries up to MAX_REFRESHES times before giving up and requiring manual refresh
   useEffect(() => {
     if (hasPermission === true && !isLoading && !healthCheckActive.current) {
       healthCheckActive.current = true;
@@ -106,7 +115,7 @@ export const useCamera = () => {
               `Camera health check failed ${MAX_REFRESHES} times - stopping automatic refreshes`
             );
             healthCheckActive.current = false;
-            // Stop auto-refresh, let user manually refresh if needed
+            // Auto-refresh stops; user must manually refresh
           } else {
             console.warn(
               `Camera health check failed - camera not ready after 8 seconds (attempt ${refreshCount.current}/${MAX_REFRESHES})`
@@ -115,10 +124,11 @@ export const useCamera = () => {
             debouncedRefresh();
           }
         } else {
+          // Camera ready, reset counters and timers
           healthCheckActive.current = false;
-          refreshCount.current = 0; // Reset on success
+          refreshCount.current = 0;
         }
-      }, 8000); // 8 second timeout
+      }, 8000); // Timeout duration in ms
 
       return () => {
         if (healthCheckTimer.current) {
@@ -130,20 +140,21 @@ export const useCamera = () => {
     }
   }, [hasPermission, isLoading, debouncedRefresh]);
 
-  // Manual camera refresh (resets health check count)
+  // Manual camera refresh:
+  // - Resets health check attempt count and invokes debounced refresh
   const refreshCamera = useCallback(() => {
     refreshCount.current = 0;
     debouncedRefresh();
   }, [debouncedRefresh]);
 
-  // Camera ready callback
+  // Callback invoked when the Camera component signals it's ready:
+  // - Updates ready states, stops loading, resets health checks, and clears timers
   const handleCameraReady = useCallback(() => {
     setCameraReady(true);
     cameraReadyRef.current = true;
     setIsLoading(false);
     refreshCount.current = 0;
 
-    // Clear health check timer if camera becomes ready
     if (healthCheckTimer.current) {
       clearTimeout(healthCheckTimer.current);
       healthCheckTimer.current = null;

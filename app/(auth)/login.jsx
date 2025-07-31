@@ -26,22 +26,33 @@ import { Colors } from "../../constants/Colors";
 import { useUser } from "../../hooks/useUser";
 
 const LoginScreen = () => {
+  // Form state: email, password, and error message
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
+  // Auth hook: provides login function to authenticate user
   const { login } = useUser();
 
+  /**
+   * handleSubmit: clears previous errors, attempts login, and handles failures
+   */
   const handleSubmit = async () => {
+    // Reset any existing error messages before submission
     setError(null);
+
     try {
+      // Attempt to authenticate with provided credentials
       await login(email, password);
     } catch (error) {
+      // On failure, display error message to user
       setError(error?.message || "Login failed.");
     }
   };
 
+  // Render the login form UI
   return (
+    // Dismiss keyboard when tapping outside inputs
     <TouchableWithoutFeedback
       onPress={Platform.OS !== "web" ? Keyboard.dismiss : undefined}
       accessible={false}

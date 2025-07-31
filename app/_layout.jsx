@@ -17,27 +17,36 @@ import { CardsProvider } from "../contexts/CardsContext";
 import { ThemeProvider, useTheme } from "../contexts/ThemeContext";
 import { UserProvider } from "../contexts/UserContext";
 
-// Stack navigator with themed headers and hidden by default
+// Stack navigator component: sets up app screens with themed headers
 const StackNavigator = () => {
+  // Theme context: determine current theme mode and colors
   const { actualTheme } = useTheme();
+  // Resolve color palette based on theme
   const theme = Colors[actualTheme] ?? Colors.light;
 
   return (
     <>
+      {/* StatusBar: adapt style to light or dark mode */}
       <StatusBar style={actualTheme === "dark" ? "light" : "dark"} />
+      {/* Navigation stack with global header styling */}
       <Stack
         screenOptions={{
+          // Header background and tint based on theme
           headerStyle: { backgroundColor: theme.navBackground },
           headerTintColor: theme.title,
           headerTitleAlign: "center",
+          // Hide headers by default for custom layout
           headerShown: false,
         }}
       >
+        {/* Home screen route: initial landing page */}
         <Stack.Screen
           name="index"
           options={{ title: "Home", headerShown: false }}
         />
+        {/* Auth flow routes: login and register screens */}
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        {/* Dashboard routes: protected user area with tabs */}
         <Stack.Screen name="(dashboard)" options={{ headerShown: false }} />
       </Stack>
     </>

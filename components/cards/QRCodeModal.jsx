@@ -13,61 +13,77 @@ import ThemedText from "../ThemedText";
  * - Displays available rewards and instructions.
  */
 const QRCodeModal = ({ visible, onClose, qrData, availableRewards, theme }) => {
+  // visible: toggles modal display
+  // onClose: callback fired to close modal
+  // qrData: JSON string containing QR payload
+  // availableRewards: count of redeemable rewards
+  // theme: current theme object for styling
   const { user } = useUser();
 
-  if (!qrData) return null;
+  if (!qrData) return null; // don't render if no QR payload
 
-  // Parse and modify QR data to ensure it uses the current user's name
+  // Parse and inject current user's name into QR payload if applicable
   let modifiedQRData = qrData;
   try {
+    // Try parsing JSON to update payload metadata
     const parsedData = JSON.parse(qrData);
     if (parsedData.type === "reward_redemption" && user?.name) {
+      // Assign current user's name for redemption record
       parsedData.customerName = user.name;
       modifiedQRData = JSON.stringify(parsedData);
     }
   } catch (error) {
-    // If parsing fails, use original data
+    // Fallback to original data if parsing fails
     console.warn("Could not parse QR data:", error);
   }
 
   return (
     <Modal
-      visible={visible}
-      animationType="slide"
-      transparent={true}
-      onRequestClose={onClose}
+      visible={visible} // controls modal visibility
+      animationType="slide" // slide-in animation
+      transparent={true} // allow overlay effect
+      onRequestClose={onClose} // handle hardware back press
     >
       <View style={styles.modalOverlay}>
+        {" "}
+        {/* dark translucent backdrop */}
         <ThemedCard style={styles.modalContent}>
+          {" "}
+          {/* card container */}
           <ThemedText style={styles.modalTitle}>
+            {" "}
+            {/* modal heading */}
             🎉 Redeem Your Free Coffee!
           </ThemedText>
-
           <ThemedText style={styles.modalSubtitle}>
+            {" "}
+            {/* instruction subtitle */}
             Show this QR code to the cafe staff to redeem one of your
             {availableRewards || 1} available reward
             {(availableRewards || 1) > 1 ? "s" : ""}
           </ThemedText>
-
           <View style={styles.qrContainer}>
+            {" "}
+            {/* QR code wrapper */}
             <QRCode
-              value={modifiedQRData}
-              size={200}
-              backgroundColor="white"
-              color="black"
+              value={modifiedQRData} // payload with user name injected
+              size={200} // square dimension in pixels
+              backgroundColor="white" // ensures white background
+              color="black" // QR fill color
             />
           </View>
-
           <ThemedText style={styles.qrInstructions}>
+            {" "}
+            {/* usage hint */}
             Present this code at the counter for scanning
           </ThemedText>
-
           <ThemedText style={[styles.statusText, { color: theme.primary }]}>
+            {" "}
+            {/* waiting status */}
             ⏱️ Waiting for cafe to scan...
           </ThemedText>
-
           <ThemedButton
-            onPress={onClose}
+            onPress={onClose} // close action
             style={[styles.closeButton, { backgroundColor: theme.primary }]}
           >
             <ThemedText style={styles.closeButtonText}>Close</ThemedText>
@@ -79,6 +95,7 @@ const QRCodeModal = ({ visible, onClose, qrData, availableRewards, theme }) => {
 };
 
 const styles = StyleSheet.create({
+  // Full-screen backdrop with semi-transparent black
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -86,6 +103,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
   },
+  // Main card container for QR and instructions
   modalContent: {
     width: "100%",
     maxWidth: 350,
@@ -93,12 +111,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
   },
+  // Title text at top of modal
   modalTitle: {
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 15,
   },
+  // Subtitle/instructions under title
   modalSubtitle: {
     fontSize: 14,
     textAlign: "center",
@@ -106,6 +126,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     lineHeight: 20,
   },
+  // Container styling around the QR code graphic
   qrContainer: {
     padding: 20,
     backgroundColor: "white",
@@ -117,12 +138,14 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  // Instructions label under QR code
   qrInstructions: {
     fontSize: 12,
     textAlign: "center",
     opacity: 0.6,
     marginBottom: 15,
   },
+  // Status text shown while waiting for scan
   statusText: {
     fontSize: 11,
     textAlign: "center",
@@ -130,12 +153,14 @@ const styles = StyleSheet.create({
     opacity: 0.7,
     marginBottom: 25,
   },
+  // Style for the close button wrapper
   closeButton: {
     paddingHorizontal: 30,
     paddingVertical: 12,
     borderRadius: 25,
     minWidth: 120,
   },
+  // Text style inside the close button
   closeButtonText: {
     color: "#fff",
     fontSize: 16,

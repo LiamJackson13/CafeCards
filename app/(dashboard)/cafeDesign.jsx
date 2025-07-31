@@ -46,12 +46,16 @@ const colorOptions = [
 const stampIcons = ["⭐", "☕", "💫", "🎯", "💎", "🏆", "❤️", "🎁", "🌟", "✨"];
 
 const CafeDesignSettings = () => {
+  // Auth hook: get current user and name-update function
   const { user, updateName } = useUser();
+  // Loading state: indicates profile fetch in progress
   const [loading, setLoading] = useState(true);
+  // Saving state: indicates save operation in progress
   const [saving, setSaving] = useState(false);
+  // Profile state: stores fetched cafe design settings
   const [profile, setProfile] = useState(null);
 
-  // Design settings state
+  // Form state: cafe name, location, description, colors, icon, reward, stamps, layout options
   const [cafeName, setCafeName] = useState(
     // Default to auth user's name or email prefix
     user?.name || user?.email?.split("@")[0] || ""
@@ -69,7 +73,10 @@ const CafeDesignSettings = () => {
   const [borderRadius, setBorderRadius] = useState(15);
   const [shadowEnabled, setShadowEnabled] = useState(true);
 
-  // Load cafe profile on mount or user change
+  /**
+   * loadCafeProfile: fetches existing design settings for this cafe
+   * and populates local state, falling back to defaults on error.
+   */
   const loadCafeProfile = useCallback(async () => {
     if (!user?.$id) return;
     try {
@@ -103,11 +110,15 @@ const CafeDesignSettings = () => {
     }
   }, [user]);
 
+  // Effect: trigger profile load on mount or when user changes
   useEffect(() => {
     loadCafeProfile();
   }, [user, loadCafeProfile]);
 
-  // Save profile to backend
+  /**
+   * saveProfile: sends updated design settings to backend,
+   * creates or updates profile, and updates auth name.
+   */
   const saveProfile = async () => {
     if (!user?.$id) return;
     try {
@@ -147,6 +158,7 @@ const CafeDesignSettings = () => {
     }
   };
 
+  // Render loading placeholder while profile data is being fetched
   if (loading) {
     return (
       <ThemedView style={styles.container} safe>
@@ -155,12 +167,14 @@ const CafeDesignSettings = () => {
     );
   }
 
+  // Main render: scrollable settings form
   return (
     <ThemedView style={styles.container} safe>
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
+        {/* Header: page title and description */}
         <ThemedText type="title" style={styles.title}>
           Cafe Design Settings
         </ThemedText>
@@ -169,7 +183,7 @@ const CafeDesignSettings = () => {
         </ThemedText>
         <Spacer size={20} />
 
-        {/* Basic Info */}
+        {/* Basic Information section: name, location, description, reward, stamps-required */}
         <ThemedCard style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Basic Information
@@ -233,7 +247,7 @@ const CafeDesignSettings = () => {
 
         <Spacer size={15} />
 
-        {/* Colors */}
+        {/* Colors section: pick primary, secondary, background, and text colors */}
         <ThemedCard style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Colors
@@ -320,7 +334,7 @@ const CafeDesignSettings = () => {
 
         <Spacer size={15} />
 
-        {/* Stamp Icon */}
+        {/* Stamp Icon section: choose icon and icon color */}
         <ThemedCard style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Stamp Icon
@@ -370,7 +384,7 @@ const CafeDesignSettings = () => {
 
         <Spacer size={15} />
 
-        {/* Card Style */}
+        {/* Card Style section: border radius and shadow toggle */}
         <ThemedCard style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Card Style
@@ -399,7 +413,7 @@ const CafeDesignSettings = () => {
 
         <Spacer size={30} />
 
-        {/* Save Button */}
+        {/* Save button: apply and persist design changes */}
         <ThemedButton
           onPress={saveProfile}
           disabled={saving || !cafeName.trim()}
@@ -422,36 +436,45 @@ const CafeDesignSettings = () => {
 
 // --- Styles ---
 const styles = StyleSheet.create({
+  // Full-screen container for design settings UI
   container: { flex: 1 },
+  // Enables scrolling for long form
   scrollView: { flex: 1 },
+  // Large bold title at top
   title: {
     fontSize: 28,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 8,
   },
+  // Subtitle text under title
   subtitle: {
     fontSize: 16,
     opacity: 0.7,
     textAlign: "center",
   },
+  // Wrapper for each form section card
   section: {
     margin: 15,
     padding: 20,
   },
+  // Title text for each section
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 15,
   },
+  // Groups inputs with spacing
   inputGroup: {
     marginBottom: 15,
   },
+  // Label text for form fields
   label: {
     fontSize: 14,
     fontWeight: "500",
     marginBottom: 8,
   },
+  // Standard text input styling
   textInput: {
     borderWidth: 1,
     borderColor: "#ddd",
@@ -460,15 +483,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: "#fff",
   },
+  // Extended multiline text input
   textArea: {
     height: 80,
     textAlignVertical: "top",
   },
+  // Row layout for color selection controls
   colorSelector: {
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
   },
+  // Circle preview of selected color
   colorPreview: {
     width: 40,
     height: 40,
@@ -476,12 +502,14 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#ddd",
   },
+  // Container for color option bubbles
   colorOptions: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 8,
     flex: 1,
   },
+  // Individual color bubble option
   colorOption: {
     width: 30,
     height: 30,
@@ -489,9 +517,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "transparent",
   },
+  // Highlight border for selected color
   selectedColor: {
     borderColor: "#000",
   },
+  // Input for manual color code entry
   colorInput: {
     flex: 1,
     borderWidth: 1,
@@ -501,11 +531,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: "#fff",
   },
+  // Layout for icon selection
   iconSelector: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 10,
   },
+  // Individual icon option circle
   iconOption: {
     width: 50,
     height: 50,
@@ -516,40 +548,49 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
   },
+  // Highlight styling for chosen icon
   selectedIcon: {
     borderColor: "#AA7C48",
     backgroundColor: "#AA7C48" + "20",
   },
+  // Icon text size
   iconText: {
     fontSize: 24,
   },
+  // Row layout for card style toggles (shadow)
   settingRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 10,
   },
+  // Container for setting explanation text
   settingInfo: {
     flex: 1,
     marginRight: 15,
   },
+  // Title text for individual setting
   settingTitle: {
     fontSize: 16,
     fontWeight: "500",
     marginBottom: 2,
   },
+  // Subtitle text for setting description
   settingSubtitle: {
     fontSize: 14,
     opacity: 0.7,
   },
+  // Save button styling wrapper
   saveButton: {
     marginHorizontal: 15,
     paddingVertical: 15,
     borderRadius: 12,
   },
+  // Disabled button overlay style
   disabledButton: {
     opacity: 0.5,
   },
+  // Text style for save button label
   saveButtonText: {
     color: "#fff",
     fontSize: 16,

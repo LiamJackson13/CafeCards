@@ -29,24 +29,31 @@ import { Colors } from "../../constants/Colors";
 import { useUser } from "../../hooks/useUser";
 
 const RegisterScreen = () => {
+  // Form state: email, password, and error message
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  // Toggle for registering as cafe or customer
+  // Registration type flag: cafe vs customer
   const [isCafeUserFlag, setIsCafeUserFlag] = useState(false);
+  // Auth hook: provides register function for new user signup
   const { register } = useUser();
 
-  // Handles registration and error state
+  /**
+   * handleSubmit: resets errors, attempts registration, and handles failures
+   */
   const handleSubmit = async () => {
     setError(null);
     try {
+      // Attempt to register with credentials and user type
       await register(email, password, isCafeUserFlag);
     } catch (error) {
       setError(error?.message || "Registration failed.");
     }
   };
 
+  // Render the registration form UI
   return (
+    // Dismiss keyboard when tapping outside inputs
     <TouchableWithoutFeedback
       onPress={Platform.OS !== "web" ? Keyboard.dismiss : undefined}
       accessible={false}

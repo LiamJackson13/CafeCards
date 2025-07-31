@@ -14,6 +14,16 @@ import ThemedView from "../ThemedView";
  * - Calls onBarCodeScanned when a barcode is detected (unless blocked).
  */
 const CameraScanner = ({
+  // Props:
+  // hasPermission: camera permission state (null/true/false)
+  // cameraReady: indicates if camera preview is ready
+  // setCameraReady: callback to mark camera as ready
+  // cameraKey: unique key for remounting camera component
+  // onBarCodeScanned: handler for detected barcodes
+  // scanned: prevents duplicate scans
+  // showStampModal: blocks scanning when modals shown
+  // isLoading: loading state for camera initialization
+  // refreshCamera: function to retry camera setup
   hasPermission,
   cameraReady,
   setCameraReady,
@@ -26,23 +36,23 @@ const CameraScanner = ({
 }) => {
   const [cameraError, setCameraError] = useState(false);
 
-  // Reset error state when camera key changes
+  // Reset error flag whenever cameraKey changes (new camera instance)
   useEffect(() => {
     setCameraError(false);
   }, [cameraKey]);
 
-  // Handle camera mount error
+  // Handler: mark error state when camera fails to mount
   const handleCameraError = () => {
     setCameraError(true);
   };
 
-  // Retry camera initialization
+  // Handler: retry camera initialization by clearing error and invoking refresh
   const handleRefresh = () => {
     setCameraError(false);
     refreshCamera?.();
   };
 
-  // Show loading indicator while requesting permission or loading
+  // UI State: requesting permission or initial loading
   if (hasPermission === null || isLoading) {
     return (
       <ThemedView style={styles.scannerContainer}>
@@ -56,7 +66,7 @@ const CameraScanner = ({
     );
   }
 
-  // Show error if no camera permission
+  // UI State: permission denied error
   if (hasPermission === false) {
     return (
       <ThemedView style={styles.scannerContainer}>
@@ -70,7 +80,7 @@ const CameraScanner = ({
     );
   }
 
-  // Show error UI if camera fails to load
+  // UI State: camera component mounting error
   if (cameraError) {
     return (
       <ThemedView style={styles.scannerContainer}>
@@ -89,7 +99,7 @@ const CameraScanner = ({
     );
   }
 
-  // Main camera view
+  // Main UI: camera preview with overlays for loading and scanning frame
   return (
     <View style={styles.scannerContainer}>
       <CameraView
@@ -102,13 +112,13 @@ const CameraScanner = ({
         }}
         onBarcodeScanned={
           scanned || showStampModal
-            ? () => {} // Ignore scans if blocked
+            ? () => {} // block scanning when modal is open or already scanned
             : onBarCodeScanned
         }
         onMountError={handleCameraError}
       />
 
-      {/* Loading overlay when camera is not ready */}
+      {/* Overlay loader until cameraReady */}
       {!cameraReady && (
         <View style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color="#fff" />
@@ -116,7 +126,7 @@ const CameraScanner = ({
         </View>
       )}
 
-      {/* Scanning Frame Overlay */}
+      {/* Scanning frame overlay when ready: corners highlight scan area */}
       {cameraReady && (
         <View style={styles.scanningFrame}>
           <View style={[styles.corner, styles.topLeft]} />
@@ -130,6 +140,7 @@ const CameraScanner = ({
 };
 
 const styles = StyleSheet.create({
+  // Wrapper for camera and overlays with fixed height and rounded corners
   scannerContainer: {
     height: 300,
     borderRadius: 15,
@@ -137,15 +148,18 @@ const styles = StyleSheet.create({
     position: "relative",
     backgroundColor: "#000",
   },
+  // Camera preview takes full container
   camera: {
     flex: 1,
   },
+  // Centered text styling for loading/error messages
   centerText: {
     textAlign: "center",
     fontSize: 18,
     marginBottom: 20,
     padding: 20,
   },
+  // Styling for scanning frame container positioning
   scanningFrame: {
     position: "absolute",
     top: "20%",
@@ -154,6 +168,7 @@ const styles = StyleSheet.create({
     height: "60%",
     backgroundColor: "transparent",
   },
+  // Corner element styling for scanning frame outline
   corner: {
     position: "absolute",
     width: 30,
@@ -161,29 +176,72 @@ const styles = StyleSheet.create({
     borderColor: "#007AFF",
     borderWidth: 3,
   },
+  // Top-left corner adjustments
   topLeft: {
     top: 0,
     left: 0,
     borderRightWidth: 0,
     borderBottomWidth: 0,
   },
+  // Top-right corner adjustments
   topRight: {
     top: 0,
     right: 0,
     borderLeftWidth: 0,
     borderBottomWidth: 0,
   },
+  // Bottom-left corner adjustments
   bottomLeft: {
     bottom: 0,
     left: 0,
     borderRightWidth: 0,
     borderTopWidth: 0,
   },
+  // Bottom-right corner adjustments
   bottomRight: {
     bottom: 0,
     right: 0,
     borderLeftWidth: 0,
     borderTopWidth: 0,
+  },
+  // Loading container centering
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  // Subtext styling under centerText
+  subText: {
+    textAlign: "center",
+    fontSize: 14,
+    opacity: 0.7,
+    marginHorizontal: 20,
+  },
+  // Overlay shown while camera is initializing
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  // Text style for loading overlay
+  loadingText: {
+    color: "#fff",
+    marginTop: 10,
+    fontSize: 16,
+  },
+  // Retry button styling in error state
+  refreshButton: {
+    marginTop: 20,
+    backgroundColor: "#007AFF",
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  // Text for retry button
+  refreshButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
   },
 });
 

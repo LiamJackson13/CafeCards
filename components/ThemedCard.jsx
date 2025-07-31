@@ -9,12 +9,20 @@ import { Colors } from "../constants/Colors";
 import { useTheme } from "../contexts/ThemeContext";
 
 const ThemedCard = ({ style, ...props }) => {
+  // style: custom styles to merge with base card styles
+  // ...props: other View props (e.g., accessibility, testID)
   const { actualTheme } = useTheme();
   const theme = Colors[actualTheme] ?? Colors.light;
 
   return (
+    // Container view applying theme background and card styling
     <View
-      style={[{ backgroundColor: theme.uiBackground }, styles.card, style]}
+      // backgroundColor: use the theme's UI background color
+      style={[
+        { backgroundColor: theme.uiBackground },
+        styles.card, // base card styles: rounded corners and padding
+        style, // any additional custom styles passed in
+      ]}
       {...props}
     />
   );
@@ -24,7 +32,9 @@ export default ThemedCard;
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 5, // Rounded corners
-    padding: 20, // Standard padding
+    // Rounded corners for card container
+    borderRadius: 5,
+    // Default padding inside card
+    padding: 20,
   },
 });

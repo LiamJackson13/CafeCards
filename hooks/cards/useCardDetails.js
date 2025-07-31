@@ -17,53 +17,68 @@ export const useCardDetails = (
   isCafeUser,
   onRedemptionSuccess
 ) => {
+  // Raw card data fetched from backend; null until loaded
   const [card, setCard] = useState(null);
+  // Loading indicator for initial fetch or polling updates
   const [loading, setLoading] = useState(true);
+  // Tracks add-stamp API call in progress to disable UI interactions
   const [addingStamp, setAddingStamp] = useState(false);
+  // Toggles visibility of the reward redemption modal
   const [showRedeemModal, setShowRedeemModal] = useState(false);
+  // Stores previous availableRewards to detect when a redemption occurs
   const [previousAvailableRewards, setPreviousAvailableRewards] =
     useState(null);
 
+  // Context method for fetching card data by ID
   const { fetchCardById } = useContext(CardsContext);
 
-  // Load card data on mount or when cardId changes
+  // Effect: load or reload card data on mount or when cardId changes
   useEffect(() => {
     async function loadCard() {
       try {
+        // Show spinner while fetching
         setLoading(true);
+        // Fetch card details from context/backend
         const cardData = await fetchCardById(cardId);
+        // Store result in state
         setCard(cardData);
       } catch (error) {
+        // Log fetch error and alert user
         console.error("Error loading card:", error);
         Alert.alert("Error", "Failed to load card details");
       } finally {
+        // Always hide loading spinner
         setLoading(false);
       }
     }
 
+    // Only load if a valid cardId is provided
     if (cardId) {
       loadCard();
     }
   }, [cardId, fetchCardById]);
 
-  // Monitor for reward redemptions and auto-close modal
+  // Effect: detect when availableRewards decreases to auto-close modal and notify
   useEffect(() => {
+    // Skip until card is loaded
     if (!card) return;
 
+    // Current count of available rewards (new reward system)
     const currentAvailableRewards = card.availableRewards || 0;
 
-    // If rewards decreased while modal is open, close modal and show success
+    // If rewards dropped while redemption modal open, redemption just succeeded
     if (
       previousAvailableRewards !== null &&
       currentAvailableRewards < previousAvailableRewards &&
       showRedeemModal
     ) {
+      // Close the modal UI
       setShowRedeemModal(false);
 
-      // Call the success callback with a slight delay for better UX
+      // Delay notification callback for smoother UX
       setTimeout(() => {
         if (onRedemptionSuccess) {
-          // Pass reward info to callback
+          // Build structured info for callback
           const rewardInfo = {
             cafeName: card.cafeName || "your favorite cafe",
             rewardType: "free coffee",
@@ -71,6 +86,7 @@ export const useCardDetails = (
           };
           onRedemptionSuccess(rewardInfo);
         } else {
+          // Default alert if no callback provided
           Alert.alert(
             "Reward Redeemed! 🎉",
             "Your reward has been successfully redeemed. Enjoy your free coffee!",
@@ -80,35 +96,39 @@ export const useCardDetails = (
       }, 300);
     }
 
-    // Update the previous rewards count
+    // Update stored previous count for next comparison
     setPreviousAvailableRewards(currentAvailableRewards);
   }, [card, showRedeemModal, previousAvailableRewards, onRedemptionSuccess]);
 
-  // Poll for card updates while the redeem modal is open
+  // Effect: while redemption modal is open, poll for card updates every 1.5s
   useEffect(() => {
+    // Skip if modal closed or no cardId
     if (!showRedeemModal || !cardId) return;
 
     const pollInterval = setInterval(async () => {
       try {
+        // Refetch card details to detect state changes
         const updatedCard = await fetchCardById(cardId);
         setCard(updatedCard);
       } catch (error) {
         console.error("Error polling for card updates:", error);
       }
-    }, 1500); // Poll every 1.5 seconds
+    }, 1500);
 
+    // Clear interval when modal closes or dependencies change
     return () => {
       clearInterval(pollInterval);
     };
   }, [showRedeemModal, cardId, fetchCardById]);
 
-  // Format card data for display (handles old and new reward systems)
+  // Helper: normalize and augment raw card data for UI display
   const formatCardData = (cardData) => {
     if (!cardData) return null;
 
+    // Parse raw scan history into structured entries
     const scanHistory = parseScanHistory(cardData.scanHistory);
 
-    // New reward system
+    // New rewards system path (availableRewards provided by backend)
     if ("availableRewards" in cardData) {
       return {
         ...cardData,
@@ -119,14 +139,14 @@ export const useCardDetails = (
         supportsNewRewards: true,
       };
     } else {
-      // Old system: calculate rewards from currentStamps
+      // Legacy system: calculate rewards from currentStamps
       const rewardsEarned = Math.floor(cardData.currentStamps / 10);
       const currentProgress = cardData.currentStamps % 10;
 
       return {
         ...cardData,
         availableRewards: rewardsEarned,
-        totalRedeemed: 0, // Unknown in old system
+        totalRedeemed: 0, // Not tracked in legacy
         currentStamps: currentProgress,
         scanHistory,
         hasAvailableRewards: rewardsEarned > 0,
@@ -135,7 +155,7 @@ export const useCardDetails = (
     }
   };
 
-  // Generate QR code data for reward redemption
+  // Generate JSON payload string used in redemption QR code
   const generateRedemptionQRData = () => {
     if (!card || !user) return "";
 
@@ -152,37 +172,44 @@ export const useCardDetails = (
     });
   };
 
-  // Handle adding a stamp (cafe users only)
+  // Action: add a stamp to the card via Appwrite backend (cafe staff only)
   const handleAddStamp = async () => {
+    // Prevent non-staff from adding stamps
     if (!isCafeUser || !user) {
       Alert.alert("Error", "Only cafe staff can add stamps");
       return;
     }
 
     try {
+      // Indicate stamping in progress
       setAddingStamp(true);
+      // Call backend API to add stamp and get updated card
       const updatedCard = await addStampToCard(card.customerId, user.$id);
+      // Update state with new card data
       setCard(updatedCard);
       Alert.alert("Success", "Stamp added successfully!");
     } catch (error) {
+      // Log error and notify user
       console.error("Error adding stamp:", error);
       Alert.alert("Error", error.message || "Failed to add stamp");
     } finally {
+      // Reset stamping indicator
       setAddingStamp(false);
     }
   };
 
+  // Prepare final formatted card for UI components
   const formattedCard = formatCardData(card);
 
   return {
-    // State
+    // State values provided to consuming components
     card,
     formattedCard,
     loading,
     addingStamp,
     showRedeemModal,
 
-    // Actions
+    // Action handlers and utilities
     handleAddStamp,
     setShowRedeemModal,
     generateRedemptionQRData,

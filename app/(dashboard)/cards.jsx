@@ -26,11 +26,11 @@ import ThemedText from "../../components/ThemedText";
 import ThemedView from "../../components/ThemedView";
 import { EmptyState, LoadingState } from "../../components/cards/CardStates";
 import CardsListHeader from "../../components/cards/CardsListHeader";
-import CustomCardItem from "../../components/cards/CustomCardItem";
+import CustomCardItem from "../../components/cards/CardItem";
 import QRCodeModal from "../../components/cards/QRCodeModal";
 import { Colors } from "../../constants/Colors";
 import { useTheme } from "../../contexts/ThemeContext";
-import { useEnhancedCardsList } from "../../hooks/cards/useEnhancedCardsList";
+import { useCardsList } from "../../hooks/cards/useCardsList";
 import { useCafeUser, useUser } from "../../hooks/useUser";
 
 const SORT_OPTIONS = [
@@ -40,40 +40,53 @@ const SORT_OPTIONS = [
 ];
 
 const CardsScreen = () => {
+  // Router hook: navigate to detail screens
   const router = useRouter();
+  // Auth context: current user info
   const { user } = useUser();
+  // Role check: only customers see this screen
   const isCafeUser = useCafeUser();
+  // Theme context: current theme colors
   const { actualTheme } = useTheme();
+  // Data hook: fetches, refreshes, and updates loyalty cards list
   const { displayCards, loading, refreshing, onRefresh, updateCardInList } =
-    useEnhancedCardsList();
+    useCardsList();
 
   const theme = Colors[actualTheme] ?? Colors.light;
 
-  // Modal state for redeem functionality
+  // Modal state: controls display of redemption QR modal
   const [showRedeemModal, setShowRedeemModal] = useState(false);
+  // Holds selected card data for redemption
   const [selectedCard, setSelectedCard] = useState(null);
+  // Sorting control: determines current sort option
   const [sortType, setSortType] = useState("lastUsed");
 
+  /**
+   * sortedCards: memoized, combines pinned and unpinned cards,
+   * sorted by selected criteria (stamps, lastUsed, alpha).
+   */
   const sortedCards = useMemo(() => {
     const cards = [...displayCards];
     const pinned = cards.filter((c) => c.isPinned);
     const others = cards.filter((c) => !c.isPinned);
     const sortFn = (arr) => {
+      // Choose sorting logic based on sortType
       switch (sortType) {
         case "stamps":
           return arr.sort((a, b) => {
-            // Rewards-ready cards first
+            // Rewards-ready cards first, then by stamp count desc
             if (a.isReady && !b.isReady) return -1;
             if (!a.isReady && b.isReady) return 1;
-            // Then sort by stamp count descending
             return (b.stamps || 0) - (a.stamps || 0);
           });
         case "lastUsed":
           return arr.sort(
+            // Sort by most recent update timestamp
             (a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0)
           );
         case "alpha":
         default:
+          // Alphabetical by cafe name
           return arr.sort((a, b) =>
             (a.cafeName || "").localeCompare(b.cafeName || "")
           );
@@ -82,7 +95,9 @@ const CardsScreen = () => {
     return [...sortFn(pinned), ...sortFn(others)];
   }, [displayCards, sortType]);
 
-  // Handle card press: open details or redeem modal
+  /**
+   * handleCardPress: if redeem option, open modal; otherwise navigate to details.
+   */
   const handleCardPress = (cardId, options = {}) => {
     if (options.redeem) {
       const card = displayCards.find((c) => c.id === cardId);
@@ -95,7 +110,7 @@ const CardsScreen = () => {
     }
   };
 
-  // Generate QR data for redemption modal
+  // Prepare QR data string for redemption modal
   const generateRedemptionQRData = () => {
     if (!selectedCard || !user) return "";
     return JSON.stringify({
@@ -112,6 +127,7 @@ const CardsScreen = () => {
     });
   };
 
+  // Access control: only non-cafe users (customers) can view
   if (isCafeUser) {
     return (
       <ThemedView style={styles.container} safe>
@@ -125,6 +141,7 @@ const CardsScreen = () => {
     );
   }
 
+  // Show loader if initial data is still fetching
   if (loading && displayCards.length === 0) {
     return (
       <ThemedView style={styles.container} safe>
@@ -137,6 +154,7 @@ const CardsScreen = () => {
   }
   return (
     <ThemedView style={styles.container} safe>
+      {/* Cards list with sorting and refresh control */}
       <FlatList
         data={sortedCards}
         keyExtractor={(item) => item.id}
@@ -154,6 +172,7 @@ const CardsScreen = () => {
         ItemSeparatorComponent={() => <View style={styles.cardSeparator} />}
         ListHeaderComponent={
           <>
+            {/* Header: sorting buttons */}
             <CardsListHeader
               isCafeUser={isCafeUser}
               displayCards={displayCards}
@@ -216,27 +235,33 @@ const CardsScreen = () => {
 
 // --- Styles ---
 const styles = StyleSheet.create({
+  // Main container: full screen flex
   container: {
     flex: 1,
   },
+  // FlatList content container style for lists
   list: {
     flexGrow: 1,
   },
+  // Separator between cards
   cardSeparator: {
     height: 16,
   },
+  // Centered loader container for initial load state
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     gap: 16,
   },
+  // Row layout for sort buttons section
   sortButtonRow: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 8,
   },
+  // Individual sort button styling
   sortButton: {
     paddingVertical: 6,
     paddingHorizontal: 12,

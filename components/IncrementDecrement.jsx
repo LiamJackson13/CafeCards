@@ -9,20 +9,28 @@ import ThemedText from "./ThemedText";
  * - Shows current value.
  */
 const IncrementDecrement = ({ value, setValue, min = 1, max = 10 }) => {
+  // value: current numeric value displayed
+  // setValue: function to update the value state
+  // min: minimum allowed value (button disabled at limit)
+  // max: maximum allowed value (button disabled at limit)
   const increment = () => {
+    // Increase value by 1, until max limit
     if (value < max) {
       setValue(value + 1);
     }
   };
 
   const decrement = () => {
+    // Decrease value by 1, respecting min limit
     if (value > min) {
       setValue(value - 1);
     }
   };
 
   return (
+    // Wrapper for buttons and label
     <View style={styles.container}>
+      {/* Decrement button: disabled at minimum */}
       <TouchableOpacity
         onPress={decrement}
         style={[styles.button, value <= min && styles.disabledButton]}
@@ -30,11 +38,14 @@ const IncrementDecrement = ({ value, setValue, min = 1, max = 10 }) => {
         accessibilityLabel="Decrease value"
         accessibilityRole="button"
       >
+        {/* Minus sign icon */}
         <ThemedText style={styles.buttonText}>-</ThemedText>
       </TouchableOpacity>
 
+      {/* Display the current value */}
       <ThemedText style={styles.valueLabel}>{value}</ThemedText>
 
+      {/* Increment button: disabled at maximum */}
       <TouchableOpacity
         onPress={increment}
         style={[styles.button, value >= max && styles.disabledButton]}
@@ -42,6 +53,7 @@ const IncrementDecrement = ({ value, setValue, min = 1, max = 10 }) => {
         accessibilityLabel="Increase value"
         accessibilityRole="button"
       >
+        {/* Plus sign icon */}
         <ThemedText style={styles.buttonText}>+</ThemedText>
       </TouchableOpacity>
     </View>
@@ -49,6 +61,7 @@ const IncrementDecrement = ({ value, setValue, min = 1, max = 10 }) => {
 };
 
 const styles = StyleSheet.create({
+  // Container for buttons and value label
   container: {
     flexDirection: "row",
     alignItems: "center",
@@ -63,6 +76,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  // Base style for both increment and decrement buttons
   button: {
     backgroundColor: "#007AFF",
     paddingVertical: 5,
@@ -72,14 +86,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  // Style applied when button is disabled (min/max reached)
   disabledButton: {
     backgroundColor: "#ccc",
   },
+  // Text style inside the +/- buttons
   buttonText: {
     color: "#fff",
     fontSize: 20,
     fontWeight: "bold",
   },
+  // Styling for the central value display
   valueLabel: {
     fontSize: 24,
     fontWeight: "bold",

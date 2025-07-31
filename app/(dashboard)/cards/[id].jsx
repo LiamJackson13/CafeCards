@@ -21,8 +21,8 @@ import ThemedText from "../../../components/ThemedText";
 import ThemedView from "../../../components/ThemedView";
 import ActivityHistory from "../../../components/cards/ActivityHistory";
 import CardActions from "../../../components/cards/CardActions";
-import CustomCardHeader from "../../../components/cards/CustomCardHeader";
-import CustomStampProgress from "../../../components/cards/CustomStampProgress";
+import CustomCardHeader from "../../../components/cards/CardHeader";
+import CustomStampProgress from "../../../components/cards/StampProgress";
 import QRCodeModal from "../../../components/cards/QRCodeModal";
 import { Colors } from "../../../constants/Colors";
 import { useTheme } from "../../../contexts/ThemeContext";
@@ -43,18 +43,27 @@ const getCardSectionStyle = (dynamicTheme, cafeDesign, actualTheme) => ({
 });
 
 const CardDetails = () => {
+  // Route param: extract card ID from URL for fetching details
   const { id } = useLocalSearchParams();
+  // Theme context: determine current UI mode (light or dark)
   const { actualTheme } = useTheme();
+  // User context: current authenticated user
   const { user } = useUser();
+  // Role check: is this a cafe owner view?
   const isCafeUser = useCafeUser();
+  // Router: for navigating after user actions (e.g., redemption)
   const router = useRouter();
 
   const [cafeDesign, setCafeDesign] = useState(null);
+  // State: tracks loading status for fetching cafe design settings
   const [designLoading, setDesignLoading] = useState(true); // This state tracks whether the cafe design is still loading, ensuring the UI reflects the loading state appropriately.
 
   const theme = Colors[actualTheme] ?? Colors.light;
 
-  // Navigate to reward success page after redemption
+  /**
+   * handleRedemptionSuccess: callback invoked after gift redemption
+   * navigates to the reward-success screen with relevant params
+   */
   const handleRedemptionSuccess = useCallback(
     (rewardInfo) => {
       router.push({
@@ -68,6 +77,7 @@ const CardDetails = () => {
     [router]
   ); // useCallback is used here to memoize the function, ensuring it is not recreated on every render. This prevents unnecessary re-renders or re-executions of hooks that depend on this function.
 
+  // Hook: loads card details, provides data, loading flags, and action handlers
   const {
     formattedCard,
     loading,

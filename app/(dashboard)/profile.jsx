@@ -35,10 +35,14 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useProfile } from "../../hooks/profile/useProfile";
 
 const ProfileScreen = () => {
+  // Theme context: get current theme and colors
   const { actualTheme } = useTheme();
+  // Resolve theme colors for styling
   const theme = Colors[actualTheme] ?? Colors.light;
+  // Pull-to-refresh state for manual data refresh
   const [refreshing, setRefreshing] = useState(false);
 
+  // Profile hook: user info, role, stats, modal visibility, and handlers
   const {
     user,
     isCafeUser,
@@ -57,14 +61,14 @@ const ProfileScreen = () => {
     getDisplayName,
     refetchStats,
   } = useProfile();
-  // Determine summary stats: for cafe users use Total Customers and Rewards Redeemed, otherwise first two stats
+  // Select summary stats based on user role (first/last for cafe, first two for customers)
   const summaryStats = isCafeUser
     ? stats
       ? [stats[0], stats[stats.length - 1]]
       : []
     : stats?.slice(0, 2);
 
-  // Pull-to-refresh handler
+  // Pull-to-refresh handler: refetch stats data
   const onRefresh = async () => {
     setRefreshing(true);
     try {
@@ -78,6 +82,7 @@ const ProfileScreen = () => {
 
   return (
     <ThemedView style={styles.container} safe>
+      {/* Scrollable content area with pull-to-refresh */}
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -90,7 +95,7 @@ const ProfileScreen = () => {
           />
         }
       >
-        {/* Profile Header */}
+        {/* Profile header: display and edit user/cafe information */}
         <ProfileHeader
           isCafeUser={isCafeUser}
           cafeProfile={cafeProfile}
@@ -99,9 +104,8 @@ const ProfileScreen = () => {
           onEditName={handleEditName}
         />
 
+        {/* Summary stats section (customer or cafe user) */}
         <Spacer size={20} />
-
-        {/* Stats Section (Summary) */}
         <StatsSection
           isCafeUser={isCafeUser}
           stats={summaryStats}
@@ -119,17 +123,15 @@ const ProfileScreen = () => {
           ></View>
         )}
 
+        {/* Account settings: password change modal trigger */}
         <Spacer size={20} />
-
-        {/* Settings Section */}
         <SettingsSection
           isCafeUser={isCafeUser}
           onChangePassword={handleChangePassword}
         />
 
+        {/* Data Management: export or clear user data options */}
         <Spacer size={20} />
-
-        {/* Data Management */}
         <ThemedCard style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Data Management
@@ -150,7 +152,8 @@ const ProfileScreen = () => {
           </View>
         </ThemedCard>
 
-        {/* App Information */}
+        {/* App Information: version, build, last updated */}
+        <Spacer size={20} />
         <ThemedCard style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             App Information
@@ -169,15 +172,15 @@ const ProfileScreen = () => {
           </View>
         </ThemedCard>
 
+        {/* Logout button: end user session */}
         <Spacer size={20} />
-
-        {/* Logout Button */}
         <LogoutButton onPress={logout} />
 
+        {/* Spacer for safe area bottom padding */}
         <Spacer size={50} />
       </ScrollView>
 
-      {/* Modals */}
+      {/* Modals: handle name edit and password change dialogs */}
       <ProfileModals
         isPasswordModalVisible={isPasswordModalVisible}
         setIsPasswordModalVisible={setIsPasswordModalVisible}
@@ -196,52 +199,64 @@ const ProfileScreen = () => {
 
 // --- Styles ---
 const styles = StyleSheet.create({
+  // Main container: full-screen wrapper
   container: {
     flex: 1,
   },
+  // ScrollView container: padding and vertical scroll
   scrollView: {
     flex: 1,
     padding: 20,
   },
+  // Section card wrapper: spacing around each card section
   section: {
     marginBottom: 20,
     padding: 18,
   },
+  // Title for each section card
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 12,
   },
+  // Container for data management buttons
   dataButtons: {
     flexDirection: "row",
     gap: 12,
     marginTop: 10,
     marginBottom: 5,
   },
+  // Individual data button styling
   dataButton: {
     flex: 1,
     borderRadius: 8,
     paddingVertical: 12,
     alignItems: "center",
   },
+  // Export button color styling
   exportButton: {
     backgroundColor: "#3498DB",
   },
+  // Clear data button color styling
   clearButton: {
     backgroundColor: "#E74C3C",
   },
+  // Row layout for app info label/value pairs
   infoRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 6,
   },
+  // Label styling for app info
   infoLabel: {
     fontWeight: "500",
     opacity: 0.7,
   },
+  // Value styling for app info
   infoValue: {
     fontWeight: "400",
   },
+  // Button to view analytics (if needed)
   viewAnalyticsButton: {
     paddingVertical: 12,
     paddingHorizontal: 20,

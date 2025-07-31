@@ -7,7 +7,11 @@ import ThemedText from "../ThemedText";
 /**
  * CustomerRedeemActions
  *
- * Shows available rewards and redeem button for customers.
+ * Renders reward count and a redeem button for normal users.
+ * Props:
+ * - formattedCard: object with pre-computed card data (availableRewards, etc.)
+ * - onRedeem: callback when redeem button is pressed
+ * - theme: current theme colors
  */
 const CustomerRedeemActions = ({ formattedCard, onRedeem, theme }) => {
   if (!formattedCard.hasAvailableRewards) return null;
@@ -15,40 +19,44 @@ const CustomerRedeemActions = ({ formattedCard, onRedeem, theme }) => {
   return (
     <ThemedCard
       style={[
-        styles.actionsCard,
+        styles.actionsCard, // Base card container styling
         {
-          backgroundColor: theme.card,
-          borderColor: theme.border,
+          backgroundColor: theme.card, // Card background from theme
+          borderColor: theme.border, // Border color from theme
         },
       ]}
     >
+      {/* Section header showing readiness */}
       <ThemedText style={[styles.sectionTitle, { color: theme.text }]}>
         {formattedCard.availableRewards > 1
           ? "Rewards Ready!"
           : "Reward Ready!"}
       </ThemedText>
+      {/* Info text displaying count of free coffees */}
       <ThemedText
         style={[styles.rewardCount, { color: theme.text, opacity: 0.8 }]}
       >
         You have {formattedCard.availableRewards} free coffee
         {formattedCard.availableRewards > 1 ? "s" : ""} available!
       </ThemedText>
+
       <Spacer height={15} />
+
+      {/* Redeem button with enhanced styling */}
       <ThemedButton
         onPress={onRedeem}
         style={[
-          styles.redeemButton,
-          styles.redeemButtonEnhanced,
+          styles.redeemButton, // button styling
+
           {
-            backgroundColor: theme.primary || theme.accent,
-            shadowColor: theme.primary || theme.accent,
-            borderColor: theme.primary || theme.accent,
+            backgroundColor: theme.primary || theme.accent, // Theme primary
+            shadowColor: theme.primary || theme.accent, // Shadow matches theme
+            borderColor: theme.primary || theme.accent, // Border matches theme
           },
         ]}
       >
-        <ThemedText
-          style={[styles.redeemButtonText, styles.redeemButtonTextEnhanced]}
-        >
+        {/* Button text with extra weight */}
+        <ThemedText style={styles.redeemButtonText}>
           🎁 Redeem Free Coffee
         </ThemedText>
       </ThemedButton>
@@ -59,22 +67,30 @@ const CustomerRedeemActions = ({ formattedCard, onRedeem, theme }) => {
 /**
  * CafeActions
  *
- * Shows "Add Stamp" button for cafe users.
+ * Renders an "Add Stamp" button for cafe staff.
+ * Props:
+ * - onAddStamp: callback when adding a stamp
+ * - addingStamp: boolean indicating busy state
+ * - theme: current theme colors
  */
 const CafeActions = ({ onAddStamp, addingStamp, theme }) => (
   <ThemedCard
     style={[
-      styles.actionsCard,
+      styles.actionsCard, // Base card container styling
       {
-        backgroundColor: theme.card,
-        borderColor: theme.border,
+        backgroundColor: theme.card, // Card background from theme
+        borderColor: theme.border, // Border color from theme
       },
     ]}
   >
+    {/* Section header */}
     <ThemedText style={[styles.sectionTitle, { color: theme.text }]}>
       Actions
     </ThemedText>
+
     <Spacer height={15} />
+
+    {/* Add Stamp button */}
     <ThemedButton
       onPress={onAddStamp}
       disabled={addingStamp}
@@ -90,7 +106,10 @@ const CafeActions = ({ onAddStamp, addingStamp, theme }) => (
 /**
  * CardActions
  *
- * Decides which actions to show based on user type.
+ * Chooses between CustomerRedeemActions and CafeActions
+ * based on user role.
+ * Props:
+ * - formattedCard, isCafeUser, onRedeem, onAddStamp, addingStamp, theme
  */
 const CardActions = ({
   formattedCard,
@@ -100,16 +119,13 @@ const CardActions = ({
   addingStamp,
   theme,
 }) => {
-  if (isCafeUser) {
-    return (
-      <CafeActions
-        onAddStamp={onAddStamp}
-        addingStamp={addingStamp}
-        theme={theme}
-      />
-    );
-  }
-  return (
+  return isCafeUser ? (
+    <CafeActions
+      onAddStamp={onAddStamp}
+      addingStamp={addingStamp}
+      theme={theme}
+    />
+  ) : (
     <CustomerRedeemActions
       formattedCard={formattedCard}
       onRedeem={onRedeem}
@@ -120,23 +136,23 @@ const CardActions = ({
 
 const styles = StyleSheet.create({
   actionsCard: {
+    // Card container for action buttons
     padding: 20,
     borderWidth: 1,
   },
   sectionTitle: {
+    // Section header text style
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 10,
   },
   rewardCount: {
+    // Sub-header text for reward count
     fontSize: 14,
     textAlign: "center",
   },
   redeemButton: {
-    paddingVertical: 15,
-    borderRadius: 12,
-  },
-  redeemButtonEnhanced: {
+    // styling for redeem button
     paddingVertical: 16,
     borderRadius: 14,
     borderWidth: 1,
@@ -146,21 +162,19 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   redeemButtonText: {
+    // Text style in redeem button
     color: "#fff",
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "700",
     textAlign: "center",
   },
-  redeemButtonTextEnhanced: {
-    fontSize: 16,
-    fontWeight: "700",
-    letterSpacing: 0.3,
-  },
   addStampButton: {
+    // Button styling for Add Stamp
     paddingVertical: 15,
     borderRadius: 8,
   },
   addStampText: {
+    // Text style inside Add Stamp button
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",

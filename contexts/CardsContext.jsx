@@ -197,6 +197,7 @@ export function CardsProvider({ children }) {
 
     let unsubscribe;
     const channel = `databases.${DATABASE_ID}.collections.${LOYALTY_CARDS_COLLECTION_ID}.documents`;
+    let retryCount = 0;
 
     const handleRealtimeUpdate = (response) => {
       try {
@@ -271,19 +272,15 @@ export function CardsProvider({ children }) {
     const setupSubscription = () => {
       try {
         unsubscribe = client.subscribe(channel, handleRealtimeUpdate);
+        // console.log("Real-time subscription established.");
+        retryCount = 0; // Reset retry count on successful connection
       } catch (error) {
-        // Ignore INVALID_STATE_ERR and retry after delay
-        if (
-          !(
-            error.name === "InvalidStateError" ||
-            error.message?.includes("INVALID_STATE_ERR")
-          )
-        ) {
-          console.error("Failed to set up real-time subscription:", error);
-        }
+        console.error("Failed to set up real-time subscription:", error);
+        retryCount++;
+        const retryDelay = Math.min(5000 * retryCount, 30000); // Exponential backoff with max delay of 30 seconds
         setTimeout(() => {
           if (user) setupSubscription();
-        }, 5000);
+        }, retryDelay);
       }
     };
 
@@ -294,6 +291,7 @@ export function CardsProvider({ children }) {
       if (unsubscribe) {
         try {
           unsubscribe();
+          // console.log("Real-time subscription cleaned up.");
         } catch (error) {
           console.error("Error cleaning up subscription:", error);
         }
