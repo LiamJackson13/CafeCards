@@ -12,8 +12,8 @@ import { useTheme } from "../contexts/ThemeContext";
 const ThemedTextInput = ({ style, ...props }) => {
   // style: custom styles to merge with the themed TextInput container
   // ...props: additional TextInput props (e.g., value, onChangeText, placeholder)
-  const { actualTheme } = useTheme();
-  const theme = Colors[actualTheme] ?? Colors.light;
+  const { userTheme } = useTheme();
+  const theme = Colors[userTheme] ?? Colors.light;
 
   // Platform-specific tweaks for web
   const webStyles =

@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useTheme } from "../../contexts/ThemeContext";
 import ThemedText from "../ThemedText";
 import StatCard from "./StatCard";
@@ -16,9 +16,9 @@ const StatsSection = ({ isCafeUser, stats, loading, error }) => {
   // loading: boolean flag to show loading placeholders when data is fetching
   // error: truthy value triggers error message when stats fail to load
   const router = useRouter();
-  const { actualTheme } = useTheme();
+  const { userTheme } = useTheme();
   const theme =
-    actualTheme === "dark" ? { text: "#FFFFFF" } : { text: "#000000" };
+    userTheme === "dark" ? { text: "#FFFFFF" } : { text: "#000000" };
 
   return (
     <>
@@ -31,28 +31,9 @@ const StatsSection = ({ isCafeUser, stats, loading, error }) => {
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           {/* Section title with optional navigation for cafe users */}
-          <ThemedText
-            type="subtitle"
-            style={styles.sectionTitle}
-            onPress={() => isCafeUser && router.push("coming-soon")}
-          >
+          <ThemedText type="subtitle" style={styles.sectionTitle}>
             {isCafeUser ? "Business Analytics" : "Your Stats"}
           </ThemedText>
-          {isCafeUser && (
-            // Arrow icon to navigate to full analytics view
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "600",
-                color: theme.text,
-                marginLeft: 15,
-                marginBottom: 10, // align arrow with text baseline
-              }}
-              onPress={() => router.push("analytics")}
-            >
-              ➔
-            </Text>
-          )}
         </View>
       </View>
 

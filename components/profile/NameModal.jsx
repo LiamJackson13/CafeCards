@@ -47,8 +47,8 @@ const NameModal = ({
   const { user, updateName } = useUser();
   // user: current authenticated user object
   // updateName: context function to update auth user name
-  const { actualTheme } = useTheme();
-  const theme = Colors[actualTheme] ?? Colors.light;
+  const { userTheme } = useTheme();
+  const theme = Colors[userTheme] ?? Colors.light;
 
   const [name, setName] = useState(currentName || "");
   // name: controlled input state for display name
@@ -189,7 +189,7 @@ const NameModal = ({
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
                   <ThemedText style={styles.updateButtonText}>
-                    Update Name
+                    Update
                   </ThemedText>
                 )}
               </ThemedButton>

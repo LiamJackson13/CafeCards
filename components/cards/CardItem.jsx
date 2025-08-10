@@ -19,7 +19,7 @@ const CustomCardItem = ({
   onPress,
   isCafeUser,
   theme,
-  actualTheme,
+  userTheme,
   onUpdate,
 }) => {
   const [cafeDesign, setCafeDesign] = useState(null);
@@ -32,19 +32,16 @@ const CustomCardItem = ({
       try {
         const design = await getCafeDesign(item.cafeUserId);
         setCafeDesign(design);
-      } catch (error) {
-        // Fallback to default design if error
+      } catch (_error) {
+        // Fallback to theme-based design if error
         setCafeDesign({
           primaryColor: "#AA7C48",
-          secondaryColor: "#7B6F63",
-          backgroundColor: "#FDF3E7",
-          textColor: "#3B2F2F",
+          // backgroundColor and textColor are handled by theme system
           stampIcon: "⭐",
           stampIconColor: "#FFD700",
-          borderRadius: 15,
-          shadowEnabled: true,
           cafeName: "Local Cafe",
           rewardDescription: "Free Coffee",
+          maxStampsPerCard: 10,
         });
       } finally {
         setLoading(false);
@@ -55,18 +52,14 @@ const CustomCardItem = ({
 
   if (loading || !cafeDesign) return null;
 
-  // Ensure all design props have fallbacks
+  // Ensure all design props have theme-based fallbacks
   const safeDesign = {
     primaryColor: cafeDesign.primaryColor || "#AA7C48",
-    secondaryColor: cafeDesign.secondaryColor || "#7B6F63",
-    backgroundColor: cafeDesign.backgroundColor || "#FDF3E7",
-    textColor: cafeDesign.textColor || "#3B2F2F",
+    // backgroundColor and textColor are handled by theme system
     stampIcon: cafeDesign.stampIcon || "⭐",
     stampIconColor: cafeDesign.stampIconColor || "#FFD700",
-    borderRadius: cafeDesign.borderRadius || 15,
-    shadowEnabled: cafeDesign.shadowEnabled !== false,
     cafeName: cafeDesign.cafeName || "Local Cafe",
-    location: cafeDesign.location || "Downtown",
+    address: cafeDesign.address || "123 Main St, Newport",
     rewardDescription: cafeDesign.rewardDescription || "Free Coffee",
     maxStampsPerCard: cafeDesign.maxStampsPerCard || 10,
   };
@@ -76,39 +69,23 @@ const CustomCardItem = ({
   // Dynamic theme based on cafe design and app theme
   const dynamicTheme = {
     primary: safeDesign.primaryColor,
-    secondary: safeDesign.secondaryColor,
-    background:
-      actualTheme === "dark" ? theme.background : safeDesign.backgroundColor,
-    text: actualTheme === "dark" ? theme.text : safeDesign.textColor,
-    card: actualTheme === "dark" ? theme.card : safeDesign.backgroundColor,
+    background: theme.background,
+    text: theme.text,
+    card: theme.uiBackground, // Use theme's uiBackground for cards
     border: safeDesign.primaryColor,
   };
 
-  // Card style with dynamic theming and optional shadow
+  // Card style with dynamic theming and fixed shadow
   const cardStyle = [
     styles.card,
     {
       backgroundColor: dynamicTheme.card,
       borderColor: dynamicTheme.border,
       borderWidth: 1,
-      borderRadius: safeDesign.borderRadius,
+      borderRadius: 15,
     },
   ];
-  if (safeDesign.shadowEnabled && actualTheme !== "dark") {
-    cardStyle.push({
-      shadowColor: dynamicTheme.primary,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.15,
-      shadowRadius: 8,
-      elevation: 6,
-    });
-  } else {
-    cardStyle.push({
-      shadowOpacity: 0,
-      elevation: 0,
-    });
-  }
-  if (actualTheme === "dark") {
+  if (userTheme === "dark") {
     cardStyle.push({
       shadowColor: dynamicTheme.text,
       shadowOpacity: 0.3,
@@ -122,7 +99,7 @@ const CustomCardItem = ({
       <View style={styles.cardHeader}>
         <View style={styles.iconContainer}>
           <ThemedText
-            style={[styles.cardIcon, { color: dynamicTheme.primary }]}
+            style={[styles.cardIcon, { color: cafeDesign.stampIconColor }]}
           >
             {safeDesign.stampIcon}
           </ThemedText>
@@ -137,14 +114,11 @@ const CustomCardItem = ({
               : safeDesign.cafeName || item.cafeName}
           </ThemedText>
           <ThemedText
-            style={[
-              styles.location,
-              { color: dynamicTheme.text, opacity: 0.7 },
-            ]}
+            style={[styles.address, { color: dynamicTheme.text, opacity: 0.7 }]}
           >
             {isCafeUser
               ? item.customerEmail
-              : safeDesign.location || item.location}
+              : safeDesign.address || item.address}
           </ThemedText>
         </View>
         {/* Pin Button for customers */}
@@ -213,7 +187,7 @@ const CustomCardItem = ({
             style={[
               styles.redeemText,
               styles.customerRedeemText,
-              { color: safeDesign.textColor },
+              { color: dynamicTheme.text }, // Use theme text color
             ]}
           >
             🎁 Reward available - Tap to view
@@ -373,7 +347,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   cardContent: {
-    flex: 1,
+    // flex: 1,
+    // removed flex to allow content to size naturally
   },
   cardHeader: {
     flexDirection: "row",
@@ -396,7 +371,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 2,
   },
-  location: {
+  address: {
     fontSize: 14,
     opacity: 0.8,
   },

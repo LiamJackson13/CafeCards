@@ -19,6 +19,7 @@ const CustomCardHeader = ({ formattedCard, isCafeUser, theme, cafeDesign }) => {
           {
             backgroundColor: theme.card,
             borderColor: theme.border,
+            borderRadius: 15,
           },
         ]}
       >
@@ -40,22 +41,16 @@ const CustomCardHeader = ({ formattedCard, isCafeUser, theme, cafeDesign }) => {
     );
   }
 
-  // Card style with dynamic border radius and shadow
+  // Card style with fixed border radius and shadow
   const cardStyle = [
     styles.headerCard,
     {
       backgroundColor: theme.card,
-      borderRadius: cafeDesign.borderRadius,
+      borderRadius: 15,
       borderColor: theme.border,
       borderWidth: 1,
     },
   ];
-  if (!cafeDesign.shadowEnabled) {
-    cardStyle.push({
-      shadowOpacity: 0,
-      elevation: 0,
-    });
-  }
 
   // Header content with logo/icon and info
   const HeaderContent = () => (
@@ -92,7 +87,7 @@ const CustomCardHeader = ({ formattedCard, isCafeUser, theme, cafeDesign }) => {
         >
           {isCafeUser
             ? formattedCard.customerEmail
-            : cafeDesign.location || "Your loyalty card"}
+            : cafeDesign.address || "Your loyalty card"}
         </ThemedText>
         {formattedCard.isComplete && (
           <View
@@ -115,7 +110,7 @@ const CustomCardHeader = ({ formattedCard, isCafeUser, theme, cafeDesign }) => {
         style={styles.backgroundImage}
         imageStyle={{
           opacity: cafeDesign.backgroundImageOpacity || 0.1,
-          borderRadius: cafeDesign.borderRadius - 2,
+          borderRadius: 13,
         }}
       >
         <HeaderContent />

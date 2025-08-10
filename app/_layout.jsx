@@ -20,14 +20,14 @@ import { UserProvider } from "../contexts/UserContext";
 // Stack navigator component: sets up app screens with themed headers
 const StackNavigator = () => {
   // Theme context: determine current theme mode and colors
-  const { actualTheme } = useTheme();
-  // Resolve color palette based on theme
-  const theme = Colors[actualTheme] ?? Colors.light;
+  const { userTheme } = useTheme();
+  // Resolve colour palette based on theme
+  const theme = Colors[userTheme] ?? Colors.light;
 
   return (
     <>
       {/* StatusBar: adapt style to light or dark mode */}
-      <StatusBar style={actualTheme === "dark" ? "light" : "dark"} />
+      <StatusBar style={userTheme === "dark" ? "light" : "dark"} />
       {/* Navigation stack with global header styling */}
       <Stack
         screenOptions={{

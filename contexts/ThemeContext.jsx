@@ -18,13 +18,12 @@ const ThemeContext = createContext();
  */
 export const ThemeProvider = ({ children }) => {
   // themeMode: current theme setting stored ('light' or 'dark')
-  // setThemeMode: updater to change the theme mode
   const [themeMode, setThemeMode] = useState("light");
   // isLoading: flag while loading saved theme from AsyncStorage
   const [isLoading, setIsLoading] = useState(true);
 
-  // actualTheme: effective theme applied (currently mirrors themeMode)
-  const actualTheme = themeMode;
+  // userTheme: effective theme applied (currently mirrors themeMode)
+  const userTheme = themeMode;
 
   // Load saved theme preference on app start
   useEffect(() => {
@@ -59,7 +58,7 @@ export const ThemeProvider = ({ children }) => {
   // context value exposed to users
   const value = {
     themeMode, // current theme mode string
-    actualTheme, // effective theme applied
+    userTheme, // effective theme applied
     changeTheme, // function to switch themes
     isLoading, // loading state for initial theme fetch
   };

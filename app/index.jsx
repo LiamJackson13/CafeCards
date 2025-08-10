@@ -28,8 +28,8 @@ export default function Index() {
   // Authenticated user object (null if not logged in)
   const { user } = useUser();
   // Theme context: get current theme and resolve color palette
-  const { actualTheme } = useTheme();
-  const theme = Colors[actualTheme] ?? Colors.light;
+  const { userTheme } = useTheme();
+  const theme = Colors[userTheme] ?? Colors.light;
   // Loading state: controls display of initial loader while auth resolves
   const [isLoading, setIsLoading] = useState(true);
 
@@ -68,7 +68,7 @@ export default function Index() {
     <ThemedView style={styles.container} safe>
       {/* StatusBar adapts to theme */}
       <StatusBar
-        barStyle={actualTheme === "dark" ? "light-content" : "dark-content"}
+        barStyle={userTheme === "dark" ? "light-content" : "dark-content"}
         backgroundColor={theme.background}
       />
 

@@ -39,51 +39,50 @@ const QRCodeModal = ({ visible, onClose, qrData, availableRewards, theme }) => {
 
   return (
     <Modal
-      visible={visible} // controls modal visibility
-      animationType="slide" // slide-in animation
-      transparent={true} // allow overlay effect
-      onRequestClose={onClose} // handle hardware back press
+      visible={visible}
+      animationType="slide"
+      transparent={true}
+      onRequestClose={onClose}
     >
       <View style={styles.modalOverlay}>
-        {" "}
+
         {/* dark translucent backdrop */}
         <ThemedCard style={styles.modalContent}>
-          {" "}
+
           {/* card container */}
           <ThemedText style={styles.modalTitle}>
-            {" "}
-            {/* modal heading */}
+
+           {/* modal heading */}
             🎉 Redeem Your Free Coffee!
           </ThemedText>
           <ThemedText style={styles.modalSubtitle}>
-            {" "}
+
             {/* instruction subtitle */}
             Show this QR code to the cafe staff to redeem one of your
             {availableRewards || 1} available reward
             {(availableRewards || 1) > 1 ? "s" : ""}
           </ThemedText>
           <View style={styles.qrContainer}>
-            {" "}
+
             {/* QR code wrapper */}
             <QRCode
-              value={modifiedQRData} // payload with user name injected
-              size={200} // square dimension in pixels
-              backgroundColor="white" // ensures white background
-              color="black" // QR fill color
+              value={modifiedQRData}
+              size={200}
+              backgroundColor="white"
+              color="black"
             />
           </View>
           <ThemedText style={styles.qrInstructions}>
-            {" "}
+
             {/* usage hint */}
             Present this code at the counter for scanning
           </ThemedText>
           <ThemedText style={[styles.statusText, { color: theme.primary }]}>
-            {" "}
-            {/* waiting status */}
+                   {/* waiting status */}
             ⏱️ Waiting for cafe to scan...
-          </ThemedText>
+         </ThemedText>
           <ThemedButton
-            onPress={onClose} // close action
+            onPress={onClose}
             style={[styles.closeButton, { backgroundColor: theme.primary }]}
           >
             <ThemedText style={styles.closeButtonText}>Close</ThemedText>

@@ -17,8 +17,8 @@ const StatCard = ({ title, value, icon, color, loading = false }) => {
   // icon: symbol or emoji to visually represent the stat
   // color: custom tint used for icon background and value text
   // loading: flag to render placeholder views while data loads
-  const { actualTheme } = useTheme();
-  const theme = Colors[actualTheme] ?? Colors.light;
+  const { userTheme } = useTheme();
+  const theme = Colors[userTheme] ?? Colors.light;
 
   // Ensure color is always defined with multiple fallback
   const safeColor = color || Colors.primary || "#4CAF50";

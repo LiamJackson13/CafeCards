@@ -7,6 +7,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Alert } from "react-native";
 import { addStampToCard, redeemReward } from "../../lib/appwrite";
 import {
   createScanHistoryEntry,
@@ -124,6 +125,11 @@ export const useScanner = (user, isCafeUser) => {
           return; // Exit early on unauthorized access
         }
 
+        // Check for invalid card (Unknown Customer indicates failed parsing)
+        if (customer.name === "Unknown Customer") {
+          throw new Error("Card not found - Invalid card ID or QR code format");
+        }
+
         // Decide between redemption or stamp flow
         if (isRedemptionQR) {
           await handleRewardRedemption(customer); // Process redemption path
@@ -142,6 +148,10 @@ export const useScanner = (user, isCafeUser) => {
           `Error: ${error.message}`,
           0
         );
+
+        // Show user-friendly error message
+        Alert.alert("Card Error", error.message || "Failed to process card");
+
         // Allow retries by resetting scan markers after timeout
         setTimeout(() => {
           setScanned(false);

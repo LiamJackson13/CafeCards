@@ -26,9 +26,9 @@ const TAB_ICON_SIZE = 24;
 
 const DashboardLayout = () => {
   // Theme context: provides current theme mode (light/dark)
-  const { actualTheme } = useTheme();
+  const { userTheme } = useTheme();
   // Resolve theme colors based on current mode
-  const theme = Colors[actualTheme] ?? Colors.light;
+  const theme = Colors[userTheme] ?? Colors.light;
   // Role check hook: determines if logged-in user is a cafe owner
   const isCafeUser = useCafeUser();
   // Cards context: recent redemption event and dismiss handler for notifications
@@ -68,7 +68,6 @@ const DashboardLayout = () => {
               ),
             }}
           />
-
           {/* Customer: QR Code tab */}
           <Tabs.Screen
             name="qr"
@@ -84,7 +83,6 @@ const DashboardLayout = () => {
               ),
             }}
           />
-
           {/* Cafe User: Design tab */}
           <Tabs.Screen
             name="cafeDesign"
@@ -100,7 +98,6 @@ const DashboardLayout = () => {
               ),
             }}
           />
-
           {/* Cafe User: Scanner tab */}
           <Tabs.Screen
             name="cafeCamera"
@@ -116,7 +113,6 @@ const DashboardLayout = () => {
               ),
             }}
           />
-
           {/* Profile tab - available to all users */}
           <Tabs.Screen
             name="profile"
@@ -131,11 +127,9 @@ const DashboardLayout = () => {
               ),
             }}
           />
-
           {/* Hidden screens - not shown in tab bar */}
           <Tabs.Screen name="cards/[id]" options={{ href: null }} />
           <Tabs.Screen name="reward-success" options={{ href: null }} />
-          <Tabs.Screen name="analytics" options={{ href: null }} />
         </Tabs>
 
         {/* Global Redemption Notification - Only for customers */}

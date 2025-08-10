@@ -94,13 +94,13 @@ const PasswordModal = ({ visible, onClose }) => {
       onRequestClose={handleClose}
     >
       <View style={styles.modalOverlay}>
-        {" "}
+
         {/* backdrop overlay */}
         <ThemedCard style={styles.modalContent}>
-          {" "}
+
           {/* card container */}
           <ThemedText type="title" style={styles.modalTitle}>
-            {" "}
+
             {/* title */}
             Change Password
           </ThemedText>

@@ -14,8 +14,8 @@ import ThemedText from "../ThemedText";
 
 const DebugToggle = () => {
   const { debugCafeMode, setDebugCafeMode, realIsCafeUser, user } = useUser();
-  const { actualTheme } = useTheme();
-  const theme = Colors[actualTheme] ?? Colors.light;
+  const { userTheme } = useTheme();
+  const theme = Colors[userTheme] ?? Colors.light;
 
   // debugCafeMode: boolean override for cafe/customer mode in development
   // setDebugCafeMode: function to toggle the debugCafeMode state

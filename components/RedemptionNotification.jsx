@@ -77,24 +77,19 @@ const RedemptionNotification = ({ visible, redemption, onDismiss }) => {
       ]}
     >
       <ThemedCard style={styles.notification}>
-        {" "}
         {/* Card background */}
         <View style={styles.content}>
-          {" "}
           {/* Horizontal layout */}
           <View style={styles.iconContainer}>
-            {" "}
             {/* Icon wrapper */}
             <ThemedText style={styles.icon}>🎉</ThemedText>{" "}
             {/* Celebration icon */}
           </View>
           <View style={styles.textContainer}>
-            {" "}
             {/* Text info */}
             <ThemedText style={styles.title}>Reward Redeemed!</ThemedText>{" "}
             {/* Header */}
             <ThemedText style={styles.message}>
-              {" "}
               {/* Primary message */}
               {redemption.rewardsRedeemed === 1
                 ? "1 free coffee reward was just redeemed"
@@ -102,7 +97,6 @@ const RedemptionNotification = ({ visible, redemption, onDismiss }) => {
             </ThemedText>
             {redemption.remainingRewards > 0 && (
               <ThemedText style={styles.remaining}>
-                {" "}
                 {/* Remaining count */}
                 {redemption.remainingRewards} reward
                 {redemption.remainingRewards !== 1 ? "s" : ""} remaining

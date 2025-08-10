@@ -29,10 +29,10 @@ import { useCafeUser, useUser } from "../../hooks/useUser";
 
 const CafeScannerScreen = () => {
   // Theme/User Context: determine current theme and authenticated user
-  const { actualTheme } = useTheme();
+  const { userTheme } = useTheme();
   const { user } = useUser();
   const isCafeUser = useCafeUser();
-  const theme = Colors[actualTheme] ?? Colors.light;
+  const theme = Colors[userTheme] ?? Colors.light;
 
   // Camera Hook: handles permissions, readiness, and camera key
   const {

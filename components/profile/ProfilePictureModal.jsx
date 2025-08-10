@@ -21,8 +21,8 @@ const ProfilePictureModal = ({
   hasProfilePicture, // indicates if a profile picture exists
   uploading, // true while a new photo is uploading
 }) => {
-  const { actualTheme } = useTheme();
-  const theme = Colors[actualTheme] ?? Colors.light;
+  const { userTheme } = useTheme();
+  const theme = Colors[userTheme] ?? Colors.light;
 
   return (
     <Modal

@@ -6,7 +6,7 @@
  * Integrates with CardsContext and Appwrite backend.
  */
 
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { CardsContext } from "../../contexts/CardsContext";
 import { addStampToCard, parseScanHistory } from "../../lib/appwrite";
@@ -28,6 +28,8 @@ export const useCardDetails = (
   // Stores previous availableRewards to detect when a redemption occurs
   const [previousAvailableRewards, setPreviousAvailableRewards] =
     useState(null);
+  // Prepared formatted card data for UI consumption
+  const [formattedCard, setFormattedCard] = useState(null);
 
   // Context method for fetching card data by ID
   const { fetchCardById } = useContext(CardsContext);
@@ -36,6 +38,8 @@ export const useCardDetails = (
   useEffect(() => {
     async function loadCard() {
       try {
+        // Reset formattedCard when starting new load to prevent flash
+        setFormattedCard(null);
         // Show spinner while fetching
         setLoading(true);
         // Fetch card details from context/backend
@@ -55,6 +59,11 @@ export const useCardDetails = (
     // Only load if a valid cardId is provided
     if (cardId) {
       loadCard();
+    } else {
+      // If no cardId, reset everything
+      setCard(null);
+      setFormattedCard(null);
+      setLoading(false);
     }
   }, [cardId, fetchCardById]);
 
@@ -122,7 +131,7 @@ export const useCardDetails = (
   }, [showRedeemModal, cardId, fetchCardById]);
 
   // Helper: normalize and augment raw card data for UI display
-  const formatCardData = (cardData) => {
+  const formatCardData = useCallback((cardData) => {
     if (!cardData) return null;
 
     // Parse raw scan history into structured entries
@@ -132,6 +141,7 @@ export const useCardDetails = (
     if ("availableRewards" in cardData) {
       return {
         ...cardData,
+        id: cardData.$id, // Ensure id field is available for UI components
         availableRewards: cardData.availableRewards || 0,
         totalRedeemed: cardData.totalRedeemed || 0,
         scanHistory,
@@ -145,6 +155,7 @@ export const useCardDetails = (
 
       return {
         ...cardData,
+        id: cardData.$id, // Ensure id field is available for UI components
         availableRewards: rewardsEarned,
         totalRedeemed: 0, // Not tracked in legacy
         currentStamps: currentProgress,
@@ -153,7 +164,7 @@ export const useCardDetails = (
         supportsNewRewards: false,
       };
     }
-  };
+  }, []); // Empty dependency array since function doesn't depend on external values
 
   // Generate JSON payload string used in redemption QR code
   const generateRedemptionQRData = () => {
@@ -199,7 +210,11 @@ export const useCardDetails = (
   };
 
   // Prepare final formatted card for UI components
-  const formattedCard = formatCardData(card);
+  useEffect(() => {
+    // Format card data whenever the raw card state changes
+    const formatted = formatCardData(card);
+    setFormattedCard(formatted);
+  }, [card, formatCardData]);
 
   return {
     // State values provided to consuming components

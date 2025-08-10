@@ -11,9 +11,9 @@ import ThemedText from "../ThemedText";
  */
 const AboutSection = () => {
   // Retrieve current theme key and resolve Colors object
-  const { actualTheme } = useTheme();
-  // theme: object containing color definitions based on actualTheme
-  const theme = Colors[actualTheme] ?? Colors.light;
+  const { userTheme } = useTheme();
+  // theme: object containing color definitions based on userTheme
+  const theme = Colors[userTheme] ?? Colors.light;
 
   return (
     <>

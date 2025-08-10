@@ -3,7 +3,7 @@
  *
  * Allows cafe owners to customize their loyalty card appearance and info.
  * Features:
- * - Edit cafe name, location, description, reward, and stamp requirements
+ * - Edit cafe name, address, description, reward, and stamp requirements
  * - Choose card/stamp colors and icons
  * - Card style options (border radius, shadow)
  * - Loads and saves design to backend
@@ -13,7 +13,6 @@ import {
   Alert,
   ScrollView,
   StyleSheet,
-  Switch,
   TextInput,
   TouchableOpacity,
   View,
@@ -55,23 +54,20 @@ const CafeDesignSettings = () => {
   // Profile state: stores fetched cafe design settings
   const [profile, setProfile] = useState(null);
 
-  // Form state: cafe name, location, description, colors, icon, reward, stamps, layout options
+  // Form state: cafe name, address, description, colors, icon, reward, stamps
   const [cafeName, setCafeName] = useState(
     // Default to auth user's name or email prefix
     user?.name || user?.email?.split("@")[0] || ""
   );
-  const [location, setLocation] = useState("");
+  const [address, setAddress] = useState("");
   const [description, setDescription] = useState("");
   const [primaryColor, setPrimaryColor] = useState("#AA7C48");
-  const [secondaryColor, setSecondaryColor] = useState("#7B6F63");
-  const [backgroundColor, setBackgroundColor] = useState("#FDF3E7");
-  const [textColor, setTextColor] = useState("#3B2F2F");
   const [stampIcon, setStampIcon] = useState("⭐");
   const [stampIconColor, setStampIconColor] = useState("#FFD700");
   const [rewardDescription, setRewardDescription] = useState("Free Coffee");
   const [maxStampsPerCard, setMaxStampsPerCard] = useState(10);
-  const [borderRadius, setBorderRadius] = useState(15);
-  const [shadowEnabled, setShadowEnabled] = useState(true);
+
+  // Removed customization for border radius and shadow effect
 
   /**
    * loadCafeProfile: fetches existing design settings for this cafe
@@ -85,18 +81,13 @@ const CafeDesignSettings = () => {
       if (cafeProfile) {
         setProfile(cafeProfile);
         setCafeName(cafeProfile.cafeName || "");
-        setLocation(cafeProfile.location || "");
+        setAddress(cafeProfile.address || "");
         setDescription(cafeProfile.description || "");
         setPrimaryColor(cafeProfile.primaryColor || "#AA7C48");
-        setSecondaryColor(cafeProfile.secondaryColor || "#7B6F63");
-        setBackgroundColor(cafeProfile.backgroundColor || "#FDF3E7");
-        setTextColor(cafeProfile.textColor || "#3B2F2F");
         setStampIcon(cafeProfile.stampIcon || "⭐");
         setStampIconColor(cafeProfile.stampIconColor || "#FFD700");
         setRewardDescription(cafeProfile.rewardDescription || "Free Coffee");
         setMaxStampsPerCard(cafeProfile.maxStampsPerCard || 10);
-        setBorderRadius(cafeProfile.borderRadius || 15);
-        setShadowEnabled(cafeProfile.shadowEnabled !== false);
       } else {
         // No profile yet: default cafeName to auth user's name or email prefix
         setProfile(null);
@@ -125,18 +116,13 @@ const CafeDesignSettings = () => {
       setSaving(true);
       const profileData = {
         cafeName,
-        location,
+        address,
         description,
         primaryColor,
-        secondaryColor,
-        backgroundColor,
-        textColor,
         stampIcon,
         stampIconColor,
         rewardDescription,
         maxStampsPerCard: parseInt(maxStampsPerCard) || 10,
-        borderRadius: parseInt(borderRadius) || 15,
-        shadowEnabled,
       };
       let result;
       if (profile?.$id) {
@@ -174,6 +160,7 @@ const CafeDesignSettings = () => {
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
+        <Spacer size={20} />
         {/* Header: page title and description */}
         <ThemedText type="title" style={styles.title}>
           Cafe Design Settings
@@ -181,9 +168,9 @@ const CafeDesignSettings = () => {
         <ThemedText style={styles.subtitle}>
           Customize how your loyalty cards look to customers
         </ThemedText>
-        <Spacer size={20} />
+        <Spacer size={15} />
 
-        {/* Basic Information section: name, location, description, reward, stamps-required */}
+        {/* Basic Information section: name, address, description, reward, stamps-required */}
         <ThemedCard style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Basic Information
@@ -199,12 +186,12 @@ const CafeDesignSettings = () => {
             />
           </View>
           <View style={styles.inputGroup}>
-            <ThemedText style={styles.label}>Location</ThemedText>
+            <ThemedText style={styles.label}>Address</ThemedText>
             <TextInput
               style={styles.textInput}
-              value={location}
-              onChangeText={setLocation}
-              placeholder="e.g. Downtown, Sydney"
+              value={address}
+              onChangeText={setAddress}
+              placeholder="e.g. 123 Main St, Newport"
               placeholderTextColor="#999"
             />
           </View>
@@ -230,30 +217,15 @@ const CafeDesignSettings = () => {
               placeholderTextColor="#999"
             />
           </View>
-          <View style={styles.inputGroup}>
-            <ThemedText style={styles.label}>
-              Stamps Required for Reward
-            </ThemedText>
-            <TextInput
-              style={styles.textInput}
-              value={maxStampsPerCard.toString()}
-              onChangeText={(text) => setMaxStampsPerCard(parseInt(text) || 10)}
-              placeholder="10"
-              placeholderTextColor="#999"
-              keyboardType="numeric"
-            />
-          </View>
         </ThemedCard>
 
-        <Spacer size={15} />
-
-        {/* Colors section: pick primary, secondary, background, and text colors */}
+        {/* Colors section: pick primary, background, and text colors */}
         <ThemedCard style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Colors
+            Colours
           </ThemedText>
           <View style={styles.inputGroup}>
-            <ThemedText style={styles.label}>Primary Color</ThemedText>
+            <ThemedText style={styles.label}>Primary Colour</ThemedText>
             <View style={styles.colorSelector}>
               <View
                 style={[styles.colorPreview, { backgroundColor: primaryColor }]}
@@ -273,66 +245,7 @@ const CafeDesignSettings = () => {
               </View>
             </View>
           </View>
-          <View style={styles.inputGroup}>
-            <ThemedText style={styles.label}>Secondary Color</ThemedText>
-            <View style={styles.colorSelector}>
-              <View
-                style={[
-                  styles.colorPreview,
-                  { backgroundColor: secondaryColor },
-                ]}
-              />
-              <View style={styles.colorOptions}>
-                {colorOptions.map((color) => (
-                  <TouchableOpacity
-                    key={color}
-                    style={[
-                      styles.colorOption,
-                      { backgroundColor: color },
-                      secondaryColor === color && styles.selectedColor,
-                    ]}
-                    onPress={() => setSecondaryColor(color)}
-                  />
-                ))}
-              </View>
-            </View>
-          </View>
-          <View style={styles.inputGroup}>
-            <ThemedText style={styles.label}>Background Color</ThemedText>
-            <View style={styles.colorSelector}>
-              <View
-                style={[
-                  styles.colorPreview,
-                  { backgroundColor: backgroundColor },
-                ]}
-              />
-              <TextInput
-                style={styles.colorInput}
-                value={backgroundColor}
-                onChangeText={setBackgroundColor}
-                placeholder="#FDF3E7"
-                placeholderTextColor="#999"
-              />
-            </View>
-          </View>
-          <View style={styles.inputGroup}>
-            <ThemedText style={styles.label}>Text Color</ThemedText>
-            <View style={styles.colorSelector}>
-              <View
-                style={[styles.colorPreview, { backgroundColor: textColor }]}
-              />
-              <TextInput
-                style={styles.colorInput}
-                value={textColor}
-                onChangeText={setTextColor}
-                placeholder="#3B2F2F"
-                placeholderTextColor="#999"
-              />
-            </View>
-          </View>
         </ThemedCard>
-
-        <Spacer size={15} />
 
         {/* Stamp Icon section: choose icon and icon color */}
         <ThemedCard style={styles.section}>
@@ -382,37 +295,6 @@ const CafeDesignSettings = () => {
           </View>
         </ThemedCard>
 
-        <Spacer size={15} />
-
-        {/* Card Style section: border radius and shadow toggle */}
-        <ThemedCard style={styles.section}>
-          <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Card Style
-          </ThemedText>
-          <View style={styles.inputGroup}>
-            <ThemedText style={styles.label}>Border Radius</ThemedText>
-            <TextInput
-              style={styles.textInput}
-              value={borderRadius.toString()}
-              onChangeText={(text) => setBorderRadius(parseInt(text) || 15)}
-              placeholder="15"
-              placeholderTextColor="#999"
-              keyboardType="numeric"
-            />
-          </View>
-          <View style={styles.settingRow}>
-            <View style={styles.settingInfo}>
-              <ThemedText style={styles.settingTitle}>Shadow Effect</ThemedText>
-              <ThemedText style={styles.settingSubtitle}>
-                Add shadow to cards for depth
-              </ThemedText>
-            </View>
-            <Switch value={shadowEnabled} onValueChange={setShadowEnabled} />
-          </View>
-        </ThemedCard>
-
-        <Spacer size={30} />
-
         {/* Save button: apply and persist design changes */}
         <ThemedButton
           onPress={saveProfile}
@@ -452,6 +334,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     opacity: 0.7,
     textAlign: "center",
+  },
+  // Banner text for unsaved changes
+  unsavedBanner: {
+    textAlign: "center",
+    color: "#d9534f",
+    marginVertical: 8,
+    fontWeight: "600",
   },
   // Wrapper for each form section card
   section: {

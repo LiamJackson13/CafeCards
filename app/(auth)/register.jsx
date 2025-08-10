@@ -1,14 +1,7 @@
 /**
  * User Registration Screen
- *
- * Allows new users to create an account.
- * Features:
- * - Email/password input with validation
- * - Error display
- * - Integration with UserContext for registration/login
- * - Navigation to login screen
- * - Responsive, themed design
  */
+
 import { Link } from "expo-router";
 import { useState } from "react";
 import {
@@ -33,20 +26,19 @@ const RegisterScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  // Registration type flag: cafe vs customer
+  // Registration type flag: cafe or customer
   const [isCafeUserFlag, setIsCafeUserFlag] = useState(false);
   // Auth hook: provides register function for new user signup
   const { register } = useUser();
 
-  /**
-   * handleSubmit: resets errors, attempts registration, and handles failures
-   */
+
+  // handleSubmit: resets errors, attempts registration, and handles failures
   const handleSubmit = async () => {
     setError(null);
     try {
       // Attempt to register with credentials and user type
       await register(email, password, isCafeUserFlag);
-    } catch (error) {
+    } catch (error) { // On failure, catch the error and save it to state
       setError(error?.message || "Registration failed.");
     }
   };
@@ -63,6 +55,7 @@ const RegisterScreen = () => {
         <ThemedText title style={styles.title}>
           Register for an Account
         </ThemedText>
+        {/* Email and password inputs with validation */}
         <ThemedTextInput
           placeholder="Email"
           keyboardType="email-address"
@@ -78,7 +71,7 @@ const RegisterScreen = () => {
           value={password}
           style={styles.input}
         />
-        {/* Toggle to choose cafe or customer registration */}
+        {/* Toggle to choose to register as a cafe or customer */}
         <View style={styles.switchContainer}>
           <ThemedText style={styles.switchLabel}>Register as Cafe</ThemedText>
           <Switch
@@ -90,13 +83,14 @@ const RegisterScreen = () => {
             style={styles.switch}
           />
         </View>
+        {/* Register button to submit form */}
         <ThemedButton onPress={handleSubmit}>
           <Text style={{ color: "#f2f2f2" }}>Register</Text>
         </ThemedButton>
         <Spacer />
         {error && <Text style={styles.error}>{error}</Text>}
         <Spacer height={100} />
-
+        {/* Link to login screen for existing users */}
         <Link href="/login">
           <ThemedText style={styles.link}>
             Already have an account? Login Instead
@@ -111,22 +105,19 @@ export default RegisterScreen;
 
 // Styles grouped and documented for clarity
 const styles = StyleSheet.create({
+  // Main view: center content with padding and responsive design
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    // Responsive web adjustments
-    ...(Platform.OS === "web" && {
-      minHeight: "100vh",
-      paddingVertical: 20,
-      width: "100%",
-    }),
   },
+  // Title the screen title
   title: {
     textAlign: "center",
     fontSize: 18,
     marginBottom: 30,
   },
+  // Error message
   error: {
     color: Colors.warning,
     padding: 10,
@@ -136,30 +127,22 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginHorizontal: 10,
   },
+
   link: {
     textAlign: "center",
   },
+  // Input fields
   input: {
     width: "80%",
     marginBottom: 20,
-    ...(Platform.OS === "web" && {
-      maxWidth: 400,
-      width: "calc(100% - 80px)",
-      boxSizing: "border-box",
-      alignSelf: "center",
-    }),
   },
+  // Switch styles
   switchContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     width: "50%",
     marginBottom: 20,
-    ...(Platform.OS === "web" && {
-      maxWidth: 400,
-      width: "calc(100% - 80px)",
-      alignSelf: "center",
-    }),
   },
   switchLabel: {
     fontSize: 16,

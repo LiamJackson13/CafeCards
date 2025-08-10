@@ -24,9 +24,9 @@ import Spacer from "../../components/Spacer";
 import ThemedLoader from "../../components/ThemedLoader";
 import ThemedText from "../../components/ThemedText";
 import ThemedView from "../../components/ThemedView";
+import CustomCardItem from "../../components/cards/CardItem";
 import { EmptyState, LoadingState } from "../../components/cards/CardStates";
 import CardsListHeader from "../../components/cards/CardsListHeader";
-import CustomCardItem from "../../components/cards/CardItem";
 import QRCodeModal from "../../components/cards/QRCodeModal";
 import { Colors } from "../../constants/Colors";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -47,12 +47,12 @@ const CardsScreen = () => {
   // Role check: only customers see this screen
   const isCafeUser = useCafeUser();
   // Theme context: current theme colors
-  const { actualTheme } = useTheme();
+  const { userTheme } = useTheme();
   // Data hook: fetches, refreshes, and updates loyalty cards list
   const { displayCards, loading, refreshing, onRefresh, updateCardInList } =
     useCardsList();
 
-  const theme = Colors[actualTheme] ?? Colors.light;
+  const theme = Colors[userTheme] ?? Colors.light;
 
   // Modal state: controls display of redemption QR modal
   const [showRedeemModal, setShowRedeemModal] = useState(false);
@@ -107,8 +107,7 @@ const CardsScreen = () => {
       }
     } else {
       router.push(`/cards/${cardId}`);
-    }
-  };
+    }  };
 
   // Prepare QR data string for redemption modal
   const generateRedemptionQRData = () => {
@@ -165,7 +164,7 @@ const CardsScreen = () => {
             onUpdate={updateCardInList}
             isCafeUser={isCafeUser}
             theme={theme}
-            actualTheme={actualTheme}
+            userTheme={userTheme}
           />
         )}
         contentContainerStyle={styles.list}

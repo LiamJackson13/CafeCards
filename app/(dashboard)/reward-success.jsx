@@ -24,11 +24,11 @@ const RewardSuccessScreen = () => {
   // Navigation hook: for redirecting users after actions
   const router = useRouter();
   // Theme context: determine current theme mode and colors
-  const { actualTheme } = useTheme();
+  const { userTheme } = useTheme();
   // Route params: cafe name and reward type to display
   const { cafeName, rewardType } = useLocalSearchParams();
   // Resolve theme color palette
-  const theme = Colors[actualTheme] ?? Colors.light;
+  const theme = Colors[userTheme] ?? Colors.light;
 
   // Determine display values with fallback defaults
   const displayCafeName = cafeName || "your favorite cafe";

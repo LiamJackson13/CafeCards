@@ -38,18 +38,16 @@ export const useCardsList = () => {
           designs[cafeUserId] = design;
         } catch (error) {
           console.error(`Error loading design for cafe ${cafeUserId}:`, error);
-          // Use fallback default theme if fetching fails
+          // Use fallback theme-based design if fetching fails
           designs[cafeUserId] = {
             primaryColor: "#AA7C48",
-            secondaryColor: "#7B6F63",
-            backgroundColor: "#FDF3E7",
-            textColor: "#3B2F2F",
+            // backgroundColor and textColor are handled by theme system
             stampIcon: "☕",
             stampIconColor: "#FFD700",
             borderRadius: 15,
             shadowEnabled: true,
             cafeName: "Local Cafe",
-            location: "Downtown",
+            address: "123 Main St, Newport",
             rewardDescription: "Free Coffee",
             maxStampsPerCard: 10,
           };
@@ -89,18 +87,16 @@ export const useCardsList = () => {
     if (!cardsData || cardsData.length === 0) return [];
 
     const processedCards = cardsData.map((card) => {
-      // Retrieve the design for this cafe or fallback to defaults
+      // Retrieve the design for this cafe or fallback to theme-based defaults
       const cafeDesign = cafeDesigns[card.cafeUserId] || {
         primaryColor: "#AA7C48",
-        secondaryColor: "#7B6F63",
-        backgroundColor: "#FDF3E7",
-        textColor: "#3B2F2F",
+        // backgroundColor and textColor are handled by theme system
         stampIcon: "☕",
         stampIconColor: "#FFD700",
         borderRadius: 15,
         shadowEnabled: true,
         cafeName: "Local Cafe",
-        location: "Downtown",
+        address: "123 Main St, Newport",
         rewardDescription: "Free Coffee",
         maxStampsPerCard: 10,
       };
@@ -112,7 +108,7 @@ export const useCardsList = () => {
         customerEmail: card.customerEmail || "",
         // Use design values for theming and display
         cafeName: cafeDesign.cafeName,
-        location: cafeDesign.location,
+        address: cafeDesign.address || "123 Main St, Newport",
         stamps: card.currentStamps || 0,
         maxStamps: cafeDesign.maxStampsPerCard,
         totalStamps: card.totalStamps || card.currentStamps || 0,

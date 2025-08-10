@@ -69,7 +69,7 @@ export function CardsProvider({ children }) {
   /**
    * Fetch a single card by its ID.
    */
-  const fetchCardById = async (cardId) => {
+  const fetchCardById = useCallback(async (cardId) => {
     if (!cardId) return null;
     try {
       return await getLoyaltyCardById(cardId);
@@ -77,12 +77,12 @@ export function CardsProvider({ children }) {
       console.error("Error fetching card by ID:", error);
       return null;
     }
-  };
+  }, []); // Empty dependency array since it doesn't depend on any state
 
   /**
    * Fetch a card by customer user ID.
    */
-  const fetchCardByUserId = async (userId) => {
+  const fetchCardByUserId = useCallback(async (userId) => {
     if (!userId) return null;
     try {
       return await findLoyaltyCardByCustomerId(userId);
@@ -90,20 +90,29 @@ export function CardsProvider({ children }) {
       console.error("Error fetching card by user ID:", error);
       return null;
     }
-  };
+  }, []);
 
   /**
    * Fetch a card by customer user ID and cafe user ID.
    */
-  const fetchCardByUserIdAndCafeUserId = async (userId, cafeUserId) => {
-    if (!userId || !cafeUserId) return null;
-    try {
-      return await findLoyaltyCardByCustomerIdAndCafeUserId(userId, cafeUserId);
-    } catch (error) {
-      console.error("Error fetching card by user ID and cafe user ID:", error);
-      return null;
-    }
-  };
+  const fetchCardByUserIdAndCafeUserId = useCallback(
+    async (userId, cafeUserId) => {
+      if (!userId || !cafeUserId) return null;
+      try {
+        return await findLoyaltyCardByCustomerIdAndCafeUserId(
+          userId,
+          cafeUserId
+        );
+      } catch (error) {
+        console.error(
+          "Error fetching card by user ID and cafe user ID:",
+          error
+        );
+        return null;
+      }
+    },
+    []
+  );
 
   /**
    * Create a new loyalty card (cafe users only).

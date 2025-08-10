@@ -11,8 +11,8 @@ import { useTheme } from "../contexts/ThemeContext";
 const ThemedCard = ({ style, ...props }) => {
   // style: custom styles to merge with base card styles
   // ...props: other View props (e.g., accessibility, testID)
-  const { actualTheme } = useTheme();
-  const theme = Colors[actualTheme] ?? Colors.light;
+  const { userTheme } = useTheme();
+  const theme = Colors[userTheme] ?? Colors.light;
 
   return (
     // Container view applying theme background and card styling

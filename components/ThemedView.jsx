@@ -14,8 +14,8 @@ const ThemedView = ({ style, safe = false, ...props }) => {
   // safe: when true, adds top/bottom padding based on device safe area insets
   // ...props: other View props (e.g., accessibility, children)
   const insets = useSafeAreaInsets();
-  const { actualTheme } = useTheme();
-  const theme = Colors[actualTheme] ?? Colors.light;
+  const { userTheme } = useTheme();
+  const theme = Colors[userTheme] ?? Colors.light;
 
   if (!safe)
     return (

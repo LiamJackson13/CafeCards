@@ -1,11 +1,5 @@
 /**
  * User Login Screen
- *
- * UI for user authentication:
- * - Email/password input with validation
- * - Error display
- * - Navigation to registration
- * - Responsive, themed design
  */
 
 import { Link } from "expo-router";
@@ -34,23 +28,21 @@ const LoginScreen = () => {
   // Auth hook: provides login function to authenticate user
   const { login } = useUser();
 
-  /**
-   * handleSubmit: clears previous errors, attempts login, and handles failures
-   */
+  //handleSubmit: clears previous errors, attempts login, and handles failures
   const handleSubmit = async () => {
     // Reset any existing error messages before submission
     setError(null);
 
     try {
-      // Attempt to authenticate with provided credentials
+      // Attempt to authenticate with provided email and password
       await login(email, password);
     } catch (error) {
-      // On failure, display error message to user
+      // If there is an error, save it to state
       setError(error?.message || "Login failed.");
     }
   };
 
-  // Render the login form UI
+  // login form UI
   return (
     // Dismiss keyboard when tapping outside inputs
     <TouchableWithoutFeedback
@@ -105,29 +97,26 @@ const LoginScreen = () => {
 
 export default LoginScreen;
 
-// Styles grouped by purpose
+// styles for the login screen
 const styles = StyleSheet.create({
-  // Layout & container
+  // Main view
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    ...(Platform.OS === "web" && {
-      minHeight: "100vh",
-      paddingVertical: 20,
-      width: "100%",
-    }),
   },
 
-  // Typography
+  // Title
   title: {
     textAlign: "center",
     fontSize: 18,
     marginBottom: 30,
   },
+  // Button text
   btnText: {
     color: "#f2f2f2",
   },
+  // Register link
   registerLink: {
     textAlign: "center",
   },
@@ -140,12 +129,6 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     alignSelf: "stretch",
     marginHorizontal: 40,
-    ...(Platform.OS === "web" && {
-      maxWidth: 400,
-      width: "calc(100% - 80px)",
-      boxSizing: "border-box",
-      alignSelf: "center",
-    }),
   },
 
   // Buttons
@@ -154,6 +137,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 35,
     borderRadius: 5,
   },
+  // Button pressed state
   pressed: {
     opacity: 0.8,
   },

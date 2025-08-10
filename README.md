@@ -14,7 +14,7 @@ Cafe Cards is a mobile application designed for cafes to manage loyalty programs
 
 - Scan customer QR codes to add stamps or redeem rewards.
 - Use a manual entry fallback for card management.
-- Customize cafe branding with themes and designs.
+- Customize cafe branding with primary colors, stamp icons, and descriptions.
 
 ## Project Structure
 

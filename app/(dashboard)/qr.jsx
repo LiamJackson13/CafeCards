@@ -6,13 +6,10 @@
  * - Generates QR code with user/card data
  * - Themed QR code (dark/light)
  * - User info and card ID (copyable)
- * - Refresh QR code
  * - Instructions for use
- * - Responsive, modern UI
  */
 import * as Clipboard from "expo-clipboard";
 import { useRouter } from "expo-router";
-import { useState } from "react";
 import {
   Alert,
   Dimensions,
@@ -35,11 +32,9 @@ const QRDisplayScreen = () => {
   // User context: current authenticated user
   const { user } = useUser();
   // Theme context: determine light or dark mode
-  const { actualTheme } = useTheme();
+  const { userTheme } = useTheme();
   // Resolve theme colors based on current theme
-  const theme = Colors[actualTheme] ?? Colors.light;
-  // State: key used to refresh QR code component
-  const [qrKey, setQrKey] = useState(0);
+  const theme = Colors[userTheme] ?? Colors.light;
   // Router: for navigation to other screens
   const router = useRouter();
 
@@ -79,13 +74,6 @@ const QRDisplayScreen = () => {
     }
   };
 
-  // Refresh QR code
-  const refreshQR = () => {
-    // Increment qrKey to remount QRCode component and alert user
-    setQrKey((prev) => prev + 1);
-    Alert.alert("QR Code Refreshed", "Your QR code has been updated");
-  };
-
   return (
     <ThemedView style={styles.container} safe>
       {/* Screen Title */}
@@ -104,15 +92,14 @@ const QRDisplayScreen = () => {
         <View
           style={[
             styles.qrContainer,
-            { backgroundColor: actualTheme === "dark" ? "#000" : "#fff" },
+            { backgroundColor: userTheme === "dark" ? "#000" : "#fff" },
           ]}
         >
           <QRCode
-            key={qrKey}
             value={cardData}
             size={qrSize}
-            color={actualTheme === "dark" ? "#fff" : "#000"}
-            backgroundColor={actualTheme === "dark" ? "#000" : "#fff"}
+            color={userTheme === "dark" ? "#fff" : "#000"}
+            backgroundColor={userTheme === "dark" ? "#000" : "#fff"}
             logoSize={60}
             logoBackgroundColor="transparent"
             quietZone={10}
@@ -136,25 +123,13 @@ const QRDisplayScreen = () => {
             </ThemedText>
             <ThemedText style={styles.copyHint}>📋 Tap to copy</ThemedText>
           </TouchableOpacity>
-          <ThemedText style={styles.issueDate}>
-            Issued: {JSON.parse(cardData).issueDate}
-          </ThemedText>
         </View>
       </ThemedCard>
 
-      <Spacer size={30} />
+      <Spacer size={10} />
 
-      {/* Action buttons: refresh QR and navigate to cards */}
+      {/* Action button: Navigate to cards */}
       <View style={styles.actionButtons}>
-        <ThemedButton
-          onPress={refreshQR}
-          style={[styles.actionButton, { backgroundColor: theme.iconColor }]}
-        >
-          <ThemedText style={[styles.buttonText, { color: "#fff" }]}>
-            🔄 Refresh QR
-          </ThemedText>
-        </ThemedButton>
-
         <ThemedButton
           onPress={() => router.push("/cards")}
           style={[styles.actionButton, { backgroundColor: Colors.primary }]}

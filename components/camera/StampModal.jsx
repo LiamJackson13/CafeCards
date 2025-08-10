@@ -53,10 +53,10 @@ const StampModal = ({
       onRequestClose={onClose} // Android back button handler
     >
       <View style={styles.modalOverlay}>
-        {" "}
+
         {/* Dark semi-transparent backdrop */}
         <ThemedCard style={styles.modalContent}>
-          {" "}
+
           {/* White card container */}
           <ThemedText type="title" style={styles.modalTitle}>
             Add Stamps {/* Modal header */}

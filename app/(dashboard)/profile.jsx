@@ -6,27 +6,19 @@
  * - Profile header and editable display name
  * - Stats section (customer/cafe user)
  * - Settings (password change, etc.)
- * - Data management actions (export/clear)
  * - App info/version/build
  * - Logout
  * - Pull-to-refresh for stats
  * - Themed, safe-area layout
  */
 import { useState } from "react";
-import {
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import LogoutButton from "../../components/profile/LogoutButton";
 import ProfileHeader from "../../components/profile/ProfileHeader";
 import ProfileModals from "../../components/profile/ProfileModals";
 import SettingsSection from "../../components/profile/SettingsSection";
 import StatsSection from "../../components/profile/StatsSection";
 import Spacer from "../../components/Spacer";
-import ThemedButton from "../../components/ThemedButton";
 import ThemedCard from "../../components/ThemedCard";
 import ThemedText from "../../components/ThemedText";
 import ThemedView from "../../components/ThemedView";
@@ -36,9 +28,9 @@ import { useProfile } from "../../hooks/profile/useProfile";
 
 const ProfileScreen = () => {
   // Theme context: get current theme and colors
-  const { actualTheme } = useTheme();
+  const { userTheme } = useTheme();
   // Resolve theme colors for styling
-  const theme = Colors[actualTheme] ?? Colors.light;
+  const theme = Colors[userTheme] ?? Colors.light;
   // Pull-to-refresh state for manual data refresh
   const [refreshing, setRefreshing] = useState(false);
 
@@ -129,28 +121,6 @@ const ProfileScreen = () => {
           isCafeUser={isCafeUser}
           onChangePassword={handleChangePassword}
         />
-
-        {/* Data Management: export or clear user data options */}
-        <Spacer size={20} />
-        <ThemedCard style={styles.section}>
-          <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Data Management
-          </ThemedText>
-          <View style={styles.dataButtons}>
-            <ThemedButton
-              title="Export Data"
-              style={[styles.dataButton, styles.exportButton]}
-            >
-              <Text>Export Data</Text>
-            </ThemedButton>
-            <ThemedButton
-              title="Clear All Data"
-              style={[styles.dataButton, styles.clearButton]}
-            >
-              <Text>Clear All Data</Text>
-            </ThemedButton>
-          </View>
-        </ThemedCard>
 
         {/* App Information: version, build, last updated */}
         <Spacer size={20} />

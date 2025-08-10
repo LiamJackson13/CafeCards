@@ -28,9 +28,9 @@ const ProfileHeader = ({
   // onEditName: callback to trigger name editing
   // getDisplayName: function returning the display name for non-cafe users
 
-  const { actualTheme } = useTheme();
-  // actualTheme: current theme key ("light" or "dark") for styling
-  const theme = Colors[actualTheme] ?? Colors.light;
+  const { userTheme } = useTheme();
+  // userTheme: current theme key ("light" or "dark") for styling
+  const theme = Colors[userTheme] ?? Colors.light;
 
   // Profile picture hook
   // useProfilePicture hook provides picture URL, loading states, and modal controls
@@ -78,7 +78,7 @@ const ProfileHeader = ({
               styles.avatarContainer,
               {
                 backgroundColor: isCafeUser ? theme.primary : theme.secondary,
-                borderColor: actualTheme === "dark" ? "#fff" : "#000",
+                borderColor: userTheme === "dark" ? "#fff" : "#000",
               },
             ]}
           >
@@ -108,8 +108,8 @@ const ProfileHeader = ({
                 styles.cameraOverlay,
                 {
                   backgroundColor:
-                    actualTheme === "light" ? Colors.light.background : "#fff",
-                  borderColor: actualTheme === "dark" ? "#fff" : "#000",
+                    userTheme === "light" ? Colors.light.background : "#fff",
+                  borderColor: userTheme === "dark" ? "#fff" : "#000",
                 },
               ]}
             >

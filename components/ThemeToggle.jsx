@@ -18,10 +18,10 @@ import ThemedText from "./ThemedText";
 
 const ThemeToggle = () => {
   // themeMode: current stored theme mode ('light' or 'dark')
-  // actualTheme: effective theme applied (accounting for system preference override)
+  // userTheme: effective theme applied (accounting for system preference override)
   // changeTheme: function to update themeMode in context
-  const { themeMode, actualTheme, changeTheme } = useTheme();
-  const theme = Colors[actualTheme] ?? Colors.light;
+  const { themeMode, userTheme, changeTheme } = useTheme();
+  const theme = Colors[userTheme] ?? Colors.light;
 
   // Toggle theme between light and dark when user interacts
   const toggleTheme = () => {
@@ -38,7 +38,7 @@ const ThemeToggle = () => {
   };
 
   // Boolean flag indicating switch position (on for dark theme)
-  const isOn = actualTheme === "dark";
+  const isOn = userTheme === "dark";
 
   // Use native Switch on mobile, custom switch on web
   const renderSwitch = () => {

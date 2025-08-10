@@ -1,16 +1,8 @@
 /**
- * Individual Loyalty Card Details Screen
- *
- * Displays detailed information for a specific loyalty card.
- * Features:
- * - Dynamic routing based on card ID
- * - Card progress, stamps, customer info, scan history
- * - Role-based views (customer/cafe owner)
- * - Add stamp & redeem functionality
- * - Loading & error states
- * - Themed, branded card layout
+ * Card Specific Details Screen
  */
 
+// Imports
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -22,8 +14,8 @@ import ThemedView from "../../../components/ThemedView";
 import ActivityHistory from "../../../components/cards/ActivityHistory";
 import CardActions from "../../../components/cards/CardActions";
 import CustomCardHeader from "../../../components/cards/CardHeader";
-import CustomStampProgress from "../../../components/cards/StampProgress";
 import QRCodeModal from "../../../components/cards/QRCodeModal";
+import CustomStampProgress from "../../../components/cards/StampProgress";
 import { Colors } from "../../../constants/Colors";
 import { useTheme } from "../../../contexts/ThemeContext";
 import { useCardDetails } from "../../../hooks/cards/useCardDetails";
@@ -31,34 +23,25 @@ import { useCafeUser, useUser } from "../../../hooks/useUser";
 import { getCafeDesign } from "../../../lib/appwrite/cafe-profiles";
 
 /**
- * Helper to generate consistent card section styles based on theme and cafe design.
+ * Helper to generate card section background style.
  */
-const getCardSectionStyle = (dynamicTheme, cafeDesign, actualTheme) => ({
+const getCardSectionStyle = (dynamicTheme) => ({
   backgroundColor: dynamicTheme.card,
-  borderRadius: cafeDesign?.borderRadius || 15,
-  borderWidth: actualTheme === "dark" ? 1 : 0,
-  borderColor: actualTheme === "dark" ? dynamicTheme.border : "transparent",
-  shadowColor: cafeDesign?.shadowEnabled ? dynamicTheme.text : "transparent",
-  shadowOpacity: actualTheme === "dark" ? 0.3 : 0.1,
 });
 
 const CardDetails = () => {
-  // Route param: extract card ID from URL for fetching details
+  // Route param: get card ID from URL for fetching details
   const { id } = useLocalSearchParams();
-  // Theme context: determine current UI mode (light or dark)
-  const { actualTheme } = useTheme();
-  // User context: current authenticated user
+  const { userTheme } = useTheme();
   const { user } = useUser();
-  // Role check: is this a cafe owner view?
   const isCafeUser = useCafeUser();
-  // Router: for navigating after user actions (e.g., redemption)
   const router = useRouter();
 
+  // State to hold cafe design data and loading state
   const [cafeDesign, setCafeDesign] = useState(null);
-  // State: tracks loading status for fetching cafe design settings
-  const [designLoading, setDesignLoading] = useState(true); // This state tracks whether the cafe design is still loading, ensuring the UI reflects the loading state appropriately.
+  const [designLoading, setDesignLoading] = useState(true);
 
-  const theme = Colors[actualTheme] ?? Colors.light;
+  const theme = Colors[userTheme] ?? Colors.light;
 
   /**
    * handleRedemptionSuccess: callback invoked after gift redemption
@@ -99,12 +82,10 @@ const CardDetails = () => {
         const design = await getCafeDesign(formattedCard.cafeUserId);
         setCafeDesign(design);
       } catch (_error) {
-        // Fallback to default design
+        // Fallback to theme-based design
         setCafeDesign({
           primaryColor: "#AA7C48",
-          secondaryColor: "#7B6F63",
-          backgroundColor: "#FDF3E7",
-          textColor: "#3B2F2F",
+          // backgroundColor and textColor are handled by theme system
           borderRadius: 15,
           shadowEnabled: true,
         });
@@ -115,27 +96,33 @@ const CardDetails = () => {
     loadCafeDesign();
   }, [formattedCard]);
 
+  // Add this useEffect to reset states when ID changes
+  useEffect(() => {
+    // Reset local state when card ID changes
+    setCafeDesign(null);
+    setDesignLoading(true);
+  }, [id]); // Dependency on id will trigger reset
+
   // Merge cafe design with theme
   const dynamicTheme = cafeDesign
     ? {
         ...theme,
         primary: cafeDesign.primaryColor,
-        secondary: cafeDesign.secondaryColor,
-        background:
-          actualTheme === "dark" ? "#1a1a1a" : cafeDesign.backgroundColor,
-        text: actualTheme === "dark" ? "#ffffff" : cafeDesign.textColor,
-        card: actualTheme === "dark" ? "#2a2a2a" : cafeDesign.backgroundColor,
-        border:
-          actualTheme === "dark"
-            ? cafeDesign.primaryColor + "40"
-            : cafeDesign.borderColor || cafeDesign.secondaryColor,
+        background: theme.background,
+        text: theme.text,
+        card: theme.uiBackground, // Use theme's uiBackground for cards
+        border: cafeDesign.primaryColor,
         accent: cafeDesign.primaryColor,
-        brandSecondary: cafeDesign.secondaryColor,
       }
     : theme;
 
   // Loading state
-  if (loading || designLoading) {
+  if (
+    loading ||
+    designLoading ||
+    !formattedCard?.id ||
+    formattedCard?.id !== id
+  ) {
     return (
       <ThemedView
         safe
@@ -192,17 +179,18 @@ const CardDetails = () => {
     >
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { backgroundColor: dynamicTheme.background },
-        ]}
+        contentContainerStyle={{
+          backgroundColor: dynamicTheme.background,
+          padding: 20,
+          paddingBottom: 40,
+        }}
         showsVerticalScrollIndicator={false}
       >
         {/* Header Card */}
         <View
           style={[
             styles.cardSection,
-            getCardSectionStyle(dynamicTheme, cafeDesign, actualTheme),
+            getCardSectionStyle(dynamicTheme, cafeDesign, userTheme),
           ]}
         >
           <CustomCardHeader
@@ -219,7 +207,7 @@ const CardDetails = () => {
         <View
           style={[
             styles.cardSection,
-            getCardSectionStyle(dynamicTheme, cafeDesign, actualTheme),
+            getCardSectionStyle(dynamicTheme, cafeDesign, userTheme),
           ]}
         >
           <CustomStampProgress
@@ -237,7 +225,7 @@ const CardDetails = () => {
             <View
               style={[
                 styles.cardSection,
-                getCardSectionStyle(dynamicTheme, cafeDesign, actualTheme),
+                getCardSectionStyle(dynamicTheme, cafeDesign, userTheme),
               ]}
             >
               <CardActions
@@ -257,7 +245,7 @@ const CardDetails = () => {
         <View
           style={[
             styles.cardSection,
-            getCardSectionStyle(dynamicTheme, cafeDesign, actualTheme),
+            getCardSectionStyle(dynamicTheme, cafeDesign, userTheme),
           ]}
         >
           <ActivityHistory
@@ -285,16 +273,15 @@ export default CardDetails;
 
 // --- Styles ---
 const styles = StyleSheet.create({
+  // Main container
   container: {
     flex: 1,
   },
+  // Scroll view for card details
   scrollView: {
     flex: 1,
   },
-  scrollContent: {
-    padding: 20,
-    paddingBottom: 40,
-  },
+
   cardSection: {
     padding: 16,
     shadowOffset: { width: 0, height: 2 },
