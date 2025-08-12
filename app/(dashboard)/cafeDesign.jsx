@@ -1,13 +1,8 @@
 /**
  * Cafe Design Settings Screen
- *
- * Allows cafe owners to customize their loyalty card appearance and info.
- * Features:
- * - Edit cafe name, address, description, reward, and stamp requirements
- * - Choose card/stamp colors and icons
- * - Card style options (border radius, shadow)
- * - Loads and saves design to backend
  */
+
+// imports
 import { useCallback, useEffect, useState } from "react";
 import {
   Alert,
@@ -29,6 +24,7 @@ import {
   updateCafeProfile,
 } from "../../lib/appwrite/cafe-profiles";
 
+// Color options for cafe design
 const colorOptions = [
   "#AA7C48", // Coffee Brown
   "#E74C3C", // Red
@@ -42,16 +38,17 @@ const colorOptions = [
   "#95A5A6", // Gray
 ];
 
+// Icon options for cafe design
 const stampIcons = ["⭐", "☕", "💫", "🎯", "💎", "🏆", "❤️", "🎁", "🌟", "✨"];
 
 const CafeDesignSettings = () => {
-  // Auth hook: get current user and name-update function
+
+  // Auth hook: get current user and updateName function
   const { user, updateName } = useUser();
-  // Loading state: indicates profile fetch in progress
+
+  // states for loading, saving, and profile
   const [loading, setLoading] = useState(true);
-  // Saving state: indicates save operation in progress
   const [saving, setSaving] = useState(false);
-  // Profile state: stores fetched cafe design settings
   const [profile, setProfile] = useState(null);
 
   // Form state: cafe name, address, description, colors, icon, reward, stamps
@@ -66,8 +63,6 @@ const CafeDesignSettings = () => {
   const [stampIconColor, setStampIconColor] = useState("#FFD700");
   const [rewardDescription, setRewardDescription] = useState("Free Coffee");
   const [maxStampsPerCard, setMaxStampsPerCard] = useState(10);
-
-  // Removed customization for border radius and shadow effect
 
   /**
    * loadCafeProfile: fetches existing design settings for this cafe

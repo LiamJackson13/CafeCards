@@ -1,12 +1,3 @@
-/**
- * User Authentication Hook
- *
- * A custom React hook that provides access to user authentication context.
- * Returns user state, authentication methods (login, register, logout), and
- * auth status checking. Ensures the hook is used within a UserProvider and
- * throws an error if used outside the provider context. Simplifies access
- * to user authentication functionality throughout the app.
- */
 // Import React's useContext for accessing context values
 import { useContext } from "react";
 // Import the UserContext provider for authentication and user info

@@ -79,8 +79,8 @@ const StampModal = ({
           <IncrementDecrement
             value={stampsToAdd} // Current count
             setValue={setStampsToAdd} // Update handler
-            min={1} // Minimum value
-            max={10} // Maximum value
+            min={1}
+            max={10}
           />
           {/* Action buttons row */}
           <View style={styles.modalButtons}>

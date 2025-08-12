@@ -13,13 +13,13 @@ import ThemedText from "../ThemedText";
 import ThemedView from "../ThemedView";
 
 const ProfilePictureModal = ({
-  visible, // controls modal visibility
-  onClose, // callback to close modal (e.g., backdrop press)
-  onTakePhoto, // triggers camera capture
-  onPickImage, // opens image gallery picker
-  onRemovePhoto, // removes current profile photo
-  hasProfilePicture, // indicates if a profile picture exists
-  uploading, // true while a new photo is uploading
+  visible,
+  onClose,
+  onTakePhoto,
+  onPickImage,
+  onRemovePhoto,
+  hasProfilePicture,
+  uploading,
 }) => {
   const { userTheme } = useTheme();
   const theme = Colors[userTheme] ?? Colors.light;

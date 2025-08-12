@@ -17,8 +17,8 @@ import { View } from "react-native";
  * @param {number} [props.height=40] - Height of the spacer
  */
 const Spacer = ({ width = "100%", height = 40 }) => (
-  // width: CSS width of the spacer (default full width)
-  // height: CSS height of the spacer (default 40px)
+  // width: Width of the spacer (default full width)
+  // height: Height of the spacer (default 40px)
   <View
     // Inline style drives the empty space size
     style={{ width, height }}

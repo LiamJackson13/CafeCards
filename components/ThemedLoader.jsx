@@ -8,9 +8,6 @@ import { Colors } from "../constants/Colors";
 import ThemedView from "./ThemedView";
 
 const ThemedLoader = ({ size = "large", color, style }) => {
-  // size: ActivityIndicator size ('small' or 'large')
-  // color: optional override for spinner color; defaults to theme text color
-  // style: additional styles to apply to the container view
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme] ?? Colors.light;
 

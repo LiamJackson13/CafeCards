@@ -1,16 +1,8 @@
 /**
  * User Profile Screen
- *
- * Displays user profile info, stats, and account management options.
- * Features:
- * - Profile header and editable display name
- * - Stats section (customer/cafe user)
- * - Settings (password change, etc.)
- * - App info/version/build
- * - Logout
- * - Pull-to-refresh for stats
- * - Themed, safe-area layout
  */
+
+// imports
 import { useState } from "react";
 import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import LogoutButton from "../../components/profile/LogoutButton";
@@ -95,6 +87,7 @@ const ProfileScreen = () => {
           user={user}
           onEditName={handleEditName}
         />
+
 
         {/* Summary stats section (customer or cafe user) */}
         <Spacer size={20} />

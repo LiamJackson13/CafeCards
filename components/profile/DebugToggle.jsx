@@ -19,9 +19,6 @@ const DebugToggle = () => {
 
   // debugCafeMode: boolean override for cafe/customer mode in development
   // setDebugCafeMode: function to toggle the debugCafeMode state
-  // realIsCafeUser: actual user role from backend to indicate auto-set state
-  // user: user object, present when authenticated
-  // theme: resolved color values based on active theme
 
   // Only render in development builds
   if (!__DEV__) {

@@ -13,11 +13,6 @@ import ThemedText from "../ThemedText";
  * - Displays available rewards and instructions.
  */
 const QRCodeModal = ({ visible, onClose, qrData, availableRewards, theme }) => {
-  // visible: toggles modal display
-  // onClose: callback fired to close modal
-  // qrData: JSON string containing QR payload
-  // availableRewards: count of redeemable rewards
-  // theme: current theme object for styling
   const { user } = useUser();
 
   if (!qrData) return null; // don't render if no QR payload

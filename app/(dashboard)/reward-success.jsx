@@ -1,12 +1,5 @@
 /**
  * Reward Success/Celebration Screen
- *
- * Shown after a customer redeems a reward.
- * Features:
- * - Celebration animation and visuals
- * - Confirmation message
- * - Navigation back to cards or profile
- * - Themed, responsive design
  */
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -21,13 +14,12 @@ import { useTheme } from "../../contexts/ThemeContext";
 const { width } = Dimensions.get("window");
 
 const RewardSuccessScreen = () => {
-  // Navigation hook: for redirecting users after actions
   const router = useRouter();
   // Theme context: determine current theme mode and colors
   const { userTheme } = useTheme();
-  // Route params: cafe name and reward type to display
+  // Get Route params: cafe name and reward type to display
   const { cafeName, rewardType } = useLocalSearchParams();
-  // Resolve theme color palette
+
   const theme = Colors[userTheme] ?? Colors.light;
 
   // Determine display values with fallback defaults
@@ -63,9 +55,9 @@ const RewardSuccessScreen = () => {
     ]).start();
   }, [scaleAnim, fadeAnim, slideAnim]);
 
-  // Handler: navigate back to cards list
+  // Navigate back to cards list
   const handleBackToCards = () => router.push("/cards");
-  // Handler: navigate to user profile and stats
+  // Navigate to user profile and stats
   const handleViewProfile = () => router.push("/profile");
 
   return (
@@ -73,7 +65,6 @@ const RewardSuccessScreen = () => {
       style={[styles.container, { backgroundColor: theme.background }]}
       safe
     >
-      {/* Centered content wrapper */}
       <View style={styles.content}>
         {/* Animated celebration icon */}
         <Animated.View

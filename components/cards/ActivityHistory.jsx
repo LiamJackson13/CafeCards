@@ -1,18 +1,11 @@
+// imports
 import { StyleSheet, View } from "react-native";
 import Spacer from "../Spacer";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
-/**
- * ScanHistoryItem
- *
- * Renders a single scan activity row with an icon, action label, and time ago.
- * Props:
- * - scan: { action, timestamp, ... } record of one scan event
- * - theme: current theme colors (primary, text)
- */
 const ScanHistoryItem = ({ scan, theme }) => {
-  // Calculate human-readable time difference
+  // Calculate time difference
   const date = new Date(scan.timestamp);
   const timeAgo = getTimeAgo(date);
 
@@ -57,14 +50,7 @@ const getTimeAgo = (date) => {
   return `${diffDays}d ago`;
 };
 
-/**
- * ActivityHistory
- *
- * Card displaying up to the last 5 scan activities (most recent first).
- * Props:
- * - scanHistory: array of scan records sorted oldest→newest
- * - theme: current theme colors (card, border, text)
- */
+// Activity History Card
 const ActivityHistory = ({ scanHistory, theme }) => (
   <ThemedCard
     style={[

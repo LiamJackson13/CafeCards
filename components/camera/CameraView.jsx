@@ -7,11 +7,6 @@ import ThemedView from "../ThemedView";
 
 /**
  * CameraScanner
- *
- * Handles camera permissions, loading, error states, and barcode scanning.
- * - Shows loading or error UI as needed.
- * - Displays a scanning frame overlay when camera is ready.
- * - Calls onBarCodeScanned when a barcode is detected (unless blocked).
  */
 const CameraScanner = ({
   // Props:

@@ -1,14 +1,5 @@
 /**
  * Root App Layout Component
- *
- * Wraps the entire application with essential providers:
- * - ThemeProvider: app-wide theming (light/dark)
- * - UserProvider: authentication and user context
- * - CardsProvider: loyalty card data management
- * Sets up the root Stack navigator with theming and navigation structure:
- * - Home screen
- * - Auth screens
- * - Dashboard screens
  */
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -19,9 +10,8 @@ import { UserProvider } from "../contexts/UserContext";
 
 // Stack navigator component: sets up app screens with themed headers
 const StackNavigator = () => {
-  // Theme context: determine current theme mode and colors
+  // Get current userTheme
   const { userTheme } = useTheme();
-  // Resolve colour palette based on theme
   const theme = Colors[userTheme] ?? Colors.light;
 
   return (

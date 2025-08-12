@@ -16,8 +16,7 @@ const CustomStampProgress = ({
   onRedeem,
 }) => {
   // formattedCard: computed card data (currentStamps, totalStamps, hasAvailableRewards, etc.)
-  // theme: theme colors for styling UI elements
-  // cafeDesign: design settings (stampIcon, maxStampsPerCard)
+  // cafeDesign: design settings (stampIcon, primaryColour)
   // onRedeem: callback when redeem button is pressed
   if (!cafeDesign) {
     // Display loading state until design data is available

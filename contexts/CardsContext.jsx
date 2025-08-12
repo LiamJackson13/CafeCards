@@ -38,6 +38,7 @@ export function CardsProvider({ children }) {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(false);
   const [recentRedemption, setRecentRedemption] = useState(null);
+  const [recentStampAddition, setRecentStampAddition] = useState(null);
 
   const { user } = useUser();
   const isCafeUser = useCafeUser();
@@ -244,10 +245,14 @@ export function CardsProvider({ children }) {
             prev.map((card) => {
               if (!card || !card.$id) return card;
               if (card.$id === payload.$id) {
-                // Customer: show redemption notification if rewards decrease
+                // Customer: show notifications for card changes
                 if (!isCafeUser && card.customerId === user?.$id) {
                   const oldRewards = card.availableRewards || 0;
                   const newRewards = payload.availableRewards || 0;
+                  const oldStamps = card.totalStamps || 0;
+                  const newStamps = payload.totalStamps || 0;
+
+                  // Show redemption notification if rewards decrease
                   if (newRewards < oldRewards) {
                     setRecentRedemption({
                       timestamp: new Date(),
@@ -256,6 +261,19 @@ export function CardsProvider({ children }) {
                       remainingRewards: newRewards,
                     });
                     setTimeout(() => setRecentRedemption(null), 5000);
+                  }
+
+                  // Show stamp notification if stamps increase
+                  if (newStamps > oldStamps) {
+                    const stampsAdded = newStamps - oldStamps;
+                    setRecentStampAddition({
+                      timestamp: new Date(),
+                      customer: { name: payload.customerName || "You" },
+                      stampsAdded: stampsAdded,
+                      totalStamps: newStamps,
+                      cafeName: payload.cafeName || "this cafe", // Use cafe name from payload
+                    });
+                    setTimeout(() => setRecentStampAddition(null), 4000);
                   }
                 }
                 return payload;
@@ -314,7 +332,9 @@ export function CardsProvider({ children }) {
         cards,
         loading,
         recentRedemption,
+        recentStampAddition,
         dismissRedemption: () => setRecentRedemption(null),
+        dismissStampAddition: () => setRecentStampAddition(null),
         fetchCardById,
         fetchCards,
         fetchCardByUserId,

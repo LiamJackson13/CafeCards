@@ -7,8 +7,7 @@ import ThemedText from "../ThemedText";
  * EmptyState Component
  *
  * Renders a placeholder UI when the card list is empty.
- * Props:
- * - isCafeUser (boolean): if true, shows cafe user messaging and icon
+ * 
  */
 const EmptyState = ({ isCafeUser }) => (
   <View style={styles.emptyContainer}>

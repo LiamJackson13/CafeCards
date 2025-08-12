@@ -4,14 +4,14 @@ import ThemedCard from "./ThemedCard";
 import ThemedText from "./ThemedText";
 
 /**
- * RedemptionNotification
+ * StampNotification
  *
- * Animated notification for reward redemption events.
- * Slides in from the top and auto-dismisses after 4 seconds.
+ * Animated notification for stamp addition events.
+ * Slides in from the top and auto-dismisses after 3 seconds.
  */
-const RedemptionNotification = ({ visible, redemption, onDismiss }) => {
+const StampNotification = ({ visible, stampData, onDismiss }) => {
   // visible: controls display of the notification
-  // redemption: object with redemption data (rewardsRedeemed, remainingRewards)
+  // stampData: object with stamp data (customer, stampsAdded, cafeName)
   // onDismiss: callback fired after notification hides
   const [slideAnim] = useState(new Animated.Value(-100));
   // slideAnim: animated value for vertical slide; starts off-screen
@@ -37,8 +37,8 @@ const RedemptionNotification = ({ visible, redemption, onDismiss }) => {
   }, [slideAnim, opacityAnim, onDismiss]);
 
   useEffect(() => {
-    // Trigger slide-in and fade-in when visible, auto-hide after 4s
-    if (visible && redemption) {
+    // Trigger slide-in and fade-in when visible, auto-hide after 3s
+    if (visible && stampData) {
       Animated.parallel([
         Animated.timing(slideAnim, {
           toValue: 0, // slide into view
@@ -52,18 +52,18 @@ const RedemptionNotification = ({ visible, redemption, onDismiss }) => {
         }),
       ]).start();
 
-      // Auto-dismiss after 4 seconds
+      // Auto-dismiss after 3 seconds
       const timer = setTimeout(() => {
         hideNotification();
-      }, 4000);
+      }, 3000);
 
       return () => clearTimeout(timer);
     } else {
       hideNotification();
     }
-  }, [visible, redemption, slideAnim, opacityAnim, hideNotification]);
+  }, [visible, stampData, slideAnim, opacityAnim, hideNotification]);
 
-  if (!visible || !redemption) return null; // nothing to render
+  if (!visible || !stampData) return null; // nothing to render
 
   return (
     // Animated container sliding vertically and fading
@@ -82,26 +82,19 @@ const RedemptionNotification = ({ visible, redemption, onDismiss }) => {
           {/* Horizontal layout */}
           <View style={styles.iconContainer}>
             {/* Icon wrapper */}
-            <ThemedText style={styles.icon}>🎉</ThemedText>{" "}
-            {/* Celebration icon */}
+            <ThemedText style={styles.icon}>⭐</ThemedText> {/* Stamp icon */}
           </View>
           <View style={styles.textContainer}>
             {/* Text info */}
-            <ThemedText style={styles.title}>Reward Redeemed!</ThemedText>{" "}
+            <ThemedText style={styles.title}>Stamp Added!</ThemedText>
             {/* Header */}
             <ThemedText style={styles.message}>
               {/* Primary message */}
-              {redemption.rewardsRedeemed === 1
-                ? "1 free coffee reward was just redeemed"
-                : `${redemption.rewardsRedeemed} rewards were just redeemed`}
+              {stampData.stampsAdded === 1
+                ? "1 stamp was added"
+                : `${stampData.stampsAdded} stamps were added`}{" "}
+              to your loyalty card
             </ThemedText>
-            {redemption.remainingRewards > 0 && (
-              <ThemedText style={styles.remaining}>
-                {/* Remaining count */}
-                {redemption.remainingRewards} reward
-                {redemption.remainingRewards !== 1 ? "s" : ""} remaining
-              </ThemedText>
-            )}
           </View>
         </View>
       </ThemedCard>
@@ -119,10 +112,10 @@ const styles = StyleSheet.create({
     zIndex: 1000, // above other content
   },
   notification: {
-    // ThemedCard style: light green background and left accent
-    backgroundColor: "#e8f5e8",
+    // ThemedCard style: light blue background and left accent
+    backgroundColor: "#e8f4f8",
     borderLeftWidth: 4,
-    borderLeftColor: "#28a745",
+    borderLeftColor: "#34b233",
     elevation: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -144,14 +137,14 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   textContainer: {
-    // Vertical stack for title, message, remaining
+    // Vertical stack for title, message, cafe name
     flex: 1,
   },
   title: {
     // Title text styling
     fontWeight: "bold",
     fontSize: 16,
-    color: "#28a745",
+    color: "#34b233",
     marginBottom: 2,
   },
   message: {
@@ -160,12 +153,12 @@ const styles = StyleSheet.create({
     color: "#333",
     marginBottom: 2,
   },
-  remaining: {
-    // Text for remaining rewards
+  cafeName: {
+    // Text for cafe name
     fontSize: 12,
     color: "#666",
     fontStyle: "italic",
   },
 });
 
-export default RedemptionNotification;
+export default StampNotification;

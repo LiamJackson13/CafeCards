@@ -2,14 +2,13 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import GuestOnly from "../../components/auth/GuestOnly";
 
+// Layout for authentication screens
 export default function AuthLayout() {
   return (
+    // Only unauthenticated users can see this page
     <GuestOnly>
-      {/* Only unauthenticated users can see this page */}
       <StatusBar style="auto" />
-      {/* Ensures the status bar on the phone matches the theme of the app */}
       <Stack screenOptions={{ headerShown: false, animation: "none" }} />
-      {/* Sets the nav option to be Stack and hides the header */}
     </GuestOnly>
   );
 }

@@ -9,10 +9,6 @@ import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
 const ProfileOption = ({ title, subtitle, icon, action }) => (
-  // title: main label for the option
-  // subtitle: optional descriptive text under the title
-  // icon: emoji or symbol to display at the left
-  // action: optional component (e.g., switch or button) rendered on the right
   <ThemedCard style={styles.optionCard}>
     <View style={styles.optionContent}>
       <View style={styles.optionLeft}>

@@ -5,9 +5,9 @@ import ThemedText from "../ThemedText";
 /**
  * CustomCardHeader
  *
- * Displays a custom card header with cafe branding, logo, and background.
+ * Displays a custom card header with cafe branding.
  * - Shows loading state if cafeDesign is not loaded.
- * - Supports custom logo, background image, and reward badge.
+ *
  */
 const CustomCardHeader = ({ formattedCard, isCafeUser, theme, cafeDesign }) => {
   // Show loading state if cafeDesign is not loaded
@@ -89,6 +89,7 @@ const CustomCardHeader = ({ formattedCard, isCafeUser, theme, cafeDesign }) => {
             ? formattedCard.customerEmail
             : cafeDesign.address || "Your loyalty card"}
         </ThemedText>
+        {/* Reward badge */}
         {formattedCard.isComplete && (
           <View
             style={[styles.completeBadge, { backgroundColor: theme.primary }]}
@@ -124,6 +125,7 @@ const CustomCardHeader = ({ formattedCard, isCafeUser, theme, cafeDesign }) => {
 };
 
 const styles = StyleSheet.create({
+  // Header card container
   headerCard: {
     padding: 20,
     shadowColor: "#000",
@@ -132,13 +134,16 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  // Background image container
   backgroundImage: {
     flex: 1,
   },
+  // Card header content
   cardHeader: {
     flexDirection: "row",
     alignItems: "center",
   },
+  // Card icon container
   cardIcon: {
     width: 60,
     height: 60,
@@ -147,30 +152,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 15,
   },
+  // Logo image styling
   logoImage: {
     borderRadius: 8,
   },
+  // Card icon text styling
   cardIconText: {
     fontSize: 24,
   },
+  // Card information container
   cardInfo: {
     flex: 1,
   },
+  // Customer name styling
   customerName: {
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 4,
   },
+  // Customer email styling
   customerEmail: {
     fontSize: 14,
     marginBottom: 8,
   },
+  // Reward badge styling
   completeBadge: {
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
     alignSelf: "flex-start",
   },
+  // Reward badge text styling
   completeText: {
     color: "#fff",
     fontSize: 12,

@@ -1,3 +1,4 @@
+// imports
 import { StyleSheet } from "react-native";
 import Spacer from "../Spacer";
 import ThemedButton from "../ThemedButton";
@@ -5,14 +6,9 @@ import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
 /**
- * CustomerRedeemActions
- *
- * Renders reward count and a redeem button for normal users.
- * Props:
- * - formattedCard: object with pre-computed card data (availableRewards, etc.)
- * - onRedeem: callback when redeem button is pressed
- * - theme: current theme colors
+ * CustomerRedeemActions: Renders reward count and a redeem button for normal users.
  */
+
 const CustomerRedeemActions = ({ formattedCard, onRedeem, theme }) => {
   if (!formattedCard.hasAvailableRewards) return null;
 

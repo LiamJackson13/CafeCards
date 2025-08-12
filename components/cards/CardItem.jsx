@@ -1,3 +1,4 @@
+// imports
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import { usePinnedCards } from "../../hooks/cards/usePinnedCards";
@@ -7,13 +8,7 @@ import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 import { ProgressBar } from "./ProgressIndicators";
 
-/**
- * CustomCardItem
- *
- * Displays a loyalty card with custom cafe branding and reward logic.
- * - Shows dynamic design, progress, and reward status.
- * - Cafe users see customer info; customers see cafe info and pin option.
- */
+// Renders a loyalty card with dynamic design, progress, and reward actions
 const CustomCardItem = ({
   item,
   onPress,
@@ -336,6 +331,7 @@ const CustomStampsIndicator = ({
 };
 
 const styles = StyleSheet.create({
+  // Card styles
   card: {
     marginHorizontal: 20,
     padding: 16,
@@ -346,35 +342,37 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  cardContent: {
-    // flex: 1,
-    // removed flex to allow content to size naturally
-  },
   cardHeader: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 8,
   },
+  // Icon container for the stamp icons
   iconContainer: {
     marginRight: 12,
     alignItems: "center",
     justifyContent: "center",
   },
+  // Card icon styles
   cardIcon: {
     fontSize: 32,
   },
+  // Card information container
   cardInfo: {
     flex: 1,
   },
+  // Cafe name styles
   cafeName: {
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 2,
   },
+  // Cafe address styles
   address: {
     fontSize: 14,
     opacity: 0.8,
   },
+  // Badge styles
   completeBadge: {
     width: 32,
     height: 32,
@@ -386,6 +384,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
   },
+  // Ready badge styles
   readyBadge: {
     width: 36,
     height: 36,
@@ -395,23 +394,28 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 6,
   },
+  // Complete badge text styles
   completeText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
   },
+  // Ready badge text styles
   readyText: {
     fontSize: 18,
   },
+  // Stamps grid styles
   stampsGrid: {
     alignItems: "center",
     gap: 6,
   },
+  // Stamps row styles
   stampsRow: {
     flexDirection: "row",
     justifyContent: "center",
     gap: 6,
   },
+  // Stamp slot styles
   stampSlot: {
     width: 28,
     height: 28,
@@ -420,28 +424,34 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  // Stamp icon styles
   stampIcon: {
     fontSize: 14,
   },
+  // Reward container styles
   rewardContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
+  // Reward label styles
   rewardLabel: {
     fontSize: 14,
     fontWeight: "500",
   },
+  // Reward text styles
   rewardText: {
     fontSize: 14,
     fontWeight: "600",
   },
+  // Redeem button styles
   redeemButton: {
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 12,
     alignItems: "center",
   },
+  // Redeem button styles when emphasised
   redeemButtonEmphasized: {
     paddingVertical: 14,
     paddingHorizontal: 18,
@@ -451,17 +461,20 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
   },
+  // Redeem button text styles
   redeemText: {
     color: "#fff",
     fontSize: 14,
     fontWeight: "600",
     textAlign: "center",
   },
+  // Redeem button text styles when emphasised
   redeemTextEmphasized: {
     fontSize: 15,
     fontWeight: "700",
     letterSpacing: 0.2,
   },
+  // Customer redeem button styles
   customerRedeemButton: {
     paddingVertical: 14,
     paddingHorizontal: 20,
@@ -472,11 +485,13 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
   },
+  // Customer redeem button text styles
   customerRedeemText: {
     fontSize: 15,
     fontWeight: "600",
     letterSpacing: 0.3,
   },
+  // Pin button styles
   pinButton: {
     width: 36,
     height: 36,
@@ -486,6 +501,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 8,
   },
+  // Pin icon styles
   pinIcon: {
     fontSize: 16,
   },

@@ -31,6 +31,10 @@ export const useScanner = (user, isCafeUser) => {
   const [showRedemptionSuccess, setShowRedemptionSuccess] = useState(false);
   const [redeemedCustomer, setRedeemedCustomer] = useState(null);
 
+  // Tracks stamp addition success feedback and stores the stamp info
+  const [showStampNotification, setShowStampNotification] = useState(false);
+  const [stampNotificationData, setStampNotificationData] = useState(null);
+
   // Manual entry state for entering card ID directly
   const [isManualEntryVisible, setIsManualEntryVisible] = useState(false);
   const [manualCardId, setManualCardId] = useState("");
@@ -209,13 +213,14 @@ export const useScanner = (user, isCafeUser) => {
   // Confirms and applies stamp additions:
   // - Adds one or more stamps to customer card via backend
   // - Logs result in history
+  // - Shows stamp notification
   // - Closes modal and resets scanner state
   const confirmStampAddition = useCallback(async () => {
     if (!pendingCustomer) return;
     try {
-      for (let i = 0; i < stampsToAdd; i++) {
-        await addStampToCard(pendingCustomer, user.$id);
-      }
+      // Add all stamps in a single call instead of a loop
+      await addStampToCard(pendingCustomer, user.$id, stampsToAdd);
+
       const stampText = stampsToAdd === 1 ? "stamp" : "stamps";
       addToScanHistory(
         pendingCustomer,
@@ -224,6 +229,14 @@ export const useScanner = (user, isCafeUser) => {
         `${stampsToAdd} ${stampText} added successfully!`,
         stampsToAdd
       );
+
+      // Show stamp notification
+      setStampNotificationData({
+        customer: pendingCustomer,
+        stampsAdded: stampsToAdd,
+        cafeName: user?.name || user?.email?.split("@")[0], // Use cafe name
+      });
+      setShowStampNotification(true);
     } catch (error) {
       addToScanHistory(
         pendingCustomer,
@@ -281,6 +294,12 @@ export const useScanner = (user, isCafeUser) => {
     setRedeemedCustomer(null);
   }, []);
 
+  // Closes stamp notification and clears stamp data
+  const dismissStampNotification = useCallback(() => {
+    setShowStampNotification(false);
+    setStampNotificationData(null);
+  }, []);
+
   return {
     // State
     scanned,
@@ -291,6 +310,8 @@ export const useScanner = (user, isCafeUser) => {
     stampsToAdd,
     showRedemptionSuccess,
     redeemedCustomer,
+    showStampNotification,
+    stampNotificationData,
     isManualEntryVisible,
     manualCardId,
 
@@ -301,6 +322,7 @@ export const useScanner = (user, isCafeUser) => {
     processManualEntry,
     handleManualEntry,
     dismissRedemptionSuccess,
+    dismissStampNotification,
     setStampsToAdd,
     setIsManualEntryVisible,
     setManualCardId,

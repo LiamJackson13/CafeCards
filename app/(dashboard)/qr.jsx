@@ -1,13 +1,8 @@
 /**
  * QR Code Display Screen
- *
- * Shows the user's loyalty card QR code for scanning by cafe staff.
- * Features:
- * - Generates QR code with user/card data
- * - Themed QR code (dark/light)
- * - User info and card ID (copyable)
- * - Instructions for use
  */
+
+// imports
 import * as Clipboard from "expo-clipboard";
 import { useRouter } from "expo-router";
 import {
@@ -29,13 +24,10 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useUser } from "../../hooks/useUser";
 
 const QRDisplayScreen = () => {
-  // User context: current authenticated user
+  // Import user and theme contexts
   const { user } = useUser();
-  // Theme context: determine light or dark mode
   const { userTheme } = useTheme();
-  // Resolve theme colors based on current theme
-  const theme = Colors[userTheme] ?? Colors.light;
-  // Router: for navigation to other screens
+  
   const router = useRouter();
 
   // Dimensions: calculate QR code size (70% of width, max 300)
@@ -78,7 +70,7 @@ const QRDisplayScreen = () => {
     <ThemedView style={styles.container} safe>
       {/* Screen Title */}
       <ThemedText type="title" style={styles.heading}>
-        Your Loyalty Card
+        Your QR Code
       </ThemedText>
       {/* Subtitle instructions */}
       <ThemedText style={styles.subtitle}>

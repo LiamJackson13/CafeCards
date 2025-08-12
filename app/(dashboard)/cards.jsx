@@ -1,18 +1,9 @@
 /**
  * Loyalty Cards Screen
- *
- * Displays loyalty cards for customers or cafe users.
- * - Customers: See their own cards from different cafes
- * - Cafe users: See all customer cards they manage
- * Features:
- * - Grid/list view of cards
- * - Card progress, details, and redemption
- * - Empty/loading states
- * - Real-time updates
- * - Themed, modern UI
  */
+import { useIsFocused } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   FlatList,
   RefreshControl,
@@ -40,25 +31,22 @@ const SORT_OPTIONS = [
 ];
 
 const CardsScreen = () => {
-  // Router hook: navigate to detail screens
   const router = useRouter();
   // Auth context: current user info
   const { user } = useUser();
-  // Role check: only customers see this screen
   const isCafeUser = useCafeUser();
-  // Theme context: current theme colors
   const { userTheme } = useTheme();
+  // detect if this screen is active
+  const isFocused = useIsFocused();
   // Data hook: fetches, refreshes, and updates loyalty cards list
   const { displayCards, loading, refreshing, onRefresh, updateCardInList } =
     useCardsList();
 
   const theme = Colors[userTheme] ?? Colors.light;
 
-  // Modal state: controls display of redemption QR modal
+  // App states for managing card redemption
   const [showRedeemModal, setShowRedeemModal] = useState(false);
-  // Holds selected card data for redemption
   const [selectedCard, setSelectedCard] = useState(null);
-  // Sorting control: determines current sort option
   const [sortType, setSortType] = useState("lastUsed");
 
   /**
@@ -107,7 +95,8 @@ const CardsScreen = () => {
       }
     } else {
       router.push(`/cards/${cardId}`);
-    }  };
+    }
+  };
 
   // Prepare QR data string for redemption modal
   const generateRedemptionQRData = () => {
@@ -125,6 +114,13 @@ const CardsScreen = () => {
       timestamp: new Date().toISOString(),
     });
   };
+
+  // Close QR modal when leaving screen
+  useEffect(() => {
+    if (!isFocused) {
+      setShowRedeemModal(false);
+    }
+  }, [isFocused]);
 
   // Access control: only non-cafe users (customers) can view
   if (isCafeUser) {

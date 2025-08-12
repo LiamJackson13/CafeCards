@@ -1,6 +1,5 @@
-import { useRouter } from "expo-router";
+// imports
 import { StyleSheet, View } from "react-native";
-import { useTheme } from "../../contexts/ThemeContext";
 import ThemedText from "../ThemedText";
 import StatCard from "./StatCard";
 
@@ -13,12 +12,6 @@ import StatCard from "./StatCard";
 const StatsSection = ({ isCafeUser, stats, loading, error }) => {
   // isCafeUser: determines if analytics view applies (business) or customer stats
   // stats: array of statistic objects ({ title, value, icon, color }) to render
-  // loading: boolean flag to show loading placeholders when data is fetching
-  // error: truthy value triggers error message when stats fail to load
-  const router = useRouter();
-  const { userTheme } = useTheme();
-  const theme =
-    userTheme === "dark" ? { text: "#FFFFFF" } : { text: "#000000" };
 
   return (
     <>

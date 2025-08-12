@@ -5,10 +5,7 @@ import ThemedText from "../ThemedText";
 
 /**
  * RedemptionSuccessModal
- *
  * Modal shown after a successful reward redemption.
- * - Displays customer info and reward details.
- * - Calls onDismiss when "Continue Scanning" is pressed.
  */
 const RedemptionSuccessModal = ({ visible, customer, onDismiss }) => {
   // Do not render modal if no customer data is provided

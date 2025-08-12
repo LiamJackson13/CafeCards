@@ -1,22 +1,12 @@
 /**
  * Dashboard Layout Component
- *
- * Wraps all authenticated user screens in a bottom tab navigation.
- * - Ensures only authenticated users can access screens (UserOnly)
- * - Themed tab navigation with icons for:
- *   - Profile management
- *   - Loyalty cards
- *   - QR code scanner/generator
- *   - Cafe design (for cafe users)
- *   - Cafe scanner (for cafe users)
- * - Dynamic theming for tab bar
- * - Global redemption notification for customers
  */
 import { Ionicons } from "@expo/vector-icons";
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
+import { useEffect } from "react";
 import { View } from "react-native";
 import UserOnly from "../../components/auth/UserOnly";
-import RedemptionNotification from "../../components/RedemptionNotification";
+import StampNotification from "../../components/StampNotification";
 import { Colors } from "../../constants/Colors";
 import { useCards } from "../../contexts/CardsContext";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -27,13 +17,26 @@ const TAB_ICON_SIZE = 24;
 const DashboardLayout = () => {
   // Theme context: provides current theme mode (light/dark)
   const { userTheme } = useTheme();
-  // Resolve theme colors based on current mode
+  const router = useRouter();
   const theme = Colors[userTheme] ?? Colors.light;
-  // Role check hook: determines if logged-in user is a cafe owner
+  // Checks if logged-in user is a cafe owner
   const isCafeUser = useCafeUser();
   // Cards context: recent redemption event and dismiss handler for notifications
-  const { recentRedemption, dismissRedemption } = useCards();
+  const {
+    recentRedemption,
+    recentStampAddition,
+    dismissRedemption,
+    dismissStampAddition,
+  } = useCards();
 
+  // Redirect to reward-success whenever a redemption happens
+  useEffect(() => {
+    if (recentRedemption) {
+      router.push({ pathname: "/reward-success" });
+      // clear recent flag to prevent re-trigger
+      dismissRedemption();
+    }
+  }, [recentRedemption, router, dismissRedemption]);
   return (
     // Only allow authenticated users to access dashboard
     <UserOnly>
@@ -132,14 +135,12 @@ const DashboardLayout = () => {
           <Tabs.Screen name="reward-success" options={{ href: null }} />
         </Tabs>
 
-        {/* Global Redemption Notification - Only for customers */}
-        {!isCafeUser && (
-          <RedemptionNotification
-            visible={!!recentRedemption}
-            redemption={recentRedemption}
-            onDismiss={dismissRedemption}
-          />
-        )}
+        {/* Global stamp notification for customers */}
+        <StampNotification
+          visible={!!recentStampAddition}
+          stampData={recentStampAddition}
+          onDismiss={dismissStampAddition}
+        />
       </View>
     </UserOnly>
   );

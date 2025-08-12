@@ -9,10 +9,6 @@ import ThemedText from "./ThemedText";
  * - Shows current value.
  */
 const IncrementDecrement = ({ value, setValue, min = 1, max = 10 }) => {
-  // value: current numeric value displayed
-  // setValue: function to update the value state
-  // min: minimum allowed value (button disabled at limit)
-  // max: maximum allowed value (button disabled at limit)
   const increment = () => {
     // Increase value by 1, until max limit
     if (value < max) {
@@ -78,7 +74,7 @@ const styles = StyleSheet.create({
   },
   // Base style for both increment and decrement buttons
   button: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#ff5100ff",
     paddingVertical: 5,
     paddingHorizontal: 15,
     borderRadius: 50,

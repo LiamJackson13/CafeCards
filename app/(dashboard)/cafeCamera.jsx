@@ -1,26 +1,19 @@
 /**
  * Cafe Scanner Screen
- *
- * Allows cafe staff to scan customer QR codes to add stamps or redeem rewards.
- * Features:
- * - Camera QR scanning and manual entry fallback
- * - Stamp confirmation and redemption modals
- * - Recent scan history
- * - Access control (cafe users only)
- * - Themed layout
  */
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 import { StyleSheet } from "react-native";
-import Spacer from "../../components/Spacer";
-import ThemedButton from "../../components/ThemedButton";
-import ThemedText from "../../components/ThemedText";
-import ThemedView from "../../components/ThemedView";
 import CameraView from "../../components/camera/CameraView";
 import ManualEntryModal from "../../components/camera/ManualEntryModal";
 import RedemptionSuccessModal from "../../components/camera/RedemptionSuccessModal";
 import ScanHistory from "../../components/camera/ScanHistory";
 import StampModal from "../../components/camera/StampModal";
+import Spacer from "../../components/Spacer";
+import StampNotification from "../../components/StampNotification";
+import ThemedButton from "../../components/ThemedButton";
+import ThemedText from "../../components/ThemedText";
+import ThemedView from "../../components/ThemedView";
 import { Colors } from "../../constants/Colors";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useCamera } from "../../hooks/camera/useCamera";
@@ -54,6 +47,8 @@ const CafeScannerScreen = () => {
     stampsToAdd,
     showRedemptionSuccess,
     redeemedCustomer,
+    showStampNotification,
+    stampNotificationData,
     isManualEntryVisible,
     manualCardId,
     handleBarCodeScanned,
@@ -61,6 +56,7 @@ const CafeScannerScreen = () => {
     cancelStampAddition,
     handleManualEntry,
     dismissRedemptionSuccess,
+    dismissStampNotification,
     setStampsToAdd,
     setIsManualEntryVisible,
     setManualCardId,
@@ -99,7 +95,6 @@ const CafeScannerScreen = () => {
         Scan customer QR codes to add stamps or redeem rewards
       </ThemedText>
 
-      {/* Spacer before camera view */}
       <Spacer height={20} />
 
       {/* Camera Preview and Scanner Component */}
@@ -115,7 +110,6 @@ const CafeScannerScreen = () => {
         refreshCamera={refreshCamera}
       />
 
-      {/* Spacer before manual entry button */}
       <Spacer height={20} />
 
       {/* Manual Entry Fallback Button */}
@@ -128,7 +122,6 @@ const CafeScannerScreen = () => {
         <ThemedText style={styles.manualButtonText}>Manual Entry</ThemedText>
       </ThemedButton>
 
-      {/* Spacer before scan history list */}
       <Spacer height={20} />
 
       {/* Recent Scans List */}
@@ -169,6 +162,13 @@ const CafeScannerScreen = () => {
         customer={redeemedCustomer}
         onDismiss={dismissRedemptionSuccess}
         theme={theme}
+      />
+
+      {/* Stamp Notification: toast notification for successful stamp addition */}
+      <StampNotification
+        visible={showStampNotification}
+        stampData={stampNotificationData}
+        onDismiss={dismissStampNotification}
       />
     </ThemedView>
   );

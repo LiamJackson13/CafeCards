@@ -12,11 +12,6 @@ import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
 const StatCard = ({ title, value, icon, color, loading = false }) => {
-  // title: descriptive label for the statistic
-  // value: number or string representing the statistic
-  // icon: symbol or emoji to visually represent the stat
-  // color: custom tint used for icon background and value text
-  // loading: flag to render placeholder views while data loads
   const { userTheme } = useTheme();
   const theme = Colors[userTheme] ?? Colors.light;
 
