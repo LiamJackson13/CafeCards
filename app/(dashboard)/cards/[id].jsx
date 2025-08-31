@@ -20,7 +20,7 @@ import { Colors } from "../../../constants/Colors";
 import { useTheme } from "../../../contexts/ThemeContext";
 import { useCardDetails } from "../../../hooks/cards/useCardDetails";
 import { useCafeUser, useUser } from "../../../hooks/useUser";
-import { getCafeDesign } from "../../../lib/appwrite/cafe-profiles";
+import { getCafeDesign } from "../../../lib/appwrite/cafeProfiles";
 
 /**
  * Helper to generate card section background style.
@@ -34,7 +34,7 @@ const CardDetails = () => {
   const { id } = useLocalSearchParams();
   const { userTheme } = useTheme();
   const { user } = useUser();
-  const isCafeUser = useCafeUser();
+  const isCafeUser = useCafeUser(); // Checks if the user is a cafe or customer
   const router = useRouter();
 
   // State to hold cafe design data and loading state
@@ -44,7 +44,7 @@ const CardDetails = () => {
   const theme = Colors[userTheme] ?? Colors.light;
 
   /**
-   * handleRedemptionSuccess: callback invoked after gift redemption
+   * handleRedemptionSuccess: callback invoked after reward redemption
    * navigates to the reward-success screen with relevant params
    */
   const handleRedemptionSuccess = useCallback(
@@ -58,7 +58,7 @@ const CardDetails = () => {
       });
     },
     [router]
-  ); // useCallback is used here to memoize the function, ensuring it is not recreated on every render. This prevents unnecessary re-renders or re-executions of hooks that depend on this function.
+  ); // useCallback is used here to memoize the function, ensuring it is not recreated on every render. This is just to improve performance
 
   // Hook: loads card details, provides data, loading flags, and action handlers
   const {
@@ -96,7 +96,7 @@ const CardDetails = () => {
     loadCafeDesign();
   }, [formattedCard]);
 
-  // Add this useEffect to reset states when ID changes
+  // Reset states when ID changes
   useEffect(() => {
     // Reset local state when card ID changes
     setCafeDesign(null);
@@ -110,7 +110,7 @@ const CardDetails = () => {
         primary: cafeDesign.primaryColor,
         background: theme.background,
         text: theme.text,
-        card: theme.uiBackground, // Use theme's uiBackground for cards
+        card: theme.uiBackground,
         border: cafeDesign.primaryColor,
         accent: cafeDesign.primaryColor,
       }
@@ -271,7 +271,7 @@ const CardDetails = () => {
 
 export default CardDetails;
 
-// --- Styles ---
+// Styles
 const styles = StyleSheet.create({
   // Main container
   container: {
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
-
+  // Card section styles
   cardSection: {
     padding: 16,
     shadowOffset: { width: 0, height: 2 },
@@ -289,6 +289,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
+  // Loading state styles
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
@@ -299,6 +300,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     opacity: 0.7,
   },
+  // Error state styles
   errorContainer: {
     flex: 1,
     justifyContent: "center",
@@ -322,6 +324,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     lineHeight: 24,
   },
+  // Back button styles
   backButton: {
     paddingHorizontal: 24,
     paddingVertical: 12,

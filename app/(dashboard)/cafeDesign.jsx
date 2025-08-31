@@ -22,7 +22,7 @@ import {
   createCafeProfile,
   getCafeProfile,
   updateCafeProfile,
-} from "../../lib/appwrite/cafe-profiles";
+} from "../../lib/appwrite/cafeProfiles";
 
 // Color options for cafe design
 const colorOptions = [
@@ -42,7 +42,6 @@ const colorOptions = [
 const stampIcons = ["⭐", "☕", "💫", "🎯", "💎", "🏆", "❤️", "🎁", "🌟", "✨"];
 
 const CafeDesignSettings = () => {
-
   // Auth hook: get current user and updateName function
   const { user, updateName } = useUser();
 
@@ -51,7 +50,7 @@ const CafeDesignSettings = () => {
   const [saving, setSaving] = useState(false);
   const [profile, setProfile] = useState(null);
 
-  // Form state: cafe name, address, description, colors, icon, reward, stamps
+  // Form states: cafe name, address, description, colors, icon, reward, stamps
   const [cafeName, setCafeName] = useState(
     // Default to auth user's name or email prefix
     user?.name || user?.email?.split("@")[0] || ""
@@ -161,14 +160,14 @@ const CafeDesignSettings = () => {
           Cafe Design Settings
         </ThemedText>
         <ThemedText style={styles.subtitle}>
-          Customize how your loyalty cards look to customers
+          Customise how your loyalty cards look to customers
         </ThemedText>
         <Spacer size={15} />
 
         {/* Basic Information section: name, address, description, reward, stamps-required */}
         <ThemedCard style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Basic Information
+            Information
           </ThemedText>
           <View style={styles.inputGroup}>
             <ThemedText style={styles.label}>Cafe Name *</ThemedText>
@@ -311,13 +310,11 @@ const CafeDesignSettings = () => {
   );
 };
 
-// --- Styles ---
+// Styles
 const styles = StyleSheet.create({
-  // Full-screen container for design settings UI
+  // Full-screen container for design settings
   container: { flex: 1 },
-  // Enables scrolling for long form
   scrollView: { flex: 1 },
-  // Large bold title at top
   title: {
     fontSize: 28,
     fontWeight: "bold",

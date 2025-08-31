@@ -1,11 +1,14 @@
 /**
  * Dashboard Layout Component
  */
+
+// Imports
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { View } from "react-native";
 import UserOnly from "../../components/auth/UserOnly";
+
 import StampNotification from "../../components/StampNotification";
 import { Colors } from "../../constants/Colors";
 import { useCards } from "../../contexts/CardsContext";
@@ -32,7 +35,7 @@ const DashboardLayout = () => {
   // Redirect to reward-success whenever a redemption happens
   useEffect(() => {
     if (recentRedemption) {
-      router.push({ pathname: "/reward-success" });
+      router.push("/reward-success");
       // clear recent flag to prevent re-trigger
       dismissRedemption();
     }
@@ -61,7 +64,7 @@ const DashboardLayout = () => {
             name="cards"
             options={{
               title: "Cards",
-              href: !isCafeUser ? undefined : null,
+              href: !isCafeUser ? "/cards" : null,
               tabBarIcon: ({ focused, color }) => (
                 <Ionicons
                   name={focused ? "card" : "card-outline"}
@@ -116,7 +119,7 @@ const DashboardLayout = () => {
               ),
             }}
           />
-          {/* Profile tab - available to all users */}
+          {/* Profile tab - shows for all users */}
           <Tabs.Screen
             name="profile"
             options={{

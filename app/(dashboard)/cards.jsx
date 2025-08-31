@@ -1,6 +1,8 @@
 /**
  * Loyalty Cards Screen
  */
+
+// Imports
 import { useIsFocused } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
@@ -24,6 +26,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useCardsList } from "../../hooks/cards/useCardsList";
 import { useCafeUser, useUser } from "../../hooks/useUser";
 
+// Sorting options for loyalty cards
 const SORT_OPTIONS = [
   { label: "Last Used", value: "lastUsed" },
   { label: "Most Stamps", value: "stamps" },
@@ -109,8 +112,7 @@ const CardsScreen = () => {
       email: selectedCard.customerEmail || user.email,
       cardId: selectedCard.cardId || selectedCard.id,
       currentStamps: selectedCard.stamps || selectedCard.currentStamps || 0,
-      availableRewards:
-        selectedCard.availableRewards || selectedCard.rewardsEarned || 1,
+      availableRewards: selectedCard.availableRewards || 0,
       timestamp: new Date().toISOString(),
     });
   };
@@ -122,7 +124,7 @@ const CardsScreen = () => {
     }
   }, [isFocused]);
 
-  // Access control: only non-cafe users (customers) can view
+  // Access control: only customers can view
   if (isCafeUser) {
     return (
       <ThemedView style={styles.container} safe>
@@ -228,7 +230,7 @@ const CardsScreen = () => {
   );
 };
 
-// --- Styles ---
+// Styles
 const styles = StyleSheet.create({
   // Main container: full screen flex
   container: {

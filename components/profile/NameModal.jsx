@@ -1,11 +1,5 @@
 /**
  * NameModal
- *
- * Modal dialog for updating the user's display name.
- * - Input validation (required, length limits)
- * - Loading and error states
- * - Success feedback
- * - Themed styling
  */
 import { useState } from "react";
 import {
@@ -23,7 +17,7 @@ import { useUser } from "../../hooks/useUser";
 import {
   createCafeProfile,
   updateCafeProfile,
-} from "../../lib/appwrite/cafe-profiles";
+} from "../../lib/appwrite/cafeProfiles";
 import ThemedButton from "../ThemedButton";
 import ThemedText from "../ThemedText";
 import ThemedTextInput from "../ThemedTextInput";

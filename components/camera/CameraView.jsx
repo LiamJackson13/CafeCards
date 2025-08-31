@@ -1,3 +1,4 @@
+// Imports
 import { CameraView } from "expo-camera";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
@@ -10,19 +11,10 @@ import ThemedView from "../ThemedView";
  */
 const CameraScanner = ({
   // Props:
-  // hasPermission: camera permission state (null/true/false)
-  // cameraReady: indicates if camera preview is ready
-  // setCameraReady: callback to mark camera as ready
-  // cameraKey: unique key for remounting camera component
-  // onBarCodeScanned: handler for detected barcodes
-  // scanned: prevents duplicate scans
-  // showStampModal: blocks scanning when modals shown
-  // isLoading: loading state for camera initialization
-  // refreshCamera: function to retry camera setup
   hasPermission,
   cameraReady,
   setCameraReady,
-  cameraKey,
+  cameraKey, // cameraKey: unique key for remounting camera component
   onBarCodeScanned,
   scanned,
   showStampModal,

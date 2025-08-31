@@ -1,9 +1,5 @@
 /**
  * ThemedTextInput
- *
- * Reusable text input with theme-based styling.
- * Applies consistent appearance and adapts to light/dark mode.
- * Optimizes for web (removes outline, sets cursor/user-select).
  */
 import { Platform, TextInput } from "react-native";
 import { Colors } from "../constants/Colors";

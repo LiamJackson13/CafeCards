@@ -30,7 +30,6 @@ const LoginScreen = () => {
 
   //handleSubmit: clears previous errors, attempts login, and handles failures
   const handleSubmit = async () => {
-    // Reset any existing error messages before submission
     setError(null);
 
     try {
@@ -119,6 +118,8 @@ const styles = StyleSheet.create({
   // Register link
   registerLink: {
     textAlign: "center",
+    textDecorationLine: "underline",
+    fontWeight: "bold",
   },
 
   // Inputs

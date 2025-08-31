@@ -1,23 +1,10 @@
 /**
  * Themed Button Component
- *
- * A reusable button component with consistent styling across the app.
- * Uses the app's primary brand color and provides press feedback with opacity changes.
- * Built on React Native's Pressable component for better touch handling.
- * Supports custom styling while maintaining consistent base button appearance.
  */
 
 import { Pressable, StyleSheet } from "react-native";
 import { Colors } from "../constants/Colors";
 
-/**
- * ThemedButton
- *
- * Reusable button that applies base styling and handles press feedback.
- * - style: additional custom styles merged after base/pressed styles
- * - children: content to render inside button (text, icons)
- * - ...props: other Pressable props (e.g., onPress, disabled)
- */
 function ThemedButton({ style, children, ...props }) {
   return (
     <Pressable

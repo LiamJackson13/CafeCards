@@ -1,9 +1,8 @@
 /**
  * useCamera
  *
- * Custom React hook for managing camera permissions, state, and refresh logic.
+ * Hook for managing camera permissions, state, and refresh logic.
  * Handles permission requests, camera readiness, health checks, and automatic/manual refreshes.
- * Designed for use with Expo Camera and React Navigation.
  */
 
 import { useFocusEffect } from "@react-navigation/native";
@@ -12,21 +11,19 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AppState } from "react-native";
 
 export const useCamera = () => {
-  const [hasPermission, setHasPermission] = useState(null); // Camera permission state
-  const [cameraReady, setCameraReady] = useState(false); // Camera ready state
+  // Camera state
+  const [hasPermission, setHasPermission] = useState(null);
+  const [cameraReady, setCameraReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [cameraKey, setCameraKey] = useState(0); // Used to force camera refresh
-  const [isLoading, setIsLoading] = useState(true); // Loading state for camera
   const cameraReadyRef = useRef(false); // Ref to track camera ready status
   const lastRefreshTime = useRef(0); // Timestamp of last refresh
-  const healthCheckActive = useRef(false); // Prevents multiple health checks
-  const healthCheckTimer = useRef(null); // Timer for health check
-  const refreshCount = useRef(0); // Number of health check refreshes
-  const MAX_REFRESHES = 3; // Max health check attempts
+  const healthCheckActive = useRef(false);
+  const healthCheckTimer = useRef(null);
+  const refreshCount = useRef(0);
+  const MAX_REFRESHES = 3;
 
-  // Request camera permissions on component mount:
-  // - Uses Expo Camera API to request access
-  // - Updates hasPermission to true if granted, false if denied or on error
-  // - Sets isLoading to false once the permission request completes
+  // Request camera permissions on component mount
   useEffect(() => {
     const getCameraPermissions = async () => {
       try {
@@ -163,11 +160,11 @@ export const useCamera = () => {
   }, []);
 
   return {
-    hasPermission, // Camera permission status
-    cameraReady, // Camera ready state
-    cameraKey, // Key to force camera re-mount
-    isLoading, // Loading state
-    refreshCamera, // Manual refresh function
-    handleCameraReady, // Callback for camera ready event
+    hasPermission,
+    cameraReady,
+    cameraKey,
+    isLoading,
+    refreshCamera,
+    handleCameraReady,
   };
 };

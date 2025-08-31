@@ -10,13 +10,8 @@ import ThemedText from "./ThemedText";
  * Slides in from the top and auto-dismisses after 3 seconds.
  */
 const StampNotification = ({ visible, stampData, onDismiss }) => {
-  // visible: controls display of the notification
-  // stampData: object with stamp data (customer, stampsAdded, cafeName)
-  // onDismiss: callback fired after notification hides
   const [slideAnim] = useState(new Animated.Value(-100));
-  // slideAnim: animated value for vertical slide; starts off-screen
   const [opacityAnim] = useState(new Animated.Value(0));
-  // opacityAnim: animated value for fade-in/out
 
   const hideNotification = useCallback(() => {
     // Animates slide up and fade out, then calls onDismiss
@@ -91,9 +86,8 @@ const StampNotification = ({ visible, stampData, onDismiss }) => {
             <ThemedText style={styles.message}>
               {/* Primary message */}
               {stampData.stampsAdded === 1
-                ? "1 stamp was added"
-                : `${stampData.stampsAdded} stamps were added`}{" "}
-              to your loyalty card
+                ? "1 stamp was added to your loyalty card"
+                : `${stampData.stampsAdded} stamps were added to your loyalty card`}
             </ThemedText>
           </View>
         </View>

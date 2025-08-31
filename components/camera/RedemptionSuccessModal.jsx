@@ -1,4 +1,4 @@
-import { Modal, StyleSheet, View } from "react-native";
+import { Modal, StyleSheet, Text, View } from "react-native";
 import ThemedButton from "../ThemedButton";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
@@ -40,25 +40,23 @@ const RedemptionSuccessModal = ({ visible, customer, onDismiss }) => {
 
           {/* Customer info section: name and email */}
           <View style={styles.customerInfo}>
-            <ThemedText type="subtitle" style={styles.customerName}>
+            <Text type="subtitle" style={styles.customerName}>
               {customer.name || "Customer"}
-            </ThemedText>
+            </Text>
             {customer.email && (
-              <ThemedText style={styles.customerEmail}>
-                {customer.email}
-              </ThemedText>
+              <Text style={styles.customerEmail}>{customer.email}</Text>
             )}
           </View>
 
           {/* Reward details section: reward and remaining count */}
           <View style={styles.rewardInfo}>
-            <ThemedText style={styles.rewardText}>
-              🎁 Free Coffee Reward Claimed
-            </ThemedText>
-            {customer.availableRewards && customer.availableRewards > 0 && (
-              <ThemedText style={styles.remainingText}>
-                Remaining rewards: {customer.availableRewards}
-              </ThemedText>
+            <Text style={styles.rewardText}>🎁 Free Coffee Reward Claimed</Text>
+            {customer.availableRewards !== undefined && (
+              <Text style={styles.remainingText}>
+                {customer.availableRewards > 0
+                  ? `Remaining rewards: ${customer.availableRewards}`
+                  : "No more rewards available"}
+              </Text>
             )}
           </View>
 

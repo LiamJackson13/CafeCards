@@ -33,9 +33,7 @@ export function useCafeUser() {
   /**
    * useCafeUser
    * Returns a boolean indicating if the current user has cafe (staff) privileges.
-   * Retrieves just the isCafeUser flag from UserContext for quick checks.
    */
-  // Destructure only the isCafeUser flag from context
   const { isCafeUser } = useContext(UserContext);
   return isCafeUser;
 }

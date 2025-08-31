@@ -2,6 +2,7 @@
  * User Registration Screen
  */
 
+// imports
 import { Link } from "expo-router";
 import { useState } from "react";
 import {
@@ -28,9 +29,8 @@ const RegisterScreen = () => {
   const [error, setError] = useState(null);
   // Registration type flag: cafe or customer
   const [isCafeUserFlag, setIsCafeUserFlag] = useState(false);
-  // Auth hook: provides register function for new user signup
+  // Auth hook: gets register function for new user signup
   const { register } = useUser();
-
 
   // handleSubmit: resets errors, attempts registration, and handles failures
   const handleSubmit = async () => {
@@ -38,7 +38,8 @@ const RegisterScreen = () => {
     try {
       // Attempt to register with credentials and user type
       await register(email, password, isCafeUserFlag);
-    } catch (error) { // On failure, catch the error and save it to state
+    } catch (error) {
+      // On failure, catch the error and save it to state
       setError(error?.message || "Registration failed.");
     }
   };
@@ -103,7 +104,7 @@ const RegisterScreen = () => {
 
 export default RegisterScreen;
 
-// Styles grouped and documented for clarity
+// Styles
 const styles = StyleSheet.create({
   // Main view: center content with padding and responsive design
   container: {
@@ -130,6 +131,8 @@ const styles = StyleSheet.create({
 
   link: {
     textAlign: "center",
+    textDecorationLine: "underline",
+    fontWeight: "bold",
   },
   // Input fields
   input: {

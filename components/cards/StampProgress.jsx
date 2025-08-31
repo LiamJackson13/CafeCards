@@ -35,8 +35,7 @@ const CustomStampProgress = ({
     );
   }
 
-  const maxStamps = cafeDesign.maxStampsPerCard || 10;
-  // Determine max stamps per card (default 10)
+  const maxStamps = 10;
   const currentStamps = formattedCard.currentStamps || 0;
   // Number of stamps currently collected (default 0)
   const progressPercentage = (currentStamps / maxStamps) * 100;

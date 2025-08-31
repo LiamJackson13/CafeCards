@@ -1,29 +1,26 @@
 import { useCallback, useEffect, useState } from "react";
-import { getCafeProfile } from "../../lib/appwrite/cafe-profiles";
+import { getCafeProfile } from "../../lib/appwrite/cafeProfiles";
 import { useCafeUser, useUser } from "../useUser";
 import { useProfileStats } from "./useProfileStats";
 
 /**
  * useProfile
  *
- * Custom hook for managing profile state, modals, and actions.
+ * Hook for managing profile state, modals, and actions.
  * Handles user info, modal visibility, stats, and name editing logic.
- * Integrates with user context and profile stats hook.
  */
 export const useProfile = () => {
   // Extract logout method, current user data, and refresh function from user context
   const { logout, user, refreshUser } = useUser();
-  // Determine if current user has cafe staff permissions
   const isCafeUser = useCafeUser(); // May include debug override logic
-  // Store cafe-specific profile info (e.g., business name, image)
   const [cafeProfile, setCafeProfile] = useState(null);
 
   // Retrieve user statistics (visits, redemptions) from custom hook
   const {
     stats, // Aggregated stats object
-    loading: statsLoading, // Loading flag for stats fetch
-    error: statsError, // Any error during stats retrieval
-    refetch: refetchStats, // Method to manually refetch stats
+    loading: statsLoading,
+    error: statsError,
+    refetch: refetchStats,
   } = useProfileStats();
 
   // Fetch cafe profile data when user or permissions change

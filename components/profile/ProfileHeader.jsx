@@ -22,14 +22,7 @@ const ProfileHeader = ({
   onEditName,
   getDisplayName,
 }) => {
-  // user: authenticated user object with profile data (email, etc.)
-  // isCafeUser: flag indicating cafe manager view
-  // cafeProfile: cafe profile details (e.g., cafeName) for cafe users
-  // onEditName: callback to trigger name editing
-  // getDisplayName: function returning the display name for non-cafe users
-
   const { userTheme } = useTheme();
-  // userTheme: current theme key ("light" or "dark") for styling
   const theme = Colors[userTheme] ?? Colors.light;
 
   // Profile picture hook

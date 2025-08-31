@@ -1,11 +1,11 @@
 /**
  * CardsContext
  *
- * Provides global state and CRUD operations for loyalty cards.
- * Handles fetching, updating, and real-time syncing of cards for both cafe users and customers.
- * Integrates with Appwrite for database and real-time updates.
+ * Global state and CRUD operations for loyalty cards.
+ * Handles fetching, updating, and real-time syncing of cards
  */
 
+// Imports
 import {
   createContext,
   useCallback,
@@ -39,6 +39,7 @@ export function CardsProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const [recentRedemption, setRecentRedemption] = useState(null);
   const [recentStampAddition, setRecentStampAddition] = useState(null);
+  const [realtimeConnected, setRealtimeConnected] = useState(false);
 
   const { user } = useUser();
   const isCafeUser = useCafeUser();
@@ -200,14 +201,16 @@ export function CardsProvider({ children }) {
 
   /**
    * Real-time subscription handler for Appwrite card updates.
-   * Handles create, update, and delete events.
+   * Handles create, update, and delete events with improved error handling and reconnection.
    */
   useEffect(() => {
     if (!user) return;
 
     let unsubscribe;
+    let reconnectTimeout;
     const channel = `databases.${DATABASE_ID}.collections.${LOYALTY_CARDS_COLLECTION_ID}.documents`;
     let retryCount = 0;
+    const maxRetries = 5;
 
     const handleRealtimeUpdate = (response) => {
       try {
@@ -295,19 +298,116 @@ export function CardsProvider({ children }) {
       }
     };
 
+    // Error handler for connection events
+    const handleConnectionError = (error) => {
+      const errorMessage = error?.message || error;
+
+      // Mute common disconnection messages that are normal during app idle
+      if (
+        typeof errorMessage === "string" &&
+        (errorMessage.includes("got disconnected") ||
+          errorMessage.includes("disconnected") ||
+          errorMessage.includes("WebSocket connection closed"))
+      ) {
+        // Silently handle normal disconnections - don't log
+      } else {
+        // Log other connection errors that might be important
+        console.warn("Realtime connection error:", errorMessage);
+      }
+
+      setRealtimeConnected(false);
+
+      // Don't retry if we've exceeded max retries
+      if (retryCount >= maxRetries) {
+        // Only log if it's not a normal disconnection
+        if (
+          !(
+            typeof errorMessage === "string" &&
+            (errorMessage.includes("got disconnected") ||
+              errorMessage.includes("disconnected") ||
+              errorMessage.includes("WebSocket connection closed"))
+          )
+        ) {
+          console.warn(
+            "Max realtime reconnection attempts reached. Stopping retries."
+          );
+        }
+        return;
+      }
+
+      // Clean up existing subscription
+      if (unsubscribe) {
+        try {
+          unsubscribe();
+        } catch (_e) {
+          // Ignore cleanup errors
+        }
+        unsubscribe = null;
+      }
+
+      // Schedule reconnection with exponential backoff
+      retryCount++;
+      const retryDelay = Math.min(1000 * Math.pow(2, retryCount), 30000); // Exponential backoff: 2s, 4s, 8s, 16s, 30s
+
+      // Only log reconnection attempts for non-normal disconnections
+      if (
+        !(
+          typeof errorMessage === "string" &&
+          (errorMessage.includes("got disconnected") ||
+            errorMessage.includes("disconnected") ||
+            errorMessage.includes("WebSocket connection closed"))
+        )
+      ) {
+        console.log(
+          `Attempting realtime reconnection in ${retryDelay}ms (attempt ${retryCount}/${maxRetries})`
+        );
+      }
+
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+      }
+
+      reconnectTimeout = setTimeout(() => {
+        if (user) {
+          // Only reconnect if user is still authenticated
+          setupSubscription();
+        }
+      }, retryDelay);
+    };
+
     // Subscribe to Appwrite real-time updates
     const setupSubscription = () => {
       try {
-        unsubscribe = client.subscribe(channel, handleRealtimeUpdate);
-        // console.log("Real-time subscription established.");
+        // Clean up any existing subscription first
+        if (unsubscribe) {
+          try {
+            unsubscribe();
+          } catch (_e) {
+            // Ignore cleanup errors
+          }
+        }
+
+        unsubscribe = client.subscribe(channel, (response) => {
+          // Reset retry count on successful message
+          retryCount = 0;
+          setRealtimeConnected(true);
+          handleRealtimeUpdate(response);
+        });
+
+        // Handle connection events if the client supports it
+        if (
+          unsubscribe &&
+          typeof unsubscribe === "object" &&
+          unsubscribe.onError
+        ) {
+          unsubscribe.onError(handleConnectionError);
+        }
+
+        console.log("Real-time subscription established for channel:", channel);
         retryCount = 0; // Reset retry count on successful connection
       } catch (error) {
         console.error("Failed to set up real-time subscription:", error);
-        retryCount++;
-        const retryDelay = Math.min(5000 * retryCount, 30000); // Exponential backoff with max delay of 30 seconds
-        setTimeout(() => {
-          if (user) setupSubscription();
-        }, retryDelay);
+        handleConnectionError(error);
       }
     };
 
@@ -315,10 +415,14 @@ export function CardsProvider({ children }) {
 
     // Cleanup on unmount
     return () => {
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+      }
+
       if (unsubscribe) {
         try {
           unsubscribe();
-          // console.log("Real-time subscription cleaned up.");
+          console.log("Real-time subscription cleaned up.");
         } catch (error) {
           console.error("Error cleaning up subscription:", error);
         }
@@ -333,6 +437,7 @@ export function CardsProvider({ children }) {
         loading,
         recentRedemption,
         recentStampAddition,
+        realtimeConnected,
         dismissRedemption: () => setRecentRedemption(null),
         dismissStampAddition: () => setRecentStampAddition(null),
         fetchCardById,

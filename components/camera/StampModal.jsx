@@ -8,7 +8,7 @@ import ThemedText from "../ThemedText";
 /**
  * StampModal
  *
- * Modal dialog for cafe staff to add stamps to a customer’s loyalty card.
+ * Modal for cafe staff to add stamps to a customer’s loyalty card.
  * Props:
  * - visible: boolean to show/hide the modal
  * - onClose: callback to close the modal
@@ -47,9 +47,9 @@ const StampModal = ({
 
   return (
     <Modal
-      visible={visible} // Control modal visibility
-      animationType="slide" // Slide-in animation
-      transparent // Allow overlay transparency
+      visible={visible}
+      animationType="slide"
+      transparent
       onRequestClose={onClose} // Android back button handler
     >
       <View style={styles.modalOverlay}>
@@ -98,14 +98,14 @@ const StampModal = ({
               onPress={handleConfirm} // Guarded confirm handler
               style={[styles.modalButton, styles.submitButton]}
               disabled={
-                isProcessing || // Disable if processing
-                stampsToAdd < 1 || // Disable if no stamps chosen
-                pressedRef.current // Disable after first press
+                isProcessing ||
+                stampsToAdd < 1 ||
+                pressedRef.current
               }
             >
               <ThemedText style={{ color: "#fff" }}>
                 {isProcessing
-                  ? "Adding…" // Show spinner text
+                  ? "Adding…" // Show loading text
                   : `Add ${stampsToAdd} Stamp${stampsToAdd !== 1 ? "s" : ""}`}
               </ThemedText>
             </ThemedButton>

@@ -42,8 +42,9 @@ const DebugToggle = () => {
               </ThemedText>
               {/* Explanation subtitle, shows auto-set note when matching real role */}
               <ThemedText style={styles.debugSubtitle}>
-                Switch app between Customer/Cafe
-                {debugCafeMode === realIsCafeUser && user ? " (Auto-set)" : ""}
+                {`Switch app between Customer/Cafe${
+                  debugCafeMode === realIsCafeUser && user ? " (Auto-set)" : ""
+                }`}
               </ThemedText>
             </View>
           </View>

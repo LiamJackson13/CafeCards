@@ -1,10 +1,5 @@
 /**
  * Theme Management Context
- *
- * Provides theme state and management throughout the app.
- * Handles switching between light and dark themes with persistent storage.
- * Loads saved theme preferences from AsyncStorage on app startup.
- * Exposes theme state and changeTheme method to all components via context.
  */
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -19,7 +14,6 @@ const ThemeContext = createContext();
 export const ThemeProvider = ({ children }) => {
   // themeMode: current theme setting stored ('light' or 'dark')
   const [themeMode, setThemeMode] = useState("light");
-  // isLoading: flag while loading saved theme from AsyncStorage
   const [isLoading, setIsLoading] = useState(true);
 
   // userTheme: effective theme applied (currently mirrors themeMode)
@@ -57,10 +51,10 @@ export const ThemeProvider = ({ children }) => {
 
   // context value exposed to users
   const value = {
-    themeMode, // current theme mode string
-    userTheme, // effective theme applied
-    changeTheme, // function to switch themes
-    isLoading, // loading state for initial theme fetch
+    themeMode,
+    userTheme,
+    changeTheme,
+    isLoading,
   };
 
   // Provide theme context to app
@@ -73,7 +67,7 @@ export const ThemeProvider = ({ children }) => {
  * useTheme
  *
  * Custom hook to access theme context.
- * Throws if used outside of ThemeProvider.
+ * Throws error if used outside of ThemeProvider.
  */
 export const useTheme = () => {
   // useTheme: hook to access ThemeContext; ensures mounted within provider

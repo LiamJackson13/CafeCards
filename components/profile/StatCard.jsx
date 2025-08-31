@@ -1,10 +1,3 @@
-/**
- * StatCard Component
- *
- * A reusable card component for displaying statistics with an icon, value, and title.
- * Used in profile screens to show user analytics and metrics.
- * Now supports custom colors and better theming.
- */
 import { StyleSheet, View } from "react-native";
 import { Colors } from "../../constants/Colors";
 import { useTheme } from "../../contexts/ThemeContext";

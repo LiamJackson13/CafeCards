@@ -6,11 +6,11 @@ import StatCard from "./StatCard";
 /**
  * StatsSection
  *
- * Displays a row of StatCard components for user or business analytics.
+ * Displays a row of StatCard components for user or cafe analytics.
  * Handles loading, error, and empty states gracefully.
  */
 const StatsSection = ({ isCafeUser, stats, loading, error }) => {
-  // isCafeUser: determines if analytics view applies (business) or customer stats
+  // isCafeUser: determines if analytics view applies cafe or customer stats
   // stats: array of statistic objects ({ title, value, icon, color }) to render
 
   return (

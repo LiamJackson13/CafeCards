@@ -2,8 +2,7 @@
  * ThemeToggle
  *
  * Allows users to switch between light and dark themes.
- * Uses native Switch on mobile, custom switch on web.
- * Integrates with ThemeContext to persist and apply theme changes.
+ *
  */
 import {
   Platform,

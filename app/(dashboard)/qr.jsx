@@ -4,6 +4,7 @@
 
 // imports
 import * as Clipboard from "expo-clipboard";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import {
   Alert,
@@ -27,13 +28,21 @@ const QRDisplayScreen = () => {
   // Import user and theme contexts
   const { user } = useUser();
   const { userTheme } = useTheme();
-  
+
   const router = useRouter();
+
+  const isDark = userTheme === "dark";
 
   // Dimensions: calculate QR code size (70% of width, max 300)
   const screenWidth = Dimensions.get("window").width;
   const qrSize = Math.min(screenWidth * 0.7, 300);
 
+  // Palette helpers
+  const accentGradient = isDark
+    ? ["#5C3B1E", Colors.primary]
+    : ["#DBCBB1", Colors.primary];
+  const qrBg = isDark ? "#000" : "#fff";
+  
   // Generate loyalty card data for QR code
   const generateCardData = () => {
     // Create JSON payload with user ID, email, card ID, name, and metadata
@@ -68,37 +77,38 @@ const QRDisplayScreen = () => {
 
   return (
     <ThemedView style={styles.container} safe>
-      {/* Screen Title */}
-      <ThemedText type="title" style={styles.heading}>
-        Your QR Code
-      </ThemedText>
-      {/* Subtitle instructions */}
-      <ThemedText style={styles.subtitle}>
-        Show this QR code to cafe staff to earn stamps
-      </ThemedText>
-
-      <Spacer size={30} />
-
-      {/* QR Code display card with dynamic background */}
-      <ThemedCard style={styles.qrCard}>
-        <View
-          style={[
-            styles.qrContainer,
-            { backgroundColor: userTheme === "dark" ? "#000" : "#fff" },
-          ]}
-        >
-          <QRCode
-            value={cardData}
-            size={qrSize}
-            color={userTheme === "dark" ? "#fff" : "#000"}
-            backgroundColor={userTheme === "dark" ? "#000" : "#fff"}
-            logoSize={60}
-            logoBackgroundColor="transparent"
-            quietZone={10}
-          />
+      {/* Header */}
+      <View style={styles.headerWrap}>
+        <View style={styles.badge}>
+          <ThemedText style={styles.badgeText}>☕ Loyalty QR</ThemedText>
         </View>
+        <ThemedText type="title" style={styles.heading}>
+          Your QR Code
+        </ThemedText>
+        <ThemedText style={styles.subtitle}>
+          Show this to cafe staff to earn stamps
+        </ThemedText>
+      </View>
 
-        <Spacer size={20} />
+      <Spacer size={20} />
+
+      {/* QR Code display card with modern gradient border */}
+      <ThemedCard style={styles.qrCard}>
+        <LinearGradient colors={accentGradient} style={styles.qrGradientBorder}>
+          <View style={[styles.qrInner, { backgroundColor: qrBg }]}>
+            <QRCode
+              value={cardData}
+              size={qrSize}
+              color={isDark ? "#fff" : "#000"}
+              backgroundColor={qrBg}
+              logoSize={60}
+              logoBackgroundColor="transparent"
+              quietZone={10}
+            />
+          </View>
+        </LinearGradient>
+
+        <Spacer size={16} />
 
         {/* User Info */}
         <View style={styles.userInfo}>
@@ -108,19 +118,20 @@ const QRDisplayScreen = () => {
           <ThemedText style={styles.userEmail}>
             {user?.email || "guest@example.com"}
           </ThemedText>
+
           <TouchableOpacity onPress={copyCardId} style={styles.cardIdContainer}>
-            <ThemedText style={styles.cardIdLabel}>Card ID:</ThemedText>
+            <ThemedText style={styles.cardIdLabel}>Card ID</ThemedText>
             <ThemedText style={styles.cardId}>
               {JSON.parse(cardData).cardId}
             </ThemedText>
-            <ThemedText style={styles.copyHint}>📋 Tap to copy</ThemedText>
+            <ThemedText style={styles.copyHint}>Tap to copy</ThemedText>
           </TouchableOpacity>
         </View>
       </ThemedCard>
 
-      <Spacer size={10} />
+      <Spacer size={12} />
 
-      {/* Action button: Navigate to cards */}
+      {/* Actions */}
       <View style={styles.actionButtons}>
         <ThemedButton
           onPress={() => router.push("/cards")}
@@ -131,35 +142,54 @@ const QRDisplayScreen = () => {
           </ThemedText>
         </ThemedButton>
       </View>
-
-      <Spacer size={20} />
-
-      {/* Instructions card: step-by-step usage guide */}
-      <ThemedCard style={styles.instructionsCard}>
-        <ThemedText style={styles.instructionsTitle}>How to use:</ThemedText>
-        <ThemedText style={styles.instructionText}>
-          1. Show this QR code to cafe staff
-        </ThemedText>
-        <ThemedText style={styles.instructionText}>
-          2. They&apos;ll scan it to add stamps to your card
-        </ThemedText>
-        <ThemedText style={styles.instructionText}>
-          3. Collect stamps to earn rewards!
-        </ThemedText>
-      </ThemedCard>
     </ThemedView>
   );
 };
 
 export default QRDisplayScreen;
 
-// --- Styles ---
+// Styles
 const styles = StyleSheet.create({
   // Main container: centers content with padding
   container: {
     flex: 1,
     padding: 20,
     alignItems: "center",
+  },
+  // Ambient background accents
+  bgAccentTop: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 220,
+    opacity: 0.9,
+  },
+  bgAccentBottom: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 260,
+    opacity: 1,
+  },
+  // Header area
+  headerWrap: {
+    width: "100%",
+    maxWidth: 420,
+    alignItems: "center",
+  },
+  badge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: "rgba(170,124,72,0.15)",
+    marginBottom: 10,
+  },
+  badgeText: {
+    fontSize: 12,
+    fontWeight: "600",
+    letterSpacing: 0.4,
   },
   // Heading text style for main title
   heading: {
@@ -176,7 +206,7 @@ const styles = StyleSheet.create({
   },
   // Style for QR code card container
   qrCard: {
-    padding: 30,
+    padding: 22,
     alignItems: "center",
     borderRadius: 20,
     elevation: 8,
@@ -185,10 +215,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
   },
-  // Container for QRCode component with rounded background
-  qrContainer: {
-    padding: 20,
-    borderRadius: 15,
+  // Modern gradient border around QR
+  qrGradientBorder: {
+    padding: 2,
+    borderRadius: 18,
+  },
+  qrInner: {
+    borderRadius: 16,
+    padding: 16,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -234,12 +268,6 @@ const styles = StyleSheet.create({
     opacity: 0.5,
     marginTop: 4,
   },
-  // Issue date text style under user info
-  issueDate: {
-    fontSize: 12,
-    opacity: 0.6,
-    fontStyle: "italic",
-  },
   // Container for action buttons row
   actionButtons: {
     flexDirection: "row",
@@ -252,6 +280,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     borderRadius: 8,
+  },
+  secondaryBtn: {
+    backgroundColor: "transparent",
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "rgba(170,124,72,0.4)",
+  },
+  secondaryBtnText: {
+    color: Colors.primary,
   },
   // Button text style for action buttons
   buttonText: {

@@ -1,7 +1,7 @@
 /**
  * useProfileStats
  *
- * Custom hook for fetching and calculating profile statistics for both customers and cafe users.
+ * Hook for fetching and calculating profile statistics for both customers and cafe users.
  * Handles loading, error, and refetch logic. Returns stats formatted for display in StatCard components.
  */
 
@@ -9,19 +9,16 @@ import { useEffect, useState } from "react";
 import {
   getLoyaltyCardsByCafeUser,
   getLoyaltyCardsByCustomerId,
-} from "../../lib/appwrite/loyalty-cards";
+} from "../../lib/appwrite/loyaltyCards";
 import { useCafeUser, useUser } from "../useUser";
 
 export const useProfileStats = () => {
   // Get current user from authentication context
   const { user } = useUser();
-  // Determine if the user is a cafe staff member
   const isCafeUser = useCafeUser();
-  // State to hold formatted statistics for display
+  // State to hold profile statistics
   const [stats, setStats] = useState(null);
-  // Loading flag to indicate fetch in progress
   const [loading, setLoading] = useState(true);
-  // Error message state for fetch failures
   const [error, setError] = useState(null);
 
   // Effect: fetch profile statistics on mount and when user role changes

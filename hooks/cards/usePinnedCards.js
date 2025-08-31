@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Alert } from "react-native";
-import { updateCardPinnedStatus } from "../../lib/appwrite/loyalty-cards";
+import { updateCardPinnedStatus } from "../../lib/appwrite/loyaltyCards";
 
 /**
  * usePinnedCards
  *
- * Custom hook for managing pinned cards functionality.
- * Provides methods to pin, unpin, and toggle the pinned status of a card.
- * Handles updating the backend and parent state, and provides feedback on errors.
+ * Hook for managing pinned cards functionality.
+ * Methods to pin, unpin, and toggle the pinned status of a card.
  */
 export const usePinnedCards = () => {
   // Tracks whether a pin/unpin operation is currently in progress
@@ -124,9 +123,9 @@ export const usePinnedCards = () => {
   };
 
   return {
-    updatingPinStatus, // True when any pin/unpin operation is ongoing
-    toggleCardPin, // Toggles pin status with backend update and callback
-    pinCard, // Explicitly pins card if not already pinned
-    unpinCard, // Explicitly unpins card if currently pinned
+    updatingPinStatus,
+    toggleCardPin,
+    pinCard,
+    unpinCard,
   };
 };

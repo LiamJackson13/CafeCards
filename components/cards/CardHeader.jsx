@@ -5,7 +5,7 @@ import ThemedText from "../ThemedText";
 /**
  * CustomCardHeader
  *
- * Displays a custom card header with cafe branding.
+ * Displays a custom card header with the cafe branding.
  * - Shows loading state if cafeDesign is not loaded.
  *
  */

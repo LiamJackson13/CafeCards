@@ -1,10 +1,8 @@
 /**
  * useScanner
  *
- * Custom React hook for handling QR code scanning, processing, and scan history.
- * Manages state for scanning, debouncing, stamp addition, reward redemption, and manual entry.
- * Designed for use with cafe user flows and integrates with Appwrite backend.
- */
+ * Hook for handling QR code scanning, processing, and scan history.
+ * Manages state for scanning, debouncing, stamp addition, reward redemption, and manual entry. */
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Alert } from "react-native";
@@ -12,14 +10,11 @@ import { addStampToCard, redeemReward } from "../../lib/appwrite";
 import {
   createScanHistoryEntry,
   parseQRCode,
-} from "../../lib/scanner/qr-parser";
+} from "../../lib/scanner/qrParser";
 
 export const useScanner = (user, isCafeUser) => {
-  // Whether a barcode scan has been handled (prevents duplicate processing)
   const [scanned, setScanned] = useState(false);
-  // Array of recent scan entries with status and messages (max length 10)
   const [scanHistory, setScanHistory] = useState([]);
-  // Indicates a scan or redemption is currently being processed
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Controls stamp addition modal visibility and target customer
@@ -41,9 +36,7 @@ export const useScanner = (user, isCafeUser) => {
 
   // Ref for auto-reset timer: clears stuck processing after timeout
   const processingTimeoutRef = useRef(null);
-  // Ref to store last scanned data and timestamp for debounce logic
   const lastScannedRef = useRef({ data: null, timestamp: 0 });
-  // Minimum interval between handling the same QR scan (ms)
   const DEBOUNCE_TIME = 3000;
 
   // Auto-reset stuck processing state after 30 seconds to avoid permanent lockups
@@ -175,10 +168,6 @@ export const useScanner = (user, isCafeUser) => {
     ]
   );
 
-  // Processes reward redemption flows:
-  // - Calls backend redemption API
-  // - Records success/error in history
-  // - Displays feedback modal
   const handleRewardRedemption = useCallback(
     async (customer) => {
       try {
@@ -210,11 +199,7 @@ export const useScanner = (user, isCafeUser) => {
     [user, addToScanHistory]
   );
 
-  // Confirms and applies stamp additions:
-  // - Adds one or more stamps to customer card via backend
-  // - Logs result in history
-  // - Shows stamp notification
-  // - Closes modal and resets scanner state
+  // Confirms and applies stamp additions
   const confirmStampAddition = useCallback(async () => {
     if (!pendingCustomer) return;
     try {

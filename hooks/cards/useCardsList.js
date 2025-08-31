@@ -1,14 +1,14 @@
 /**
  * useCardsList
  *
- * Custom React hook for managing the list of loyalty cards with cafe design integration.
+ * Hook for managing the list of loyalty cards with cafe design integration.
  * Loads and caches cafe design data for each unique cafe, merges it with card data,
  * and provides formatted cards for display. Handles refresh logic and error fallback.
  */
 
 import { useContext, useEffect, useState } from "react";
 import { CardsContext } from "../../contexts/CardsContext";
-import { getCafeDesign } from "../../lib/appwrite/cafe-profiles";
+import { getCafeDesign } from "../../lib/appwrite/cafeProfiles";
 
 export const useCardsList = () => {
   const { cards, loading, fetchCards } = useContext(CardsContext);
@@ -112,16 +112,13 @@ export const useCardsList = () => {
         stamps: card.currentStamps || 0,
         maxStamps: cafeDesign.maxStampsPerCard,
         totalStamps: card.totalStamps || card.currentStamps || 0,
-        // Calculate earned rewards count
-        rewardsEarned:
-          card.availableRewards ||
-          Math.floor(
-            (card.currentStamps || 0) / (cafeDesign.maxStampsPerCard || 10)
-          ),
+        // Calculate earned rewards count (new reward system only)
+        rewardsEarned: card.availableRewards || 0,
         reward: cafeDesign.rewardDescription,
         // UI properties
         color: cafeDesign.primaryColor,
         icon: cafeDesign.stampIcon,
+        // Check if reward is available (new reward system only)
         isReady: (card.availableRewards || 0) > 0,
         isPinned: card.isPinned || false,
         cafeDesign, // expose full design object

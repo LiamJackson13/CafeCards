@@ -19,9 +19,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useProfile } from "../../hooks/profile/useProfile";
 
 const ProfileScreen = () => {
-  // Theme context: get current theme and colors
   const { userTheme } = useTheme();
-  // Resolve theme colors for styling
   const theme = Colors[userTheme] ?? Colors.light;
   // Pull-to-refresh state for manual data refresh
   const [refreshing, setRefreshing] = useState(false);
@@ -160,7 +158,7 @@ const ProfileScreen = () => {
   );
 };
 
-// --- Styles ---
+// Styles
 const styles = StyleSheet.create({
   // Main container: full-screen wrapper
   container: {

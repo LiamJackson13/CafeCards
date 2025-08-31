@@ -1,11 +1,8 @@
 /**
  * Home/Landing Screen
- *
- * Main entry point for the Cafe Cards app.
- * - App title, description, and feature highlights
- * - Navigation to login, registration, or dashboard
- * - Responsive, themed layout
  */
+
+// Imports
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { StatusBar, StyleSheet, View } from "react-native";
@@ -21,17 +18,13 @@ import { useCafeUser, useUser } from "../hooks/useUser";
 export default function Index() {
   // Auth context: indicates when initial authentication check completes
   const { authChecked } = useUser();
-  // Navigation hook: for routing between screens
   const router = useRouter();
   // Role check: determines if user is a cafe owner
   const isCafeUser = useCafeUser();
-  // Authenticated user object (null if not logged in)
   const { user } = useUser();
-  // Theme context: get current theme and resolve color palette
   const { userTheme } = useTheme();
-  const theme = Colors[userTheme] ?? Colors.light;
-  // Loading state: controls display of initial loader while auth resolves
   const [isLoading, setIsLoading] = useState(true);
+  const theme = Colors[userTheme] ?? Colors.light;
 
   // Effect: hide loader once authentication check finishes
   useEffect(() => {
@@ -157,7 +150,7 @@ export default function Index() {
   );
 }
 
-// --- Styles ---
+// Styles
 const styles = StyleSheet.create({
   // Main container wrapping all content
   container: {

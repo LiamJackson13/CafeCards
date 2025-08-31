@@ -1,8 +1,5 @@
 /**
  * PasswordModal Component
- *
- * Modal for changing user passwords with validation and Appwrite integration.
- * Includes error handling and loading states.
  */
 import { useState } from "react";
 import { Modal, StyleSheet, TextInput, View } from "react-native";
@@ -12,21 +9,12 @@ import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
 
 const PasswordModal = ({ visible, onClose }) => {
-  // visible: toggles display of the password modal
-  // onClose: callback fired to close the modal and reset state
+  // State variables for password inputs and error handling
   const [currentPassword, setCurrentPassword] = useState("");
-  // currentPassword: user-entered current password for verification
-  // setCurrentPassword: function to update currentPassword state
   const [newPassword, setNewPassword] = useState("");
-  // newPassword: user-entered new password
-  // setNewPassword: function to update newPassword state
   const [confirmPassword, setConfirmPassword] = useState("");
-  // confirmPassword: confirmation of newPassword to ensure match
-  // setConfirmPassword: function to update confirmPassword state
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-  // isChangingPassword: loading flag during password update
   const [passwordError, setPasswordError] = useState("");
-  // passwordError: stores validation or API error message
 
   // Handle password change with validation and error handling
   const handlePasswordSubmit = async () => {

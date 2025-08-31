@@ -1,10 +1,9 @@
 /**
  * useCardDetails
  *
- * Custom React hook for managing individual loyalty card details.
+ * Hook for managing individual loyalty card details.
  * Handles loading, formatting, polling, and actions (like adding stamps and redemption).
- * Integrates with CardsContext and Appwrite backend.
- */
+*/
 
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Alert } from "react-native";
@@ -17,18 +16,12 @@ export const useCardDetails = (
   isCafeUser,
   onRedemptionSuccess
 ) => {
-  // Raw card data fetched from backend; null until loaded
   const [card, setCard] = useState(null);
-  // Loading indicator for initial fetch or polling updates
   const [loading, setLoading] = useState(true);
-  // Tracks add-stamp API call in progress to disable UI interactions
   const [addingStamp, setAddingStamp] = useState(false);
-  // Toggles visibility of the reward redemption modal
   const [showRedeemModal, setShowRedeemModal] = useState(false);
-  // Stores previous availableRewards to detect when a redemption occurs
   const [previousAvailableRewards, setPreviousAvailableRewards] =
     useState(null);
-  // Prepared formatted card data for UI consumption
   const [formattedCard, setFormattedCard] = useState(null);
 
   // Context method for fetching card data by ID
@@ -38,13 +31,11 @@ export const useCardDetails = (
   useEffect(() => {
     async function loadCard() {
       try {
-        // Reset formattedCard when starting new load to prevent flash
         setFormattedCard(null);
         // Show spinner while fetching
         setLoading(true);
         // Fetch card details from context/backend
         const cardData = await fetchCardById(cardId);
-        // Store result in state
         setCard(cardData);
       } catch (error) {
         // Log fetch error and alert user
@@ -137,33 +128,21 @@ export const useCardDetails = (
     // Parse raw scan history into structured entries
     const scanHistory = parseScanHistory(cardData.scanHistory);
 
-    // New rewards system path (availableRewards provided by backend)
-    if ("availableRewards" in cardData) {
-      return {
-        ...cardData,
-        id: cardData.$id, // Ensure id field is available for UI components
-        availableRewards: cardData.availableRewards || 0,
-        totalRedeemed: cardData.totalRedeemed || 0,
-        scanHistory,
-        hasAvailableRewards: (cardData.availableRewards || 0) > 0,
-        supportsNewRewards: true,
-      };
-    } else {
-      // Legacy system: calculate rewards from currentStamps
-      const rewardsEarned = Math.floor(cardData.currentStamps / 10);
-      const currentProgress = cardData.currentStamps % 10;
-
-      return {
-        ...cardData,
-        id: cardData.$id, // Ensure id field is available for UI components
-        availableRewards: rewardsEarned,
-        totalRedeemed: 0, // Not tracked in legacy
-        currentStamps: currentProgress,
-        scanHistory,
-        hasAvailableRewards: rewardsEarned > 0,
-        supportsNewRewards: false,
-      };
+    // New rewards system only
+    if (!("availableRewards" in cardData)) {
+      throw new Error(
+        "This card does not support the new reward system. Please contact support."
+      );
     }
+
+    return {
+      ...cardData,
+      id: cardData.$id, // Ensure id field is available for UI components
+      availableRewards: cardData.availableRewards || 0,
+      totalRedeemed: cardData.totalRedeemed || 0,
+      scanHistory,
+      hasAvailableRewards: (cardData.availableRewards || 0) > 0,
+    };
   }, []); // Empty dependency array since function doesn't depend on external values
 
   // Generate JSON payload string used in redemption QR code

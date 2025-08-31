@@ -32,22 +32,22 @@ const CustomerRedeemActions = ({ formattedCard, onRedeem, theme }) => {
       <ThemedText
         style={[styles.rewardCount, { color: theme.text, opacity: 0.8 }]}
       >
-        You have {formattedCard.availableRewards} free coffee
-        {formattedCard.availableRewards > 1 ? "s" : ""} available!
+        {`You have ${formattedCard.availableRewards} free coffee${
+          formattedCard.availableRewards > 1 ? "s" : ""
+        } available!`}
       </ThemedText>
 
       <Spacer height={15} />
 
-      {/* Redeem button with enhanced styling */}
       <ThemedButton
         onPress={onRedeem}
         style={[
           styles.redeemButton, // button styling
 
           {
-            backgroundColor: theme.primary || theme.accent, // Theme primary
-            shadowColor: theme.primary || theme.accent, // Shadow matches theme
-            borderColor: theme.primary || theme.accent, // Border matches theme
+            backgroundColor: theme.primary || theme.accent,
+            shadowColor: theme.primary || theme.accent,
+            borderColor: theme.primary || theme.accent,
           },
         ]}
       >

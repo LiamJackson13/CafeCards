@@ -3,7 +3,7 @@
  *
  * Provides user authentication state and methods throughout the app.
  * Integrates with Appwrite backend for authentication services and maintains
- * user session state. Used by UserOnly/GuestOnly components and authentication-related screens.
+ * user session state.
  */
 
 import { createContext, useCallback, useEffect, useState } from "react";
@@ -239,10 +239,10 @@ export function UserProvider({ children }) {
   // Initialization: check auth and café user role
   const initialize = useCallback(async () => {
     // Auth check
-    let u = null;
+    let user = null;
     try {
-      u = await account.get();
-      setUser(u);
+      user = await account.get();
+      setUser(user);
     } catch {
       setUser(null);
     } finally {
@@ -250,10 +250,10 @@ export function UserProvider({ children }) {
     }
 
     // Role check if authed
-    if (u) {
+    if (user) {
       try {
         const ids = await fetchCafeUserIds();
-        const status = ids.includes(u.$id);
+        const status = ids.includes(user.$id);
         setIsCafeUser(status);
         if (__DEV__) setDebugCafeMode(status);
       } catch {

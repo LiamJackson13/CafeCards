@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import { usePinnedCards } from "../../hooks/cards/usePinnedCards";
-import { getCafeDesign } from "../../lib/appwrite/cafe-profiles";
+import { getCafeDesign } from "../../lib/appwrite/cafeProfiles";
 import Spacer from "../Spacer";
 import ThemedCard from "../ThemedCard";
 import ThemedText from "../ThemedText";
@@ -145,8 +145,8 @@ const CustomCardItem = ({
             </ThemedText>
           </TouchableOpacity>
         )}
-        {/* Complete badge for cafe users */}
-        {isComplete && !item.isReady && (
+        {/* Complete badge for cafe users only when card is complete but not ready */}
+        {isCafeUser && isComplete && !item.isReady && (
           <View
             style={[
               styles.completeBadge,
@@ -178,13 +178,7 @@ const CustomCardItem = ({
           ]}
           activeOpacity={0.85}
         >
-          <ThemedText
-            style={[
-              styles.redeemText,
-              styles.customerRedeemText,
-              { color: dynamicTheme.text }, // Use theme text color
-            ]}
-          >
+          <ThemedText style={[styles.redeemText, styles.customerRedeemText]}>
             🎁 Reward available - Tap to view
           </ThemedText>
         </TouchableOpacity>
@@ -487,6 +481,7 @@ const styles = StyleSheet.create({
   },
   // Customer redeem button text styles
   customerRedeemText: {
+    color: "#fff",
     fontSize: 15,
     fontWeight: "600",
     letterSpacing: 0.3,

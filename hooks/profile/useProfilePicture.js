@@ -20,9 +20,7 @@ export function useProfilePicture() {
 
   // Flag for ongoing upload process (camera or gallery)
   const [uploading, setUploading] = useState(false);
-  // Controls visibility of the modal offering camera/gallery options
   const [isModalVisible, setIsModalVisible] = useState(false);
-  // Local URI for the profile picture, either cached or remote
   const [profilePictureUrl, setProfilePictureUrl] = useState(null);
 
   // On mount: fetch remote profile picture URL and cache it locally
@@ -63,7 +61,7 @@ export function useProfilePicture() {
   }, [getProfilePictureUrl]);
 
   /**
-   * Request necessary permissions for camera and media library access
+   * Request permissions for camera and media library access
    * Returns true if both permissions granted (or running on web), else false
    */
   const requestPermissions = async () => {

@@ -1,8 +1,5 @@
 /**
  * ThemedCard
- *
- * Simple reusable card container with theme-based background.
- * Use for grouping content in a card layout.
  */
 import { StyleSheet, View } from "react-native";
 import { Colors } from "../constants/Colors";

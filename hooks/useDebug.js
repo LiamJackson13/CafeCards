@@ -1,14 +1,11 @@
 /**
  * useDebug
  *
- * Custom hook to access debug-related functions from the UserContext.
- * Provides access to the global debug cafe mode toggle that affects
- * the entire app's behavior in development mode.
+ * Hook to access debug-related functions from the UserContext.
+ * Global debug cafe mode toggle that affects the entire app's behavior in development mode.
  */
 
-// Import React's useContext hook for consuming context values
 import { useContext } from "react";
-// Import the UserContext which provides debug flags and settings
 import { UserContext } from "../contexts/UserContext";
 
 export function useDebug() {
